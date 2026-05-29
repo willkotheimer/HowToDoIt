@@ -1,14 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ErrorBoundary } from 'react-error-boundary';
 import App from './App/App';
-import ErrorBoundary from './ErrorBoundary';
 import reportWebVitals from './reportWebVitals';
 import './styles/index.scss';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+
+const FallbackComponent = () => <div>Something went wrong.</div>;
 
 ReactDOM.render(
-  <ErrorBoundary>
-    <App />,
-  </ErrorBoundary>,
+  <QueryClientProvider client={queryClient}>
+    <ErrorBoundary FallbackComponent={FallbackComponent}>
+      <App />
+    </ErrorBoundary>
+  </QueryClientProvider>,
   document.getElementById('root'),
 );
 
