@@ -4,7 +4,7 @@ import Routes from '../helpers/Routes';
 import Nav from '../Components/Nav';
 import './App.scss';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { useHousehold, useUsersHousehold } from '../helpers/data/houseHoldUsers';
+import { useHousehold, useUsersHousehold } from '../data/houseHoldUsers';
 import Footer from '../Components/Footer';
 import { AuthUser, HouseholdUser } from '../Types';
 

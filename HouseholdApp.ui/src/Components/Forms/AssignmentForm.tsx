@@ -5,10 +5,10 @@ import { Formik, Form as FormikForm } from 'formik';
 import {
   Card, CardBody, CardHeader, Button,
 } from 'reactstrap';
-import { useUnassignedChoresByWeekAndHouseHold } from '../../helpers/data/choresData';
-import { useAssignmentsByHouseholdFromUserId, useCreateAssignment } from '../../helpers/data/assignmentData';
-import Week from '../../helpers/data/weekNum';
-import { Assignment, Chore } from '../../Types';
+import { useUnassignedChoresByWeekAndHouseHold } from '../../data/choresData';
+import { useAssignmentsByHouseholdFromUserId, useCreateAssignment } from '../../data/assignmentData';
+import Week from '../../data/weekNum';
+import { choresToSelectOptions, filterAssignmentsByWeek, filterAssignmentsByUser, ChoreSelectOption } from '../../helpers/FormsHelper';
 
 interface AssignmentFormProps {
   person: { id: number; firstname: string; name?: string };
@@ -17,13 +17,8 @@ interface AssignmentFormProps {
   toggle: () => void;
 }
 
-interface OptionType {
-  value: number;
-  label: string;
-}
-
 interface AssignmentFormValues {
-  selected: OptionType[];
+  selected: ChoreSelectOption[];
 }
 
 export default function AssignmentForm({ person, householdId, toggle }: AssignmentFormProps) {
@@ -31,10 +26,10 @@ export default function AssignmentForm({ person, householdId, toggle }: Assignme
   const { data: unassigned = [] } = useUnassignedChoresByWeekAndHouseHold(Week.thisWeek(), householdId);
   const createAssignmentMutation = useCreateAssignment();
 
-  const useSelection = useMemo(() => unassigned.map((op) => ({ value: op.id ?? 0, label: op.name ?? '' })), [unassigned]);
+  const useSelection = useMemo(() => choresToSelectOptions(unassigned), [unassigned]);
 
-  const filteredByThisWeek = useMemo(() => assignments.filter((a) => a.week === Week.thisWeek()), [assignments]);
-  const myAssignments = useMemo(() => filteredByThisWeek.filter((a) => a.userId === person.id), [filteredByThisWeek, person.id]);
+  const filteredByThisWeek = useMemo(() => filterAssignmentsByWeek(assignments, Week.thisWeek()), [assignments]);
+  const myAssignments = useMemo(() => filterAssignmentsByUser(filteredByThisWeek, person.id), [filteredByThisWeek, person.id]);
 
   return (
     <Card className='assignment-form'>

@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { postJson } from './api';
-import { firebaseConfig } from '../config.json';
+import { firebaseConfig } from '../helpers/config.json';
 import type { FormEvent, MouseEvent } from 'react';
 
 const app = initializeApp(firebaseConfig);

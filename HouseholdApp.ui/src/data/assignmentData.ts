@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAPIRequest } from './useAPIRequest';
 import { getJson, postJson, patchJson } from './api';
-import type { Assignment } from '../../Types';
+import type { Assignment } from '../Types';
 
 const assignmentsURL = '/Assignments';
 const assignmentsChores = '/AssignmentsChores';

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { mergeAssignmentsWithImages } from '../../helpers/MaterialAccordionHelper';
 import { withStyles } from '@material-ui/core/styles';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
@@ -50,14 +51,7 @@ const AccordionDetails = withStyles((theme) => ({
 
 export default function CustomizedAccordions({ userAssignments, images, completeTask }) {
   const [expanded, setExpanded] = React.useState('panel1');
-  const newUserAssignments = [];
-  let myObj = {};
-  userAssignments.forEach((ua, i) => {
-    myObj = ua;
-    const theImage = images.find((image) => ua.choreId === image.choreId);
-    if (theImage) myObj.image = theImage.image;
-    newUserAssignments.push(myObj);
-  });
+  const newUserAssignments = mergeAssignmentsWithImages(userAssignments, images);
   const gettasks = () => (
     [...newUserAssignments].map((item, index) => (
         <Accordion key={`accord${item}-${index}`} square expanded={expanded === `panel${index}`} onChange={handleChange(`panel${index}`)}>

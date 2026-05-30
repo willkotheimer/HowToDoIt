@@ -6,7 +6,7 @@ import { Formik, Form as FormikForm } from 'formik';
 import {
   Button, Card, CardBody, CardHeader, FormGroup, Label, Input,
 } from 'reactstrap';
-import { useAddImage } from '../../helpers/data/imageData';
+import { useAddImage } from '../../data/imageData';
 import { Chore } from '../../Types';
 
 interface ImageUploaderProps {

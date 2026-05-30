@@ -1,9 +1,9 @@
 import React from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import CustomizedAccordions from '../MaterialAccordion';
-import assignments from '../../helpers/data/assignmentData';
-import images from '../../helpers/data/imageData';
-import week from '../../helpers/data/weekNum';
+import assignments from '../../data/assignmentData';
+import images from '../../data/imageData';
+import week from '../../data/weekNum';
 import Footer from '../Footer';
 
 export default function AddHouseholdMembers({ uid, user, userHousehold }) {

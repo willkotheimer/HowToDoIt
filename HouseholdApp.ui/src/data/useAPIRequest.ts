@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { baseUrl } from '../config.json';
+import { baseUrl } from '../helpers/config.json';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 

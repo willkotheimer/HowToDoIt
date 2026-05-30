@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import Chores from '../../helpers/data/choresData';
+import Chores from '../../data/choresData';
 import logo from '../../styles/images/logo.png';
 import Footer from '../../Components/Footer';
-import week from '../../helpers/data/weekNum';
-import assignments from '../../helpers/data/assignmentData';
+import week from '../../data/weekNum';
+import assignments from '../../data/assignmentData';
 import HouseholdPieChart from '../../Components/HouseholdPieChart';
 
 export default function UserDashboardView({

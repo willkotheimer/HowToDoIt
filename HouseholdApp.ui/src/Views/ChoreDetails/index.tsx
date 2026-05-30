@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardHeader, CardBody } from 'reactstrap';
-import images from '../../helpers/data/imageData';
-import chores from '../../helpers/data/choresData';
+import images from '../../data/imageData';
+import chores from '../../data/choresData';
 import ChoreInfo from '../../Components/ChoreInfo';
 import AppModal from '../../Components/AppModal';
 import ChoreForm from '../../Components/Forms/ChoreForm';

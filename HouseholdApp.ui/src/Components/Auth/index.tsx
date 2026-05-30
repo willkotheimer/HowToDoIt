@@ -8,7 +8,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
-import AuthData from '../../helpers/data/authData';
+import AuthData from '../../data/authData';
 import Logo from '../../styles/images/Household_logo_badge.svg';
 
 const Auth = () =>  {

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAPIRequest } from './useAPIRequest';
 import { getJson, postJson, deleteJson } from './api';
-import type { ImageRecord } from '../../Types';
+import type { ImageRecord } from '../Types';
 
 const imagesUrl = '/Images';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDeleteImage } from '../../helpers/data/imageData';
+import { useDeleteImage } from '../../data/imageData';
 
 interface DeleteImageProps {
   imageId: number;

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAPIRequest } from './useAPIRequest';
 import { getJson } from './api';
-import type { Category } from '../../Types';
+import type { Category } from '../Types';
 
 const categoriesURL = '/Categories';
 

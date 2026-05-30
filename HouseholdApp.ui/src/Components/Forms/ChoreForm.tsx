@@ -5,10 +5,11 @@ import { Formik, Field, Form as FormikForm } from 'formik';
 import {
   Button, Card, CardBody, CardHeader, FormGroup, Label, Input,
 } from 'reactstrap';
-import { useAddChore, useUpdateChore } from '../../helpers/data/choresData';
-import { useCategories } from '../../helpers/data/categoryData';
-import { useHousehold } from '../../helpers/data/houseHoldUsers';
+import { useAddChore, useUpdateChore } from '../../data/choresData';
+import { useCategories } from '../../data/categoryData';
+import { useHousehold } from '../../data/houseHoldUsers';
 import { Chore } from '../../Types';
+import { sortCategories, buildChorePayload } from '../../helpers/FormsHelper';
 
 interface ChoreFormProps {
   choreInfo?: Chore;
@@ -30,7 +31,7 @@ export default function ChoreForm({ choreInfo, uid, onUpdate, toggle }: ChoreFor
   const addChoreMutation = useAddChore();
   const updateChoreMutation = useUpdateChore();
 
-  const sortedCategories = useMemo(() => [...categories].sort((a, b) => a.categoryName.localeCompare(b.categoryName)), [categories]);
+  const sortedCategories = useMemo(() => sortCategories(categories), [categories]);
 
   const initialValues: ChoreFormValues = {
     name: choreInfo?.name ?? '',
@@ -47,17 +48,8 @@ export default function ChoreForm({ choreInfo, uid, onUpdate, toggle }: ChoreFor
           enableReinitialize
           initialValues={initialValues}
           onSubmit={(values) => {
-            const choreObject: Partial<Chore> = {
-              Name: values.name,
-              Description: values.description,
-              HouseHoldId: values.houseHoldId,
-              Category: parseInt(values.category, 10),
-            };
-
+            const choreObject = buildChorePayload(values, choreInfo?.id);
             const mutation = choreInfo?.id ? updateChoreMutation : addChoreMutation;
-            if (choreInfo?.id) {
-              choreObject.Id = choreInfo.id;
-            }
 
             mutation.mutate(choreObject, {
               onSuccess: () => {

@@ -1,18 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import { buildPieConfig } from '../../helpers/HouseholdPieChartHelper';
 
 export default function HouseholdPieChart(props) {
   const ref = useRef(null);
-  const createPie = d3
-    .pie()
-    .value((d) => d.value)
-    .sort(null);
-  const createArc = d3
-    .arc()
-    .innerRadius(props.innerRadius)
-    .outerRadius(props.outerRadius);
-  const colors = d3.scaleOrdinal(d3.schemeCategory10);
-  const format = d3.format('20');
+  const { pie: createPie, arc: createArc, colors, format } = buildPieConfig(props.innerRadius, props.outerRadius);
 
   useEffect(
     () => {

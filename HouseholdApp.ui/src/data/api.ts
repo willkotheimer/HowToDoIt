@@ -1,4 +1,4 @@
-import { baseUrl } from '../config.json';
+import { baseUrl } from '../helpers/config.json';
 
 async function fetcher<T>(url: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(url, {

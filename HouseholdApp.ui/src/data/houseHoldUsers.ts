@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAPIRequest } from './useAPIRequest';
 import { getJson } from './api';
-import type { HouseholdUser } from '../../Types';
+import type { HouseholdUser } from '../Types';
 
 const householdURL = '/HouseholdUser';
 
