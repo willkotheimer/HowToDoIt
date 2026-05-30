@@ -58,21 +58,21 @@ namespace HouseHoldApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddAHouseHoldUser(HoldholdUser householduser)
+        public IActionResult AddAHouseHoldUser(HouseholdUser householduser)
         {
             _repo.AddAHouseHoldUser(householduser);
             return Created($"api/HouseholdUser/{householduser.Id}", householduser);
         }
 
         [HttpPatch("{id}")]
-        public IActionResult ConfirmHouseHoldUser(HoldholdUser householduser)
+        public IActionResult ConfirmHouseHoldUser(HouseholdUser householduser)
         {
             _repo.ConfirmHouseHoldUser(householduser);
             return NoContent();
         }
 
         [HttpPatch("{id}")]
-        public IActionResult DeleteHouseholdUser(HoldholdUser householduser)
+        public IActionResult DeleteHouseholdUser(HouseholdUser householduser)
         {
             _repo.DeleteHouseHoldUser(householduser);
             return NoContent();

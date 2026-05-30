@@ -3,7 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HouseHoldApp.Models
 {
-    public class HoldholdUser
+    [Table("HouseholdUser")]
+    public class HouseholdUser
     {
         [Key]
         public int Id { get; set; }

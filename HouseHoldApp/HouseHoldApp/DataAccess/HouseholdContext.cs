@@ -11,7 +11,7 @@ namespace HouseHoldApp.DataAccess
         public DbSet<UserHousehold> UserHouseholds { get; set; }
         public DbSet<Images> Images { get; set; }
         public DbSet<Household> Households { get; set; }
-        public DbSet<HoldholdUser> HoldholdUsers { get; set; }
+        public DbSet<HouseholdUser> HouseholdUsers { get; set; }
         public DbSet<Chores> Chores { get; set; }
         public DbSet<Assignments> Assignments { get; set; }
 
@@ -19,17 +19,17 @@ namespace HouseHoldApp.DataAccess
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<HoldholdUser>()
+            modelBuilder.Entity<HouseholdUser>()
                 .HasKey(hu => new { hu.UserId, hu.HouseholdId });
 
-            modelBuilder.Entity<HoldholdUser>()
+            modelBuilder.Entity<HouseholdUser>()
                 .HasOne(hu => hu.User)
-                .WithMany(u => u.HoldholdUsers)
+                .WithMany(u => u.HouseholdUsers)
                 .HasForeignKey(hu => hu.UserId);
 
-            modelBuilder.Entity<HoldholdUser>()
+            modelBuilder.Entity<HouseholdUser>()
                 .HasOne(hu => hu.Household)
-                .WithMany(h => h.HoldholdUsers)
+                .WithMany(h => h.HouseholdUsers)
                 .HasForeignKey(hu => hu.HouseholdId);
         }
     }

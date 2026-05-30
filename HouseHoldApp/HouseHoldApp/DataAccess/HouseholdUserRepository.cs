@@ -10,19 +10,19 @@ namespace HouseHoldApp.DataAccess
     {
         const string ConnectionString = "Server=localhost; Database=HouseHold; Trusted_Connection=True";
 
-        public HoldholdUser GetHouseHoldUserById(int id)
+        public HouseholdUser GetHouseHoldUserById(int id)
         {
             using var db = new SqlConnection(ConnectionString);
             var sql = "SELECT * FROM HouseholdUser WHERE Id = @id";
-            var result = db.QueryFirstOrDefault<HoldholdUser>(sql, new { Id = id });
+            var result = db.QueryFirstOrDefault<HouseholdUser>(sql, new { Id = id });
             return result;
         }
 
-        public HoldholdUser GetHouseHoldUserByUserId(int id)
+        public HouseholdUser GetHouseHoldUserByUserId(int id)
         {
             using var db = new SqlConnection(ConnectionString);
             var sql = "SELECT * FROM HouseholdUser WHERE UserId = @id";
-            var result = db.QueryFirstOrDefault<HoldholdUser>(sql, new { Id = id });
+            var result = db.QueryFirstOrDefault<HouseholdUser>(sql, new { Id = id });
             return result;
         }
 
@@ -48,7 +48,7 @@ namespace HouseHoldApp.DataAccess
             return result;
         }
 
-        public void AddAHouseHoldUser(HoldholdUser HouseHoldUser)
+        public void AddAHouseHoldUser(HouseholdUser HouseHoldUser)
         {
             using var db = new SqlConnection(ConnectionString);
             var sql = $@"INSERT INTO HouseholdUser(UserId,HouseholdId,IsConfirmed) 
@@ -58,7 +58,7 @@ namespace HouseHoldApp.DataAccess
             HouseHoldUser.Id = id;
         }
 
-        public void ConfirmHouseHoldUser(HoldholdUser HouseHoldUser)
+        public void ConfirmHouseHoldUser(HouseholdUser HouseHoldUser)
         {
             using var db = new SqlConnection(ConnectionString);
             var sql = $@"UPDATE HouseholdUser SET
@@ -67,7 +67,7 @@ namespace HouseHoldApp.DataAccess
             db.Execute(sql, HouseHoldUser);
         }
 
-        public void DeleteHouseHoldUser(HoldholdUser HouseHoldUser)
+        public void DeleteHouseHoldUser(HouseholdUser HouseHoldUser)
         {
             using var db = new SqlConnection(ConnectionString);
             var sql = $@"DELETE FROM HouseholdUser 
