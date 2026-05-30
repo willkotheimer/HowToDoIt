@@ -19,7 +19,7 @@ export default function AddHouseholdMembers({ uid, user, userHousehold }) {
     () => assignments.getAssignmentsByHouseholdFromUserId(userId),
     {
       enabled: Boolean(userId),
-      select: (data) => data.filter((x) => x.week === parseInt(week.thisWeek(), 10)),
+      select: (data) => data.filter((x) => x.week === week.thisWeek()),
     },
   );
 

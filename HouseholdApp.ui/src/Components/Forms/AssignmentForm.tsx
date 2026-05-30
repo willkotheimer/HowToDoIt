@@ -14,7 +14,7 @@ interface AssignmentFormProps {
   person: { id: number; firstname: string; name?: string };
   householdId: number;
   uid: string;
-  toggle: () => void;
+  toggle?: () => void;
 }
 
 interface AssignmentFormValues {

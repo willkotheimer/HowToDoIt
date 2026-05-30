@@ -7,19 +7,36 @@ import SplashPageView from '../Views/SplashPage';
 import UserDashboardView from '../Views/UserDashboardView';
 
 export default function Routes({
+  authed,
   user,
   uid,
   userHousehold,
   householdId,
 }) {
   return (
-        <Switch><>
-            { user && <Route exact path='/' component={(props) => <UserDashboardView props={props} user={user} uid={uid} householdId={householdId} userHousehold={userHousehold} />}/> }
-            { !user && <Route exact path='/' component={(props) => <SplashPageView props={props} user={user} uid={uid} householdId={householdId} userHousehold={userHousehold} />}/> }
-            { user && <Route exact path='/assignchores' component={(props) => <AssignChores props={props} user={user} uid={uid} householdId={householdId} userHousehold={userHousehold} />}/> }
-            { user && <Route exact path='/assignmentBoard' component={(props) => <CreateHouseholdView props={props} user={user} uid={uid} userHousehold={userHousehold} />}/> }
-            <Route exact path='/chore/:id' component={(props) => <ChoresDetailsView props={props} user={user} />}/>
-            </>
-        </Switch>
+    <Switch>
+      <Route
+        exact path='/'
+        render={() => authed
+          ? <UserDashboardView user={user} uid={uid} householdId={householdId} userHousehold={userHousehold} />
+          : <SplashPageView />}
+      />
+      <Route
+        exact path='/assignchores'
+        render={() => authed
+          ? <AssignChores uid={uid} householdId={householdId} userHousehold={userHousehold} />
+          : <SplashPageView />}
+      />
+      <Route
+        exact path='/assignmentBoard'
+        render={() => authed
+          ? <CreateHouseholdView user={user} uid={uid} userHousehold={userHousehold} />
+          : <SplashPageView />}
+      />
+      <Route
+        exact path='/chore/:id'
+        render={(routerProps) => <ChoresDetailsView props={routerProps} user={user} />}
+      />
+    </Switch>
   );
 }

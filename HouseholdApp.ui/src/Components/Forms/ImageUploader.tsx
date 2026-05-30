@@ -12,7 +12,7 @@ import { Chore } from '../../Types';
 interface ImageUploaderProps {
   choreInfo: Chore;
   onUpdate?: () => void;
-  toggle: () => void;
+  toggle?: () => void;
 }
 
 interface ImageUploaderValues {

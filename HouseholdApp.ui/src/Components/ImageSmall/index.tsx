@@ -5,9 +5,9 @@ import DeleteImage from '../Forms/DeleteImage';
 export default function Image({
   image,
   imageId,
-  deleteImage,
+  deleteImage = undefined,
   imageOrdinal,
-  onUpdate,
+  onUpdate = undefined,
   showButtons,
   toggleRight,
   toggleLeft,
@@ -17,7 +17,7 @@ export default function Image({
       <span key={`${image}-outer`} className="smallFrame">
               {(imageOrdinal >= 0) && (<span className="number">{imageOrdinal + 1}</span>) } <img key={`${image}-img`} className="smallImage" src={image} alt="" />
               { deleteImage && (<AppModal deletePosition="deletePosition" deleteImage={deleteImage} onUpdate={onUpdate} title={'delete'} buttonLabel={'X'}>
-               <DeleteImage imageId={imageId} image={image} deleteImage={deleteImage} onUpdate={onUpdate} />
+               <DeleteImage imageId={imageId} onUpdate={onUpdate} />
             </AppModal>) }
             {showButtons && (<div className="showButtonsOuter">
                <button type="button" onClick = {() => toggleLeft(imageId) } className="reorder left btn"> &lt; left</button>

@@ -15,7 +15,7 @@ interface ChoreFormProps {
   choreInfo?: Chore;
   uid: string;
   onUpdate?: () => void;
-  toggle: () => void;
+  toggle?: () => void;
 }
 
 interface ChoreFormValues {

@@ -32,7 +32,7 @@ export default function UserDashboardView({
   );
 
   const filteredWeeklyAssignments = useMemo(
-    () => assignmentData.filter((x) => x.week === parseInt(week.thisWeek(), 10)),
+    () => assignmentData.filter((x) => x.week === week.thisWeek()),
     [assignmentData],
   );
 
@@ -139,67 +139,3 @@ export default function UserDashboardView({
   );
 }
 
-  return (
-        <>
-        {!!userHousehold && <div className="HouseholdChores">
-          <div className="top">
-            <div className="groups">
-              <div className="logoContainer">
-                <div className="leftGroups">
-                  <div className="Greetings">
-                  <span className="logo"> <img src={logo} /></span><div><h1 className="headline">HOUSEHOLD</h1><h4 className="mygreeting">Hi {user.displayName.split(' ')[0]}!</h4>
-                  <div className="subtitle">
-                    Household Stats for &nbsp;
-                    Week {week.thisWeek()}
-                  </div></div>
-                  </div>
-                  <div className="topContainers">
-                    <div>REMAINING TASKS</div>
-                    <div><h1>{notCompleted}</h1></div>
-                    <div>UNASSIGNED</div>
-                    <div><h1>{unassignedChores}</h1></div>
-                    <div className="householdPie"><HouseholdPieChart data={housedata} outerRadius={74} innerRadius={20} /></div>
-                  </div>
-                </div>
-                <div className="rightGroups">
-                    <div className="topContainers">
-                      <div>YOUR HOUSEHOLD</div>
-                      <ul>
-                      {userHousehold
-                       && userHousehold?.map((person, index) => (
-                           <>
-                           <li key={index}>{person.firstname}</li>
-                           </>
-                       ))}
-                      </ul>
-                    </div>
-                    <div className="topContainers">
-                      <div>HOUSEHOLD TASKS</div>
-                      <div><h1>{householdChores}</h1></div>
-                    </div>
-                </div>
-              </div>
-              </div>
-            </div>
-            <div className="bottom">
-              <div className="groups">
-              <div className="title">
-                Your Tasks
-              </div>
-              <div className="bottomGroup">
-                <div className="bottomContainers">
-                  <div>REMAINING TASKS</div>
-                  <div><h1>{myAssignments - mycompleted}</h1></div>
-                </div>
-                <div className="bottomContainers">
-                  <div>FINISHED TASKS</div>
-                  <div><h1>{mycompleted}</h1></div>
-                </div>
-              </div>
-              <Footer />
-              </div>
-            </div>
-        </div>}
-        </>
-  );
-}

@@ -4,7 +4,7 @@ import { useDeleteImage } from '../../data/imageData';
 interface DeleteImageProps {
   imageId: number;
   onUpdate?: () => void;
-  toggle: () => void;
+  toggle?: () => void;
 }
 
 export default function DeleteImage({ imageId, onUpdate, toggle }: DeleteImageProps) {

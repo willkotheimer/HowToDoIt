@@ -26,7 +26,7 @@ export default function ChoreDetailsView({ props, user }) {
 
   const {
     data: choreInfo = {} as Chore,
-  } = useQuery<Chore>(['choreInfo', id], () => chores.GetChoreById(Number(id)), {
+  } = useQuery<Chore>(['choreInfo', id], () => chores.getChoreById(Number(id)), {
     enabled: Boolean(id),
   });
 
@@ -103,8 +103,8 @@ export default function ChoreDetailsView({ props, user }) {
                   </div>
                 </div>
                 <div className="topContainers rightContainer">
-                  <AppModal choreInfo={choreInfo} choreImages={choreImages} title="Edit Chore" buttonLabel="Edit Chore">
-                    <ChoreForm choreInfo={choreInfo} choreImages={choreImages} onUpdate={refetchChoreImages} />
+                  <AppModal title="Edit Chore" buttonLabel="Edit Chore">
+                    <ChoreForm choreInfo={choreInfo} uid={user?.uid ?? ''} onUpdate={refetchChoreImages} />
                   </AppModal>
                   <ChoreInfo choreInfo={choreInfo} />
                 </div>
@@ -113,8 +113,8 @@ export default function ChoreDetailsView({ props, user }) {
           </div>
         </div>
         <div className="bottom">
-          <AppModal choreInfo={choreInfo} choreImages={choreImages} title="Add Image" buttonLabel="Add Image">
-            <Uploader choreInfo={choreInfo} choreImages={choreImages} onUpdate={refetchChoreImages} />
+          <AppModal title="Add Image" buttonLabel="Add Image">
+            <Uploader choreInfo={choreInfo} onUpdate={refetchChoreImages} />
           </AppModal>
           <button className="btn btn-danger" onClick={toggleChoresOrder}>Reorder Images</button>
           <div className="groups">

@@ -8,7 +8,7 @@ export default function ChoresLeft({ choresLeft }) {
   ));
   return (
     <div className="choresLeft">
-        { choresLeft && myChores() }
+        { choresLeft && myChores }
     </div>
   );
 }

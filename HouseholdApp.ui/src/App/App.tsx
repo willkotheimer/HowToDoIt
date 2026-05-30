@@ -44,7 +44,6 @@ function App() {
         <Nav user={user} />
         <Routes
           authed={authed}
-          showFooter={true}
           uid={uid}
           user={user}
           householdId={householdId}

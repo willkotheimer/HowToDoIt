@@ -1,8 +1,8 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, getAdditionalUserInfo } from 'firebase/auth';
 import { postJson } from './api';
 import { firebaseConfig } from '../helpers/config.json';
-import type { FormEvent, MouseEvent } from 'react';
+import type { FormEvent } from 'react';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -21,8 +21,9 @@ const loginClickEvent = async (e: FormEvent<HTMLButtonElement>) => {
 
   const provider = new GoogleAuthProvider();
   const cred = await signInWithPopup(auth, provider);
-  const user = cred.additionalUserInfo?.profile as any;
-  if (cred.additionalUserInfo?.isNewUser) {
+  const additionalInfo = getAdditionalUserInfo(cred);
+  const user = additionalInfo?.profile as any;
+  if (additionalInfo?.isNewUser) {
     const userObj = {
       FirebaseKey: cred.user.uid,
       FirstName: user?.given_name,
@@ -33,8 +34,7 @@ const loginClickEvent = async (e: FormEvent<HTMLButtonElement>) => {
   }
 };
 
-const logoutClickEvent = (e: MouseEvent<HTMLButtonElement>) => {
-  e.preventDefault();
+const logoutClickEvent = () => {
   window.sessionStorage.removeItem('token');
   signOut(auth);
   window.location.href = '/';
