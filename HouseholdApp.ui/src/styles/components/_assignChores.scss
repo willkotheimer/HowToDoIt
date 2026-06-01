@@ -19,6 +19,21 @@
     } 
 }
 
+.assignForm {
+    color: #000;
+    * { color: #000; }
+
+    // react-select selected value chips
+    [class$="-multiValue"],
+    [class$="-MultiValue"],
+    [class*="multiValue"] {
+        background-color: #e2e8f0;
+        color: #000;
+
+        div, span { color: #000; }
+    }
+}
+
 .assignment-form {
     display: flex;
     flex-direction: column;
@@ -99,13 +114,14 @@ body > div:nth-child(6) > div > div.modal.fade.show > div > div > div.modal-body
     .modal-title,
     .modal-header,
     .modal-body,
-    .modal-footer {
-        color: #111;
+    .modal-footer,
+    .form-group {
+        color: #000;
     }
 
     h1, h2, h3, h4, h5, h6,
-    p, label, span, div, li {
-        color: #111;
+    p, label, span, li {
+        color: #000;
     }
 }
 

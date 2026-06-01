@@ -38,18 +38,25 @@ export default function AssignmentForm({ person, householdId, toggle }: Assignme
         <Formik
           initialValues={{ selected: [] }}
           onSubmit={(values) => {
-            values.selected.forEach((item) => {
-              createAssignmentMutation.mutate({
-                userId: person.id,
-                week: Week.thisWeek(),
-                isCompleted: false,
-                rating: 0,
-                choreId: item.value,
-                chorename: item.label,
-                firstname: person.firstname,
-              });
+            if (!values.selected.length) { toggle(); return; }
+            values.selected.forEach((item, index) => {
+              createAssignmentMutation.mutate(
+                {
+                  userId: person.id,
+                  week: Week.thisWeek(),
+                  isCompleted: false,
+                  rating: 0,
+                  choreId: item.value,
+                  chorename: item.label,
+                  firstname: person.firstname,
+                },
+                {
+                  onSuccess: () => {
+                    if (index === values.selected.length - 1) toggle();
+                  },
+                },
+              );
             });
-            toggle();
           }}
         >
           {({ values, setFieldValue }) => (

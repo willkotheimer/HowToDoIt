@@ -43,6 +43,8 @@
     "serve:development": "NODE_OPTIONS=--openssl-legacy-provider env-cmd -f .env.development npm run serve",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:report": "playwright show-report",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -63,6 +65,7 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^12.1.5",
     "@types/react": "^16.14.33",
