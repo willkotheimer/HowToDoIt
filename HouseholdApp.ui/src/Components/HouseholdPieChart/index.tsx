@@ -1,49 +1,30 @@
-import React, { useEffect, useRef } from 'react';
-import * as d3 from 'd3';
-import { buildPieConfig } from '../../helpers/HouseholdPieChartHelper';
+import React from 'react';
+import { PieChart, Pie, Cell } from 'recharts';
 
-export default function HouseholdPieChart(props) {
-  const ref = useRef(null);
-  const { pie: createPie, arc: createArc, colors, format } = buildPieConfig(props.innerRadius, props.outerRadius);
+const COLORS = ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf'];
 
-  useEffect(
-    () => {
-      const data = createPie(props.data);
-      const group = d3.select(ref.current);
-      const groupWithData = group.selectAll('g.arc').data(data);
+interface Props {
+  data: { label: string; value: number }[];
+  outerRadius: number;
+  innerRadius: number;
+  width?: number;
+  height?: number;
+}
 
-      groupWithData.exit().remove();
-
-      const groupWithUpdate = groupWithData
-        .enter()
-        .append('g')
-        .attr('class', 'arc');
-
-      const path = groupWithUpdate
-        .append('path')
-        .merge(groupWithData.select('path.arc'));
-      path
-        .attr('class', 'arc')
-        .attr('d', createArc)
-        .attr('fill', (d, i) => colors(i));
-      const text = groupWithUpdate
-        .append('text')
-        .merge(groupWithData.select('text'));
-      text
-        .attr('text-anchor', 'middle')
-        .attr('alignment-baseline', 'middle')
-        .attr('transform', (d) => `translate(${createArc.centroid(d)})`).style('fill', 'white')
-        .style('font-size', 15)
-        .text((d) => (`${d.data.label}:${format(d.value)}`));
-    },
-    [props.data],
-  );
+export default function HouseholdPieChart({ data, outerRadius, innerRadius, width, height }: Props) {
+  const size = outerRadius * 2;
   return (
-    <svg width={props.width} height={props.height}>
-       <g
-         ref={ref}
-         transform={`translate(${props.outerRadius} ${props.outerRadius})`}
-       />
-     </svg>
+    <PieChart width={width ?? size} height={height ?? size}>
+      <Pie
+        data={data}
+        dataKey="value"
+        nameKey="label"
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
+        label={({ name, value }) => `${name}:${value}`}
+      >
+        {data.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+      </Pie>
+    </PieChart>
   );
 }

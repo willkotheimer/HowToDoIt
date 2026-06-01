@@ -1,161 +1,161 @@
+.sandboxBanner {
+    background: rgba(255, 200, 50, 0.18);
+    border: 1px solid rgba(255, 200, 50, 0.5);
+    border-radius: 8px;
+    color: #ffe082;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    margin: 12px 24px 0;
+    text-align: center;
+}
+
 .HouseholdChores {
-    position: relative;
     font-size: 1.5em;
-    h1 {
-        color: white;
-        animation: page 1s linear 0s infinite alternate both;
-    }
-    li {
-        color: white;
-        animation: page 1s linear 0s infinite alternate both;
-    }
-    .top {
-        padding-top: 20px;
-        width: 100%;
+    h1 { color: white; }
+    li  { color: white; list-style-type: none; }
+}
+
+// ── Two-column dashboard layout ──────────────────────────────────────────────
+
+.dashboardLayout {
+    display: flex;
+    align-items: flex-start;
+    padding: 24px;
+    gap: 0;
+}
+
+.dashboardLeft {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.13);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+
+    .Greetings {
         display: flex;
-        flex-wrap: wrap;
-            .groups {
-                display: flex;
-                flex-wrap: row;
-                margin: 0 auto;
-            .rightGroups {
-                margin-left: 80px;
-                margin-top: 80px;
-                .topContainers {
-                    min-height: 250px;
-                }
-            }
-            .leftGroups {
-                margin-left: 80px;
-            }
-                
-            .logoContainer {
-                display: flex;
-            }
-            .headline {
-                font-weight: bold;
-            }
-            .Greetings {
-                margin-top: 10%;
-                display: flex;
-                color: #fff;
-                padding-bottom: 25%; /* 32:18, i.e. 16:9 */
-                margin-bottom: 2%; /* (100-32*3)/2 */
-                flex: 50%;
-                flex-wrap: row;
-
-                .mygreeting {
-                    font-weight: bold;
-                }
-                .subtitle {
-                    font-size: 12px;
-                    font-weight: bold;
-                }
-            }
-            .topContainers {
-                li {
-                    list-style-type: none;
-
-                }
-                flex: 50%; 
-                font-weight: bold;
-                background-color: #3a62a6;
-                border-radius: 20px;
-                width: 32%;
-                min-width: 290px;
-                min-height: 150px;
-                margin-bottom: 10%;
-                -webkit-box-shadow: 5px 5px 7px 1px #28117d;
-                 box-shadow: 5px 5px 7px 1px #28117d;
-                .titles {
-                    font-size: 12px;
-                }
-                .stats {
-                    font-size: 18px;
-                }
-                .householdPie {
-                    margin: 0px 70px;
-                    z-index: 4;
-                }
-            }
-        }
-    }
-    .bottom {
-        padding-top: 10%;
-        position: absolute;
-        animation:page .5s;
-        -moz-animation:page .5s; /* Firefox */
-        -webkit-animation:page .5s; /* Safari and Chrome */
-        
-        display: flex;
-        flex-wrap: row;
-        width: 100%;
-        background: linear-gradient(162deg, rgb(135, 189, 236) 4%, rgb(123, 181, 231) 7%, rgba(39,132,222,1) 40%, rgba(65,49,180,1) 100%);
-        clip-path: polygon(26% 0, 68% 14%, 100% 14%, 100% 100%, 64% 100%, 20% 100%, 0 100%, 0 0);
-
-        .title {
-            font-size: 3em;
-            color: #FFF;
-            float: left;
-            margin-left: 20px;
-        }
-    }
-    .containerStats {
-        background-color: #4a90c6;
+        align-items: center;
         color: #fff;
-    }
-   
-    .bottomGroup {
-        display: flex;
-        flex-wrap: row;
-        width: 100%;
-    }
-    .bottomContainers {
-        background-color: #3a62a6;
-        font-weight: bold;
-        border-radius: 30px;
-        -webkit-box-shadow: 5px 5px 7px 1px #28117d; 
-        box-shadow: 5px 5px 7px 1px #28117d; 
-        width: 280px;
-        height: 200px;
-        margin: 50px 20px;
-        justify-content: space-evenly;
-        .titles {
-            font-size: 12px;
-        }
-        .stats {
-            font-size: 18px;
-        }
+        gap: 16px;
+        margin-bottom: 24px;
+
+        .logo img { width: 60px; }
+
+        .headline   { font-weight: bold; margin: 0; }
+        .mygreeting { font-weight: bold; margin: 0; }
+        .subtitle   { font-size: 12px; font-weight: bold; }
     }
 }
 
-@keyframes page {
-    from {top: 1000px;} 
-    to{top:520px;}
-    from {
-        font-weight: initial;
-      }
-      to {
+.dashboardStats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.dashboardDivider {
+    width: 2px;
+    background: rgba(255, 255, 255, 0.6);
+    align-self: stretch;
+    margin: 24px 28px;
+    border-radius: 2px;
+}
+
+.dashboardRight {
+    flex: 0 0 280px;
+    color: #fff;
+
+    h2 {
+        color: #fff;
         font-weight: bold;
-      }
-   }
- @-moz-keyframes page {
-      from {top: 1000px;} 
-      to{top:520px;}
-      from {
-        font-weight: initial;
-      }
-      to {
+        margin-bottom: 16px;
+    }
+
+    .btn {
+        background-color: #20c14d !important;
+        border-color: #18a840 !important;
+        color: #fff !important;
         font-weight: bold;
-      }
- }
-@-webkit-keyframes page {
-      from {top: 1000px;} 
-      to{top:520px;}
-      from {
-        font-weight: initial;
-      }
-      to {
-        font-weight: bold;
-      }
- }
+    }
+}
+
+.assignList {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.assignRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+// ── Shared card style ────────────────────────────────────────────────────────
+
+.topContainers {
+    flex: 1 1 200px;
+    font-weight: bold;
+    background-color: #20c14d;
+    border-radius: 20px;
+    min-width: 180px;
+    min-height: 150px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 5px 5px 7px 1px #28117d;
+
+    li { list-style-type: none; }
+
+    .householdPie { margin: 0 auto; text-align: center; }
+}
+
+// ── Bottom "Your Tasks" section ──────────────────────────────────────────────
+
+.bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background: linear-gradient(162deg, rgb(135,189,236) 4%, rgb(123,181,231) 7%, rgba(39,132,222,1) 40%, rgba(65,49,180,1) 100%);
+    clip-path: polygon(26% 0, 68% 14%, 100% 14%, 100% 100%, 64% 100%, 20% 100%, 0 100%, 0 0);
+
+    .title {
+        font-size: 3em;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 16px;
+    }
+
+    .groups { width: 100%; }
+}
+
+.bottomGroup {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 20px;
+    padding: 0 20px;
+}
+
+.bottomContainers {
+    background-color: #1e2160;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 30px;
+    box-shadow: 5px 5px 7px 1px #28117d;
+    width: 280px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.containerStats { background-color: #4a90c6; color: #fff; }

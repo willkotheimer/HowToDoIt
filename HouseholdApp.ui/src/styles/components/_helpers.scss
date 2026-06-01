@@ -1,3 +1,28 @@
+// ── Chore form (modal) ────────────────────────────────────────────────────────
+.chore-form {
+    color: #333;
+
+    .card-header {
+        color: #333;
+        background-color: #f0f2f5;
+        font-weight: bold;
+    }
+
+    label {
+        color: #333;
+        font-weight: 600;
+    }
+
+    input,
+    select,
+    textarea {
+        color: #333 !important;
+        background-color: #fff !important;
+
+        &::placeholder { color: #aaa; }
+    }
+}
+
 /* image helpers */@at-root
 .smallImageHolder {
 padding: 12px;

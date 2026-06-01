@@ -1,79 +1,91 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using HouseHoldApp.Models;
-using Microsoft.Data.SqlClient;
-using Dapper;
 
 namespace HouseHoldApp.DataAccess
 {
     public class HouseHoldUserRepository
     {
-        const string ConnectionString = "Server=localhost; Database=HouseHold; Trusted_Connection=True";
+        private readonly HouseholdContext _context;
 
-        public HouseholdUser GetHouseHoldUserById(int id)
+        public HouseHoldUserRepository(HouseholdContext context)
         {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = "SELECT * FROM HouseholdUser WHERE Id = @id";
-            var result = db.QueryFirstOrDefault<HouseholdUser>(sql, new { Id = id });
-            return result;
+            _context = context;
         }
 
-        public HouseholdUser GetHouseHoldUserByUserId(int id)
+        public HouseHoldUser GetHouseHoldUserById(int id)
         {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = "SELECT * FROM HouseholdUser WHERE UserId = @id";
-            var result = db.QueryFirstOrDefault<HouseholdUser>(sql, new { Id = id });
-            return result;
+            return _context.HouseHoldUsers.FirstOrDefault(hu => hu.Id == id);
         }
 
-        public HouseholdUserId GetHouseHoldIdUserId(string id)
+        public HouseHoldUser GetHouseHoldUserByUserId(int id)
         {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = @$"SELECT hhu.HouseholdId as HouseholdId FROM HouseholdUser hhu
-                         JOIN Users u on u.Id=hhu.UserId
-                         WHERE u.FirebaseKey = @id AND hhu.isConfirmed=1";
-            var result = db.QueryFirstOrDefault<HouseholdUserId>(sql, new { Id = id });
-            return result;
+            return _context.HouseHoldUsers.FirstOrDefault(hu => hu.UserId == id);
+        }
+
+        public HouseHoldUserId GetHouseHoldIdUserId(string id)
+        {
+            return _context.Users
+                .Where(u => u.FirebaseKey == id)
+                .Join(_context.HouseHoldUsers.Where(hhu => hhu.IsConfirmed),
+                      u => u.Id,
+                      hhu => hhu.UserId,
+                      (u, hhu) => new HouseHoldUserId { HouseholdId = hhu.HouseholdId })
+                .FirstOrDefault();
         }
 
         public List<UserHousehold> GetUsersInUsersHouseHold(string id)
         {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = $@"SELECT * FROM [Users] u
-                        JOIN HouseholdUser hu on hu.UserId = u.Id 
-                        WHERE hu.HouseholdId=(SELECT hu.HouseholdId FROM [Users] u
-                        JOIN HouseholdUser hu on hu.UserId = u.Id
-                        WHERE u.FirebaseKey = @id)";
-            var result = db.Query<UserHousehold>(sql, new { Id = id }).OrderByDescending(user => user.Lastname).ToList();
-            return result;
+            var householdId = _context.Users
+                .Where(u => u.FirebaseKey == id)
+                .Join(_context.HouseHoldUsers,
+                      u => u.Id,
+                      hhu => hhu.UserId,
+                      (u, hhu) => hhu.HouseholdId)
+                .FirstOrDefault();
+
+            return _context.HouseHoldUsers
+                .Where(hhu => hhu.HouseholdId == householdId)
+                .Join(_context.Users,
+                      hhu => hhu.UserId,
+                      u => u.Id,
+                      (hhu, u) => new UserHousehold
+                      {
+                          Id = u.Id,
+                          Firstname = u.Firstname,
+                          Lastname = u.Lastname,
+                          Email = u.Email,
+                          FirebaseKey = u.FirebaseKey,
+                          HouseholdId = hhu.HouseholdId
+                      })
+                .OrderByDescending(u => u.Lastname)
+                .ToList();
         }
 
-        public void AddAHouseHoldUser(HouseholdUser HouseHoldUser)
+        public void AddAHouseHoldUser(HouseHoldUser householdUser)
         {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = $@"INSERT INTO HouseholdUser(UserId,HouseholdId,IsConfirmed) 
-                        OUTPUT inserted.id
-                        VALUES(@UserId,@HouseholdId,@IsConfirmed);";
-            var id = db.ExecuteScalar<int>(sql, HouseHoldUser);
-            HouseHoldUser.Id = id;
+            _context.HouseHoldUsers.Add(householdUser);
+            _context.SaveChanges();
         }
 
-        public void ConfirmHouseHoldUser(HouseholdUser HouseHoldUser)
+        public void ConfirmHouseHoldUser(HouseHoldUser householdUser)
         {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = $@"UPDATE HouseholdUser SET
-                         IsConfirmed=1
-                         WHERE Id=@Id";
-            db.Execute(sql, HouseHoldUser);
+            var existing = _context.HouseHoldUsers.FirstOrDefault(hu => hu.Id == householdUser.Id);
+            if (existing != null)
+            {
+                existing.IsConfirmed = true;
+                _context.SaveChanges();
+            }
         }
 
-        public void DeleteHouseHoldUser(HouseholdUser HouseHoldUser)
+        public void DeleteHouseHoldUser(HouseHoldUser householdUser)
         {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = $@"DELETE FROM HouseholdUser 
-                         WHERE UserId=@Id";
-            db.Execute(sql, HouseHoldUser);
+            var existing = _context.HouseHoldUsers.FirstOrDefault(hu => hu.UserId == householdUser.Id);
+            if (existing != null)
+            {
+                _context.HouseHoldUsers.Remove(existing);
+                _context.SaveChanges();
+            }
         }
-
     }
 }

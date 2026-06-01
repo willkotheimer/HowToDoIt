@@ -5,21 +5,21 @@ import type { ImageRecord } from '../Types';
 
 const imagesUrl = '/Images';
 
-const getImagesByChoreId = async (choreId: number) => getJson<ImageRecord[]>(`${imagesUrl}/chore/${choreId}`);
-const getMainImageByChoreId = async () => getJson<ImageRecord[]>(`${imagesUrl}/main`);
+const getImagesByChoreId = async (choreId: number) => getJson<ImageRecord[]>(`${imagesUrl}/${choreId}`);
+const getMainImageByChoreId = async () => getJson<ImageRecord[]>(`${imagesUrl}/oneperchore`);
 const addImage = async (image: Partial<ImageRecord>) => postJson<ImageRecord>(`${imagesUrl}`, image);
 const deleteImage = async (imageId: number) => deleteJson<void>(`${imagesUrl}/${imageId}`);
 
 export function useImagesByChoreId(choreId: number, enabled = true) {
   const { get } = useAPIRequest();
-  return useQuery<ImageRecord[]>(['imagesByChore', choreId], () => get<ImageRecord[]>(`${imagesUrl}/chore/${choreId}`), {
+  return useQuery<ImageRecord[]>(['imagesByChore', choreId], () => get<ImageRecord[]>(`${imagesUrl}/${choreId}`), {
     enabled: Boolean(enabled && choreId),
   });
 }
 
 export function useMainImages(enabled = true) {
   const { get } = useAPIRequest();
-  return useQuery<ImageRecord[]>(['mainImages'], () => get<ImageRecord[]>(`${imagesUrl}/main`), {
+  return useQuery<ImageRecord[]>(['mainImages'], () => get<ImageRecord[]>(`${imagesUrl}/oneperchore`), {
     enabled,
   });
 }

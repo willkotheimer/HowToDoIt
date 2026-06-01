@@ -8,10 +8,11 @@ namespace HouseHoldApp.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        CategoryRepository _repo;
-        public CategoryController()
+        private readonly CategoryRepository _repo;
+
+        public CategoryController(CategoryRepository repo)
         {
-            _repo = new CategoryRepository();
+            _repo = repo;
         }
 
         [HttpGet]

@@ -8,11 +8,11 @@ namespace HouseHoldApp.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
-        ImagesRepository _repo;
+        private readonly ImagesRepository _repo;
 
-        public ImagesController()
+        public ImagesController(ImagesRepository repo)
         {
-            _repo = new ImagesRepository();
+            _repo = repo;
         }
 
         [HttpGet]

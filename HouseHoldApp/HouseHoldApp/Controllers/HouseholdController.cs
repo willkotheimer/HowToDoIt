@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using HouseholdApp.DataAccess;
+using HouseHoldApp.DataAccess;
 using HouseHoldApp.Models;
 
 namespace HouseHoldApp.Controllers
@@ -8,10 +8,11 @@ namespace HouseHoldApp.Controllers
     [ApiController]
     public class HouseholdController : ControllerBase
     {
-        HouseholdRepository _repo;
-        public HouseholdController()
+        private readonly HouseholdRepository _repo;
+
+        public HouseholdController(HouseholdRepository repo)
         {
-            _repo =  new HouseholdRepository();
+            _repo = repo;
         }
 
         [HttpGet]

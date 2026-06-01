@@ -5,14 +5,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@100&display=swap');
 
-html {
-  background: #2784DE;
+html, body {
+  min-height: 100%;
 }
 
 body {
   color: black;
   font-family: 'Work Sans', sans-serif;
-  background: rgb(218,235,250);
-  height: 1500px;
-  background: linear-gradient(162deg, rgba(218,235,250,1) 4%, #2784DE 35%, rgba(50, 54, 168, .8) 60%, #3236a8 100%);
+  background-color: #2784DE;
 }

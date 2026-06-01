@@ -24,6 +24,6 @@ namespace HouseHoldApp.Models
         [Required]
         public string FirebaseKey { get; set; }
 
-        public ICollection<HouseholdUser> HouseholdUsers { get; set; }
+        public ICollection<HouseHoldUser> HouseHoldUsers { get; set; }
     }
 }

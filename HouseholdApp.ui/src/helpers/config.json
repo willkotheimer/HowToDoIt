@@ -1,5 +1,6 @@
 {
    "baseUrl": "https://localhost:44316/api",
+   "householdId": 1,
    "firebaseConfig" : {
       "apiKey": "AIzaSyCcyOuRRdzVVMv6BtOGRWs5od67tCO2kvo",
       "authDomain": "household-app-b4381.firebaseapp.com",

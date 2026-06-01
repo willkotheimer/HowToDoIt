@@ -2,13 +2,18 @@
     h5 {
         font-weight: bold;
     }
-    color: grey;
-    background-color: #fff !important;
-    margin-top: 286px !important;
+    color: rgba(255, 255, 255, 0.85);
+    background-color: #1e2160;
     text-align: center;
-    margin: 0 auto;
     font-weight: bold;
     flex-shrink: 0;
+
+    a {
+        color: rgba(255, 255, 255, 0.7);
+        &:hover {
+            color: #fff;
+        }
+    }
 }
 
 .footerLogo {

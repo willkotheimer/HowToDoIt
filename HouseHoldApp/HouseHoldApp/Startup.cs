@@ -28,8 +28,6 @@ namespace HouseHoldApp
             services.AddDbContext<HouseholdContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            string connectionString = Configuration.GetConnectionString("DefaultConnection"); //  dapper
-
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               .AddJwtBearer(options =>
               {
@@ -45,7 +43,15 @@ namespace HouseHoldApp
                   };
               });
 
-            services.AddScoped<AssignmentsChoresRepository>(); // Register repository
+            services.AddScoped<AssignmentsChoresRepository>();
+            services.AddScoped<HouseHoldUserRepository>();
+            services.AddScoped<ImagesRepository>();
+            services.AddScoped<UserRepository>();
+            services.AddScoped<AssignmentsRepository>();
+            services.AddScoped<ChoresRepository>();
+            services.AddScoped<HouseholdRepository>();
+            services.AddScoped<CategoryRepository>();
+            services.AddScoped<AssignmentsChoresUserRepository>();
         }
 
 

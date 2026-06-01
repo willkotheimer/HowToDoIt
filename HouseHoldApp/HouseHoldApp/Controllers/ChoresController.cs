@@ -8,10 +8,11 @@ namespace HouseHoldApp.Controllers
     [ApiController]
     public class ChoresController : ControllerBase
     {
-        ChoresRepository _repo;
-        public ChoresController()
+        private readonly ChoresRepository _repo;
+
+        public ChoresController(ChoresRepository repo)
         {
-            _repo = new ChoresRepository();
+            _repo = repo;
         }
 
         [HttpGet]

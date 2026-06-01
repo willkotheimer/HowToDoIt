@@ -11,25 +11,27 @@ namespace HouseHoldApp.DataAccess
         public DbSet<UserHousehold> UserHouseholds { get; set; }
         public DbSet<Images> Images { get; set; }
         public DbSet<Household> Households { get; set; }
-        public DbSet<HouseholdUser> HouseholdUsers { get; set; }
+        public DbSet<HouseHoldUser> HouseHoldUsers { get; set; }
         public DbSet<Chores> Chores { get; set; }
         public DbSet<Assignments> Assignments { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<HouseholdUser>()
+            modelBuilder.Entity<HouseHoldUser>()
+                .ToTable("HouseholdUser")
                 .HasKey(hu => new { hu.UserId, hu.HouseholdId });
 
-            modelBuilder.Entity<HouseholdUser>()
+            modelBuilder.Entity<HouseHoldUser>()
                 .HasOne(hu => hu.User)
-                .WithMany(u => u.HouseholdUsers)
+                .WithMany(u => u.HouseHoldUsers)
                 .HasForeignKey(hu => hu.UserId);
 
-            modelBuilder.Entity<HouseholdUser>()
+            modelBuilder.Entity<HouseHoldUser>()
                 .HasOne(hu => hu.Household)
-                .WithMany(h => h.HouseholdUsers)
+                .WithMany(h => h.HouseHoldUsers)
                 .HasForeignKey(hu => hu.HouseholdId);
         }
     }

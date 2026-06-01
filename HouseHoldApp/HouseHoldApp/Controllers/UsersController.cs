@@ -8,10 +8,11 @@ namespace HouseHoldApp.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        UserRepository _repo;
-        public UserController()
+        private readonly UserRepository _repo;
+
+        public UserController(UserRepository repo)
         {
-            _repo = new UserRepository();
+            _repo = repo;
         }
 
         [HttpGet]

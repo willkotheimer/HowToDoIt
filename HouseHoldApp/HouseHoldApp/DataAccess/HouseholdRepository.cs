@@ -1,48 +1,42 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using HouseHoldApp.Models;
-using Microsoft.Data.SqlClient;
-using Dapper;
 
-namespace HouseholdApp.DataAccess
+namespace HouseHoldApp.DataAccess
 {
     public class HouseholdRepository
     {
-        const string ConnectionString = "Server=localhost; Database=Household; Trusted_Connection=True";
+        private readonly HouseholdContext _context;
+
+        public HouseholdRepository(HouseholdContext context)
+        {
+            _context = context;
+        }
 
         public List<Household> GetAllHouseholds()
         {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = @"SELECT * FROM Household";
-            var results = db.Query<Household>(sql).OrderByDescending(hh => hh.Name).ToList();
-            return results;
+            return _context.Households.OrderByDescending(h => h.Name).ToList();
         }
 
         public Household GetHouseholdById(int id)
         {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = "SELECT * FROM Household WHERE Id = @id";
-            var result = db.QueryFirstOrDefault<Household>(sql, new { Id = id });
-            return result;
+            return _context.Households.FirstOrDefault(h => h.Id == id);
         }
 
         public void AddAHousehold(Household household)
         {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = $@"INSERT INTO Household(Name) 
-                        OUTPUT inserted.id
-                        VALUES(@Name);";
-            var id = db.ExecuteScalar<int>(sql, household);
-            household.Id = id;
+            _context.Households.Add(household);
+            _context.SaveChanges();
         }
 
         public void UpdateHousehold(Household household)
         {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = $@"UPDATE Household SET
-                         Name=@Name
-                         WHERE Id=@Id";
-            db.Execute(sql, household);
+            var existing = _context.Households.FirstOrDefault(h => h.Id == household.Id);
+            if (existing != null)
+            {
+                existing.Name = household.Name;
+                _context.SaveChanges();
+            }
         }
     }
 }

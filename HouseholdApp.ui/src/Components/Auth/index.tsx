@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import 'firebase/auth';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   UncontrolledDropdown,
@@ -9,37 +7,38 @@ import {
   DropdownItem,
 } from 'reactstrap';
 import AuthData from '../../data/authData';
-import Logo from '../../styles/images/Household_logo_badge.svg';
+import { useAuth } from '../../context/AuthContext';
+import badge from '../../styles/images/Household_logo_badge.svg';
 
-const Auth = () =>  {
-  const [user, setUser] = useState(null);
+interface AuthProps {
+  variant?: 'nav' | 'splash';
+}
 
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
+const Auth = ({ variant = 'nav' }: AuthProps) => {
+  const { user } = useAuth();
 
   const handleLogout = () => {
-    AuthData.logoutClickEvent(); // Assuming this handles logout logic
+    AuthData.logoutClickEvent();
   };
 
+  if (!user) {
+    if (variant === 'splash') {
+      return (
+        <button className="button" onClick={(e) => AuthData.loginClickEvent(e)}>
+          <img src={badge} alt="Sign in to Household" />
+        </button>
+      );
+    }
+    return (
+      <button className="btn btn-outline-light btn-sm" onClick={(e) => AuthData.loginClickEvent(e)}>
+        Sign In
+      </button>
+    );
+  }
 
   return (
     <>
-      {!user ? (
-        <button className='nav-link btn btnLogin' onClick={(e) => AuthData.loginClickEvent(e)}>
-          <img title='Google Sign In' src={Logo} alt='Google Sign In' />
-        </button>
-      ) : (
+      {(
         <div className='row'>
           <div className='user-icon-container'>
             <p>Hi {user.displayName}</p>
@@ -55,9 +54,9 @@ const Auth = () =>  {
                 </Link>
               </DropdownItem>
               <DropdownItem>
-                <div className='nav-link btn btnSecondary' onClick={handleLogout}>
+                <button className='button' onClick={handleLogout}>
                   Logout
-                </div>
+                </button>
               </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>

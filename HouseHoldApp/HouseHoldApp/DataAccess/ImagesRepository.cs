@@ -1,64 +1,55 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using HouseHoldApp.Models;
-using Microsoft.Data.SqlClient;
-using Dapper;
 
 namespace HouseHoldApp.DataAccess
 {
-        public class ImagesRepository
+    public class ImagesRepository
+    {
+        private readonly HouseholdContext _context;
+
+        public ImagesRepository(HouseholdContext context)
         {
-            const string ConnectionString = "Server=localhost; Database=Household; Trusted_Connection=True";
+            _context = context;
+        }
 
-            public List<Images> GetAllImages()
-            {
-                using var db = new SqlConnection(ConnectionString);
-                var sql = @"SELECT * FROM Images";
-                var results = db.Query<Images>(sql).ToList();
-                return results;
-            }
+        public List<Images> GetAllImages()
+        {
+            return _context.Images.ToList();
+        }
 
-            public List<Images> GetImageByChoreId(int Choreid)
-            {
-                using var db = new SqlConnection(ConnectionString);
-                var sql = "SELECT * FROM Images WHERE ChoreId = @Choreid";
-                var result = db.Query<Images>(sql, new { Choreid = Choreid }).ToList();
-                return result;
-            }
+        public List<Images> GetImageByChoreId(int choreId)
+        {
+            return _context.Images.Where(i => i.ChoreId == choreId).ToList();
+        }
 
-             public Images GetOneImageByChoreId(int Choreid)
-            {
-                using var db = new SqlConnection(ConnectionString);
-                var sql = "SELECT * FROM Images WHERE ChoreId = @Choreid";
-                var result = db.QueryFirstOrDefault<Images>(sql, new { ChoreId = Choreid });
-                return result;
-            }
+        public Images GetOneImageByChoreId(int choreId)
+        {
+            return _context.Images.FirstOrDefault(i => i.ChoreId == choreId);
+        }
 
-            public List<Images> GetOneImagePerChoreId()
-            {
-            using var db = new SqlConnection(ConnectionString);
-            var sql = $@"SELECT * FROM (SELECT Image, ChoreId, ROW_NUMBER() OVER(PARTITION BY ChoreId ORDER BY ChoreId ASC) things FROM Images) i WHERE things = 1";
-            var result = db.Query<Images>(sql).ToList();
-            return result;
-            }
+        public List<Images> GetOneImagePerChoreId()
+        {
+            return _context.Images
+                .GroupBy(i => i.ChoreId)
+                .Select(g => g.OrderBy(i => i.ChoreId).First())
+                .ToList();
+        }
 
-            public void AddAnImage(Images image)
+        public void AddAnImage(Images image)
+        {
+            _context.Images.Add(image);
+            _context.SaveChanges();
+        }
+
+        public void DeleteImage(int id)
+        {
+            var image = _context.Images.FirstOrDefault(i => i.Id == id);
+            if (image != null)
             {
-                using var db = new SqlConnection(ConnectionString);
-                var sql = $@"INSERT INTO Images(Image,ChoreId,Active) 
-                        OUTPUT inserted.id
-                        VALUES(@Image,@ChoreId,@Active);";
-                var id = db.ExecuteScalar<int>(sql, image);
-                image.Id = id;
-            }
-  
-            public void DeleteImage(int id)
-            {
-                using var db = new SqlConnection(ConnectionString);
-                var sql = $@"Delete FROM Images WHERE Id=@id";
-                db.Execute(sql, new { id });
+                _context.Images.Remove(image);
+                _context.SaveChanges();
             }
         }
     }
-
+}

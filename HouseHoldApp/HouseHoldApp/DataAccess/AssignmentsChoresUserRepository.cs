@@ -1,40 +1,60 @@
-﻿using HouseHoldApp.Models;
-using Microsoft.Data.SqlClient;
-using Dapper;
 using System.Collections.Generic;
 using System.Linq;
+using HouseHoldApp.Models;
 
 namespace HouseHoldApp.DataAccess
 {
     public class AssignmentsChoresUserRepository
     {
-        private readonly string _connectionString;
+        private readonly HouseholdContext _context;
 
-        public AssignmentsChoresUserRepository(string connectionString)
+        public AssignmentsChoresUserRepository(HouseholdContext context)
         {
-            _connectionString = connectionString;
+            _context = context;
         }
 
         public List<AssignmentsChoresUser> GetAssignmentChoresUserById(int id)
         {
-            using var db = new SqlConnection(_connectionString);
-            var sql = $@" SELECT u.Firstname,u.Lastname, u.FirebaseKey, c.Name as Chorename,
-            c.Description as ChoreDescription, assign.UserId, assign.IsCompleted, assign.Week, assign.Rating,
-            assign.Id as assignmentId, c.Id as choreId, u.FirebaseKey, cat.CategoryName
-            FROM[Users] u
-            JOIN Assignments assign on assign.UserId = u.Id
-            JOIN Chores c ON c.Id = assign.ChoreId
-            JOIN dbo.[Categories] cat on cat.Id = c.Category
-            JOIN HouseholdUser hu on hu.UserId = u.Id
-            WHERE hu.HouseholdId = (SELECT hu.HouseholdId FROM[Users] u
-             JOIN HouseholdUser hu on hu.UserId = u.Id
-            WHERE u.id = @id)
-            GROUP BY c.Description, assign.Id,u.Firstname,u.Lastname, u.FirebaseKey, c.Name,
-             assign.IsCompleted, assign.Week, assign.Rating, c.Id, u.FirebaseKey, cat.CategoryName,assign.UserId
-            ORDER BY cat.CategoryName, c.Id";
-            
-            var results = db.Query<AssignmentsChoresUser>(sql, new { Id = id }).ToList();
-            return results;
+            var householdId = _context.HouseHoldUsers
+                .Where(hu => hu.UserId == id)
+                .Select(hu => hu.HouseholdId)
+                .FirstOrDefault();
+
+            return _context.Users
+                .Join(_context.Assignments,
+                      u => u.Id,
+                      a => a.UserId,
+                      (u, a) => new { u, a })
+                .Join(_context.Chores,
+                      x => x.a.ChoreId,
+                      c => c.Id,
+                      (x, c) => new { x.u, x.a, c })
+                .Join(_context.Categories,
+                      x => x.c.Category,
+                      cat => cat.Id,
+                      (x, cat) => new { x.u, x.a, x.c, cat })
+                .Join(_context.HouseHoldUsers.Where(hu => hu.HouseholdId == householdId),
+                      x => x.u.Id,
+                      hu => hu.UserId,
+                      (x, hu) => new AssignmentsChoresUser
+                      {
+                          Firstname = x.u.Firstname,
+                          Lastname = x.u.Lastname,
+                          FirebaseKey = x.u.FirebaseKey,
+                          userId = x.a.UserId.ToString(),
+                          Week = x.a.Week,
+                          isCompleted = x.a.IsCompleted,
+                          Rating = x.a.Rating,
+                          choreId = x.c.Id,
+                          assignmentId = x.a.Id,
+                          Chorename = x.c.Name,
+                          ChoreDescription = x.c.Description,
+                          HouseHoldId = hu.HouseholdId,
+                          CategoryName = x.cat.CategoryName
+                      })
+                .OrderBy(x => x.CategoryName)
+                .ThenBy(x => x.choreId)
+                .ToList();
         }
     }
 }

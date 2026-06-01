@@ -45,6 +45,8 @@ export default function AssignmentForm({ person, householdId, toggle }: Assignme
                 isCompleted: false,
                 rating: 0,
                 choreId: item.value,
+                chorename: item.label,
+                firstname: person.firstname,
               });
             });
             toggle();

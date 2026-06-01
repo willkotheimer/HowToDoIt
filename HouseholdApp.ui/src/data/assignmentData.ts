@@ -2,6 +2,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAPIRequest } from './useAPIRequest';
 import { getJson, postJson, patchJson } from './api';
 import type { Assignment } from '../Types';
+import { useAuth } from '../context/AuthContext';
+import {
+  addSandboxAssignment,
+  completeSandboxAssignment,
+  mergeSandboxAssignments,
+  mergeSandboxAssignmentsForUser,
+} from './sandbox/assignments';
 
 const assignmentsURL = '/Assignments';
 const assignmentsChores = '/AssignmentsChores';
@@ -14,48 +21,86 @@ const getAssignmentsByHouseHoldId = async (id: number) => getJson<Assignment[]>(
 const createAssignment = async (assignment: Partial<Assignment>) => postJson<Assignment>(`${assignmentsURL}`, assignment);
 
 export function useAssignmentsByHouseholdFromUserId(userId: number, enabled = true) {
+  const { authed } = useAuth();
   const { get } = useAPIRequest();
-  return useQuery<Assignment[]>(['assignmentsByUserHousehold', userId], () => get<Assignment[]>(`${assignmentChoresUserURL}/household/user/${userId}`), {
-    enabled: Boolean(enabled && userId),
-  });
+  return useQuery<Assignment[]>(
+    ['assignmentsByUserHousehold', userId],
+    async () => {
+      const apiData = await get<Assignment[]>(`${assignmentChoresUserURL}/household/user/${userId}`);
+      return authed ? apiData : mergeSandboxAssignmentsForUser(apiData, userId);
+    },
+    { enabled: Boolean(enabled && userId) },
+  );
 }
 
 export function useAssignmentsByUserId(userId: number, enabled = true) {
+  const { authed } = useAuth();
   const { get } = useAPIRequest();
-  return useQuery<Assignment[]>(['assignmentsByUser', userId], () => get<Assignment[]>(`${assignmentsURL}/user/${userId}`), {
-    enabled: Boolean(enabled && userId),
-  });
+  return useQuery<Assignment[]>(
+    ['assignmentsByUser', userId],
+    async () => {
+      const apiData = await get<Assignment[]>(`${assignmentsURL}/user/${userId}`);
+      return authed ? apiData : mergeSandboxAssignmentsForUser(apiData, userId);
+    },
+    { enabled: Boolean(enabled && userId) },
+  );
 }
 
 export function useAssignmentsByHouseHoldId(householdId: number, enabled = true) {
+  const { authed } = useAuth();
   const { get } = useAPIRequest();
-  return useQuery<Assignment[]>(['assignmentsByHousehold', householdId], () => get<Assignment[]>(`${assignmentsChores}/household/${householdId}`), {
-    enabled: Boolean(enabled && householdId),
-  });
+  return useQuery<Assignment[]>(
+    ['assignmentsByHousehold', householdId],
+    async () => {
+      const apiData = await get<Assignment[]>(`${assignmentsChores}/household/${householdId}`);
+      return authed ? apiData : mergeSandboxAssignments(apiData);
+    },
+    { enabled: Boolean(enabled && householdId) },
+  );
 }
 
 export function useCreateAssignment() {
+  const { authed } = useAuth();
   const { post } = useAPIRequest();
   const queryClient = useQueryClient();
-  return useMutation((assignment: Partial<Assignment>) => post<Assignment>(`${assignmentsURL}`, assignment), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['assignmentsByUserHousehold']);
-      queryClient.invalidateQueries(['assignmentsByUser']);
-      queryClient.invalidateQueries(['assignmentsByHousehold']);
+  const invalidate = () => {
+    queryClient.invalidateQueries(['assignmentsByUserHousehold']);
+    queryClient.invalidateQueries(['assignmentsByUser']);
+    queryClient.invalidateQueries(['assignmentsByHousehold']);
+    queryClient.invalidateQueries(['unassignedChores']);
+  };
+  return useMutation(
+    (assignment: Partial<Assignment> & { chorename?: string; firstname?: string }) => {
+      if (!authed) {
+        addSandboxAssignment(assignment);
+        return Promise.resolve(assignment as Assignment);
+      }
+      return post<Assignment>(`${assignmentsURL}`, assignment);
     },
-  });
+    { onSuccess: invalidate },
+  );
 }
 
 export function useSetAssignmentAsDone() {
+  const { authed } = useAuth();
   const { patch } = useAPIRequest();
   const queryClient = useQueryClient();
-  return useMutation((assignment: Partial<Assignment>) => patch<Assignment>(`${assignmentsURL}/done`, assignment), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['assignmentsByUserHousehold']);
-      queryClient.invalidateQueries(['assignmentsByUser']);
-      queryClient.invalidateQueries(['assignmentsByHousehold']);
+  const invalidate = () => {
+    queryClient.invalidateQueries(['assignmentsByUserHousehold']);
+    queryClient.invalidateQueries(['assignmentsByUser']);
+    queryClient.invalidateQueries(['assignmentsByHousehold']);
+  };
+  return useMutation(
+    (assignment: Partial<Assignment>) => {
+      if (!authed) {
+        const id = assignment.id ?? assignment.assignmentId;
+        if (id !== undefined) completeSandboxAssignment(id);
+        return Promise.resolve(assignment as Assignment);
+      }
+      return patch<Assignment>(`${assignmentsURL}/done`, assignment);
     },
-  });
+    { onSuccess: invalidate },
+  );
 }
 
 export default {

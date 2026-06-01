@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration; // Add this namespace for IConfiguration
 using HouseHoldApp.DataAccess;
-using HouseHoldApp.Models;
 
 namespace HouseHoldApp.Controllers
 {
@@ -11,10 +9,9 @@ namespace HouseHoldApp.Controllers
     {
         private readonly AssignmentsChoresUserRepository _repo;
 
-        public AssignmentsChoresUserController(IConfiguration configuration)
+        public AssignmentsChoresUserController(AssignmentsChoresUserRepository repo)
         {
-            string connectionString = configuration.GetConnectionString("DefaultConnection");
-            _repo = new AssignmentsChoresUserRepository(connectionString);
+            _repo = repo;
         }
 
         [HttpGet("household/user/{id}")]

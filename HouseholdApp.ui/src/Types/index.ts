@@ -32,6 +32,7 @@ export interface HouseholdUser {
   firstname: string;
   firebaseKey?: string;
   email?: string;
+  householdId?: number;
 }
 
 export interface ImageRecord {

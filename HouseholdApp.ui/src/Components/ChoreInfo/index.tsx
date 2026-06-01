@@ -6,7 +6,7 @@ export default function ChoresInfo({ choreInfo }) {
     <div>
         <div>Name: {choreInfo.name} </div>
         <div>Details: <ol className="steps">{choreInfo.description
-        && parseChoreDescription(choreInfo.description).map((step) => (<li>{step}</li>))} </ol></div>
+        && parseChoreDescription(choreInfo.description).map((step, i) => (<li key={i}>{step}</li>))} </ol></div>
     </div>
   );
 }

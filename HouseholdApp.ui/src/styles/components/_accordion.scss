@@ -1,9 +1,6 @@
 .createHousehold {
     font-size: 1.5em;
-    position: absolute;
-    animation:page .5s;
-    -moz-animation:page .5s; /* Firefox */
-    -webkit-animation:page .5s; /* Safari and Chrome */
+    animation: fadeIn 0.4s ease-in;
     h1 {
         color: white;
     }
@@ -13,18 +10,56 @@
     font-weight: bold;
     text-transform: uppercase;
     text-decoration: underline;
-    font-size: 25px;
+    font-size: 1.1em;
+    color: #fff;
+    margin-bottom: 4px;
 }
+
+.accordLabel {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.75);
+}
+
 .accordDescription {
-    width: 250px;
-    margin: 15px auto;
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.5;
 }
+
+.accordBody {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.accordMain {
+    flex: 1;
+    min-width: 0;
+}
+
+.accordMeta {
+    flex: 0 0 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #fff;
+    font-size: 0.9em;
+}
+
+.statusDone   { color: #20c14d; font-weight: bold; }
+.statusPending { color: rgba(255, 255, 255, 0.7); }
 
 .completeButton {
     color: #fff;
-    max-height: 30px;
-    background: #337db8;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    font-weight: bold;
+    background: #20c14d;
+    border: 1px solid #18a840;
+    border-radius: 6px;
+    padding: 4px 10px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
 }
 
 .MuiTypography-body1 {
@@ -32,37 +67,45 @@
 }
 .choreTitle {
     background-color: #18b5f7;
-    padding: .5em;
+    padding: .4em .7em;
     color: #fff;
     border-radius: 25px;
-    float: left;
 }
 
 .choreDone {
     background-color: #20c14d;
-    padding: .5em;
+    padding: .4em .7em;
     color: #fff;
     border-radius: 25px;
-    float: left;
 }
 
 .catTitle {
     background-color: #337db8;
-    padding: .5em;
+    padding: .4em .7em;
     color: #fff;
     border-radius: 25px;
-    float: left;
 }
 
 .nameTitle {
-    padding: .5em;
+    padding: .4em .7em;
     color: #fff;
-    text-align: right;
-    float: right;
+    margin-left: auto;
+}
+
+// Make accordion card headers flex so the pills lay out cleanly
+.card-header {
+    display: flex !important;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 4px 10px;
+    min-height: 0;
+    font-size: 0.85em;
 }
 
 .choreCorddionBackground {
-    background-color:#c5d4e5;
+    background-color: #1e2a4a;
+    color: #fff;
 }
 
 .bigCheck {
@@ -72,15 +115,74 @@
     font-size: 150px !important;
 }
 
-@keyframes page {
-    from {top: 1000px;} 
-    to{top:520px;} 
-   }
- @-moz-keyframes page {
-      from {top: 1000px;} 
-      to{top:520px;} 
- }
-@-webkit-keyframes page {
-      from {top: 1000px;} 
-      to{top:520px;}  
- }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.assignmentBox {
+    background: rgba(255, 255, 255, 0.13);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    margin: 0 24px 24px;
+}
+
+.assignmentTabs {
+    width: 100%;
+
+    // Top person tabs
+    > .nav-tabs {
+        justify-content: center;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        margin-bottom: 1rem;
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            border-color: transparent;
+            &:hover { color: #fff; }
+            &.active {
+                color: #fff;
+                background-color: rgba(255, 255, 255, 0.15);
+                border-color: rgba(255, 255, 255, 0.4) rgba(255, 255, 255, 0.4) transparent;
+            }
+        }
+    }
+}
+
+// Person tab pane body: side nav + accordion side by side
+.categoryLayout {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+
+.categoryNav {
+    flex: 0 0 200px;
+    max-width: 200px;
+    border-right: 2px solid rgba(255, 255, 255, 0.3);
+    padding-right: 0.5rem;
+
+    .nav-link {
+        color: rgba(255, 255, 255, 0.7);
+        border-radius: 6px;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        &:hover { color: #fff; background-color: rgba(255, 255, 255, 0.1); text-decoration: none; }
+        &.active {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+    }
+}
+
+.categoryContent {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}

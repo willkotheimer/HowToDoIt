@@ -8,11 +8,12 @@ namespace HouseHoldApp.Controllers
     [ApiController]
     public class AssignmentsController : ControllerBase
         {
-        AssignmentsRepository _repo;
-             public AssignmentsController()
-            {
-            _repo = new AssignmentsRepository();
-            }
+        private readonly AssignmentsRepository _repo;
+
+        public AssignmentsController(AssignmentsRepository repo)
+        {
+            _repo = repo;
+        }
 
             [HttpGet]
             public IActionResult GetAllAssignments()

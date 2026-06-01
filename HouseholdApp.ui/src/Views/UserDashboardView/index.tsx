@@ -1,35 +1,20 @@
 import React, { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import Chores from '../../data/choresData';
 import logo from '../../styles/images/logo.png';
-import Footer from '../../Components/Footer';
 import week from '../../data/weekNum';
-import assignments from '../../data/assignmentData';
+import { useChoresByHousehold, useUnassignedChoresByWeekAndHouseHold } from '../../data/choresData';
+import { useAssignmentsByHouseHoldId } from '../../data/assignmentData';
 import HouseholdPieChart from '../../Components/HouseholdPieChart';
+import AppModal from '../../Components/AppModal';
+import ChoreForm from '../../Components/Forms/ChoreForm';
+import AssignmentForm from '../../Components/Forms/AssignmentForm';
+import { useAuth } from '../../context/AuthContext';
 
-export default function UserDashboardView({
-  user,
-  userHousehold,
-  householdId,
-  uid,
-}) {
-  const { data: unassignedChoresData = [] } = useQuery(
-    ['unassignedChores', householdId],
-    () => Chores.getUnassignedChoresByWeekAndHouseHold(week.thisWeek(), householdId),
-    { enabled: Boolean(householdId) },
-  );
+export default function UserDashboardView() {
+  const { user, uid, authed, userHousehold, householdId } = useAuth();
 
-  const { data: householdChoresData = [] } = useQuery(
-    ['householdChores', householdId],
-    () => Chores.getChoresByHousehold(householdId),
-    { enabled: Boolean(householdId) },
-  );
-
-  const { data: assignmentData = [] } = useQuery(
-    ['assignments', householdId],
-    () => assignments.getAssignmentsByHouseHoldId(householdId),
-    { enabled: Boolean(householdId) },
-  );
+  const { data: unassignedChoresData = [] } = useUnassignedChoresByWeekAndHouseHold(week.thisWeek(), householdId);
+  const { data: householdChoresData = [] } = useChoresByHousehold(householdId);
+  const { data: assignmentData = [] } = useAssignmentsByHouseHoldId(householdId);
 
   const filteredWeeklyAssignments = useMemo(
     () => assignmentData.filter((x) => x.week === week.thisWeek()),
@@ -46,7 +31,7 @@ export default function UserDashboardView({
     [filteredWeeklyAssignments],
   );
 
-  const myId = useMemo(() => userHousehold?.[0]?.find((uh) => uh.firebaseKey === uid)?.id, [userHousehold, uid]);
+  const myId = useMemo(() => userHousehold?.find((uh) => uh.firebaseKey === uid)?.id, [userHousehold, uid]);
 
   const myAssignments = useMemo(
     () => filteredWeeklyAssignments.filter((mine) => mine.userId === myId),
@@ -69,73 +54,106 @@ export default function UserDashboardView({
     { label: 'To Do', value: notCompleted },
     { label: 'Complete', value: allCompleted },
   ];
-  const myData = [
-    { label: 'Assignments', value: householdChores - unassignedChores },
-    { label: 'My done', value: mycompleted },
-    { label: 'Other To Do', value: notCompleted - mycompleted },
-    { label: 'My To Do', value: myAssignments.length - mycompleted },
-  ];
 
   return (
     <>
-      {!!userHousehold && <div className="HouseholdChores">
-        <div className="top">
-          <div className="groups">
-            <div className="logoContainer">
-              <div className="leftGroups">
-                <div className="Greetings">
-                  <span className="logo"> <img src={logo} /></span><div><h1 className="headline">HOUSEHOLD</h1><h4 className="mygreeting">Hi {user.displayName.split(' ')[0]}!</h4>
-                  <div className="subtitle">
-                    Household Stats for &nbsp;
-                    Week {week.thisWeek()}
-                  </div></div>
+      {!!userHousehold && (
+        <div className="HouseholdChores">
+          {!authed && (
+            <div className="sandboxBanner">
+              You are in sandbox mode — changes are saved to your browser only and will not affect other users.
+            </div>
+          )}
+
+          <div className="dashboardLayout">
+            {/* Left: stats in white box */}
+            <div className="dashboardLeft">
+              <div className="Greetings">
+                <span className="logo"><img src={logo} alt="Household logo" /></span>
+                <div>
+                  <h1 className="headline">HOUSEHOLD</h1>
+                  <h4 className="mygreeting">Hi {user?.displayName?.split(' ')[0] ?? 'there'}!</h4>
+                  <div className="subtitle">Household Stats for Week {week.thisWeek()}</div>
                 </div>
+              </div>
+
+              <div className="dashboardStats">
                 <div className="topContainers">
                   <div>REMAINING TASKS</div>
                   <div><h1>{notCompleted}</h1></div>
                   <div>UNASSIGNED</div>
                   <div><h1>{unassignedChores}</h1></div>
-                  <div className="householdPie"><HouseholdPieChart data={housedata} outerRadius={74} innerRadius={20} /></div>
+                  <div className="householdPie">
+                    <HouseholdPieChart data={housedata} outerRadius={74} innerRadius={20} />
+                  </div>
                 </div>
-              </div>
-              <div className="rightGroups">
+
                 <div className="topContainers">
                   <div>YOUR HOUSEHOLD</div>
                   <ul>
-                    {userHousehold
-                      && userHousehold?.map((person, index) => (
-                        <li key={index}>{person.firstname}</li>
-                      ))}
+                    {userHousehold?.map((person, index) => (
+                      <li key={index}>{person.firstname}</li>
+                    ))}
                   </ul>
                 </div>
+
                 <div className="topContainers">
                   <div>HOUSEHOLD TASKS</div>
                   <div><h1>{householdChores}</h1></div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div className="bottom">
-          <div className="groups">
-            <div className="title">
-              Your Tasks
-            </div>
-            <div className="bottomGroup">
-              <div className="bottomContainers">
-                <div>REMAINING TASKS</div>
-                <div><h1>{myAssignments.length - mycompleted}</h1></div>
+
+            {/* Divider */}
+            <div className="dashboardDivider" />
+
+            {/* Right: assign chores — visible to all, sandbox users write to localStorage */}
+            <div className="dashboardRight">
+              <h2>Assign the Chores</h2>
+              <AppModal key="addChore" title="Add Chore" buttonLabel="Add Chore">
+                <ChoreForm key="choreform" uid={uid} />
+              </AppModal>
+              <div className="assignList">
+                {userHousehold.map((person, index) => (
+                  <div key={index} className="assignRow">
+                    <span>{person.firstname}</span>
+                    <AppModal
+                      title="Assign Chore"
+                      key={`modal-${index}`}
+                      buttonLabel={`${person.firstname}'s Chores`}
+                    >
+                      <AssignmentForm
+                        householdId={householdId}
+                        key={`assignForm-${person.firstname}`}
+                        person={person}
+                        uid={uid}
+                      />
+                    </AppModal>
+                  </div>
+                ))}
               </div>
-              <div className="bottomContainers">
-                <div>FINISHED TASKS</div>
-                <div><h1>{mycompleted}</h1></div>
+            </div>
+          </div>
+
+          {/* Bottom: your tasks */}
+          <div className="bottom">
+            <div className="groups">
+              <div className="title">Your Tasks</div>
+              <div className="bottomGroup">
+                <div className="bottomContainers">
+                  <div>REMAINING TASKS</div>
+                  <div><h1>{myAssignments.length - mycompleted}</h1></div>
+                </div>
+                <div className="bottomContainers">
+                  <div>FINISHED TASKS</div>
+                  <div><h1>{mycompleted}</h1></div>
+                </div>
               </div>
             </div>
-            <Footer />
           </div>
+
         </div>
-      </div>}
+      )}
     </>
   );
 }
-

@@ -4,14 +4,14 @@ using HouseHoldApp.Models;
 
 namespace HouseHoldApp.Controllers
 {
-    [Route("api/HouseholdUser")]
+    [Route("api/HouseHoldUser")]
     [ApiController]
-    public class HouseholdUserController : ControllerBase
+    public class HouseHoldUserController : ControllerBase
     {
         HouseHoldUserRepository _repo;
-        public HouseholdUserController()
+        public HouseHoldUserController(HouseHoldUserRepository repo)
         {
-            _repo = new HouseHoldUserRepository();
+            _repo = repo;
         }
 
         [HttpGet("{id}")]
@@ -47,7 +47,7 @@ namespace HouseHoldApp.Controllers
 
 
         [HttpGet("user/{id}")]
-        public IActionResult GetHouseholdUserByUserId(int id)
+        public IActionResult GetHouseHoldUserByUserId(int id)
         {
             var household = _repo.GetHouseHoldUserByUserId(id);
             if (household == null)
@@ -58,21 +58,21 @@ namespace HouseHoldApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddAHouseHoldUser(HouseholdUser householduser)
+        public IActionResult AddAHouseHoldUser(HouseHoldUser householduser)
         {
             _repo.AddAHouseHoldUser(householduser);
-            return Created($"api/HouseholdUser/{householduser.Id}", householduser);
+            return Created($"api/HouseHoldUser/{householduser.Id}", householduser);
         }
 
         [HttpPatch("{id}")]
-        public IActionResult ConfirmHouseHoldUser(HouseholdUser householduser)
+        public IActionResult ConfirmHouseHoldUser(HouseHoldUser householduser)
         {
             _repo.ConfirmHouseHoldUser(householduser);
             return NoContent();
         }
 
         [HttpPatch("{id}")]
-        public IActionResult DeleteHouseholdUser(HouseholdUser householduser)
+        public IActionResult DeleteHouseHoldUser(HouseHoldUser householduser)
         {
             _repo.DeleteHouseHoldUser(householduser);
             return NoContent();

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace HouseHoldApp.Models
 {
     [Table("HouseholdUser")]
-    public class HouseholdUser
+    public class HouseHoldUser
     {
         [Key]
         public int Id { get; set; }
@@ -21,7 +21,7 @@ namespace HouseHoldApp.Models
         public bool IsConfirmed { get; set; }
     }
 
-    public class HouseholdUserId
+    public class HouseHoldUserId
     {
         public int HouseholdId { get; set; }
     }

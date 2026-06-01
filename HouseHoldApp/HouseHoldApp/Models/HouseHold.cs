@@ -14,7 +14,7 @@ namespace HouseHoldApp.Models
         [StringLength(100)]
         public string Name { get; set; }
 
-        public ICollection<HouseholdUser> HouseholdUsers { get; set; }
+        public ICollection<HouseHoldUser> HouseHoldUsers { get; set; }
         public ICollection<Chores> Chores { get; set; }
     }
 }

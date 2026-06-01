@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useAPIRequest } from './useAPIRequest';
 import { getJson } from './api';
 import type { HouseholdUser } from '../Types';
@@ -22,4 +22,13 @@ export function useHousehold(uID: string, enabled = true) {
   });
 }
 
-export default { getUsersHousehold, getHousehold, useUsersHousehold, useHousehold };
+export function useUsersByHouseholdId(householdId: number, enabled = true) {
+  const { get } = useAPIRequest();
+  return useQuery<HouseholdUser[]>(
+    ['usersByHousehold', householdId],
+    () => get<HouseholdUser[]>(`${householdURL}/Household/${householdId}`),
+    { enabled: Boolean(enabled && householdId) },
+  );
+}
+
+export default { getUsersHousehold, getHousehold, useUsersHousehold, useHousehold, useUsersByHouseholdId };
