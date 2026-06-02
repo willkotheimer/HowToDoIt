@@ -20,11 +20,6 @@ describe('Nav', () => {
     expect(screen.getAllByText('Household').length).toBeGreaterThan(0);
   });
 
-  it('renders the Assign Chores navigation link', () => {
-    renderNav();
-    expect(screen.getByText('Assign Chores')).toBeInTheDocument();
-  });
-
   it('renders the AssignmentBoard navigation link', () => {
     renderNav();
     expect(screen.getByText('AssignmentBoard')).toBeInTheDocument();
@@ -33,12 +28,6 @@ describe('Nav', () => {
   it('renders the Auth component', () => {
     renderNav();
     expect(screen.getByTestId('auth-mock')).toBeInTheDocument();
-  });
-
-  it('Assign Chores link points to /assignchores', () => {
-    renderNav();
-    const link = screen.getByText('Assign Chores').closest('a');
-    expect(link).toHaveAttribute('href', '/assignchores');
   });
 
   it('AssignmentBoard link points to /assignmentBoard', () => {

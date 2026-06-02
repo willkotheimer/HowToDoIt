@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   Card, CardHeader, CardBody, Collapse,
 } from 'reactstrap';
-import { mergeAssignmentsWithImages } from '../../helpers/MaterialAccordionHelper';
+import { mergeAssignmentsWithImages } from '../../helpers/AccordionHelper';
 import ImageSmall from '../ImageSmall';
 import { useAuth } from '../../context/AuthContext';
 

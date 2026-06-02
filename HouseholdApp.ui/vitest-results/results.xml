@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="88" failures="0" errors="0" time="6.217">
+    <testsuite name="src/Components/test/Accordion.test.tsx" timestamp="2026-06-02T03:52:34.758Z" hostname="DESKTOP-BSPSAAD" tests="11" failures="0" errors="0" skipped="0" time="0.381261851">
+        <testcase classname="src/Components/test/Accordion.test.tsx" name="Accordion &gt; renders a card for each assignment" time="0.125178256">
+        </testcase>
+        <testcase classname="src/Components/test/Accordion.test.tsx" name="Accordion &gt; renders the chore name in the header for each assignment" time="0.010435701">
+        </testcase>
+        <testcase classname="src/Components/test/Accordion.test.tsx" name="Accordion &gt; renders the category name in the header" time="0.018986691">
+        </testcase>
+        <testcase classname="src/Components/test/Accordion.test.tsx" name="Accordion &gt; renders the first name of the assigned person in the header" time="0.015196765">
+        </testcase>
+        <testcase classname="src/Components/test/Accordion.test.tsx" name="Accordion &gt; panels start closed — body content is not visible before clicking" time="0.014445156">
+        </testcase>
+        <testcase classname="src/Components/test/Accordion.test.tsx" name="Accordion &gt; clicking a header opens that panel" time="0.056976083">
+        </testcase>
+        <testcase classname="src/Components/test/Accordion.test.tsx" name="Accordion &gt; does not render &quot;Complete Task&quot; for a completed assignment when open" time="0.029836545">
+        </testcase>
+        <testcase classname="src/Components/test/Accordion.test.tsx" name="Accordion &gt; calls completeTask with the assignment when the button is clicked" time="0.030828854">
+        </testcase>
+        <testcase classname="src/Components/test/Accordion.test.tsx" name="Accordion &gt; opening a second panel closes the first" time="0.044165271">
+        </testcase>
+        <testcase classname="src/Components/test/Accordion.test.tsx" name="Accordion &gt; clicking an open header closes that panel" time="0.024181185">
+        </testcase>
+        <testcase classname="src/Components/test/Accordion.test.tsx" name="Accordion &gt; renders an empty container when no assignments are passed" time="0.005172456">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/Components/test/AppModal.test.tsx" timestamp="2026-06-02T03:52:34.777Z" hostname="DESKTOP-BSPSAAD" tests="6" failures="0" errors="0" skipped="0" time="0.352450585">
+        <testcase classname="src/Components/test/AppModal.test.tsx" name="AppModal &gt; renders the trigger button with the given label" time="0.081306102">
+        </testcase>
+        <testcase classname="src/Components/test/AppModal.test.tsx" name="AppModal &gt; does not show modal content before the button is clicked" time="0.024092212">
+        </testcase>
+        <testcase classname="src/Components/test/AppModal.test.tsx" name="AppModal &gt; shows modal content after the trigger button is clicked" time="0.105379101">
+        </testcase>
+        <testcase classname="src/Components/test/AppModal.test.tsx" name="AppModal &gt; shows the modal title after opening" time="0.036214378">
+        </testcase>
+        <testcase classname="src/Components/test/AppModal.test.tsx" name="AppModal &gt; shows a Cancel button inside the open modal" time="0.04479719">
+        </testcase>
+        <testcase classname="src/Components/test/AppModal.test.tsx" name="AppModal &gt; closes the modal when Cancel is clicked" time="0.057525559">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/Components/test/ChoreInfo.test.tsx" timestamp="2026-06-02T03:52:34.784Z" hostname="DESKTOP-BSPSAAD" tests="6" failures="0" errors="0" skipped="0" time="0.230563579">
+        <testcase classname="src/Components/test/ChoreInfo.test.tsx" name="ChoreInfo &gt; renders the chore name" time="0.064340103">
+        </testcase>
+        <testcase classname="src/Components/test/ChoreInfo.test.tsx" name="ChoreInfo &gt; renders each description step as a list item" time="0.085427839">
+        </testcase>
+        <testcase classname="src/Components/test/ChoreInfo.test.tsx" name="ChoreInfo &gt; renders the text content of each step" time="0.014414883">
+        </testcase>
+        <testcase classname="src/Components/test/ChoreInfo.test.tsx" name="ChoreInfo &gt; filters out numeric-only segments between periods" time="0.034023576">
+        </testcase>
+        <testcase classname="src/Components/test/ChoreInfo.test.tsx" name="ChoreInfo &gt; renders no list items when description is empty" time="0.011097714">
+        </testcase>
+        <testcase classname="src/Components/test/ChoreInfo.test.tsx" name="ChoreInfo &gt; renders a single step when description has no periods" time="0.016822785">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/Components/test/ChoresImages.test.tsx" timestamp="2026-06-02T03:52:34.790Z" hostname="DESKTOP-BSPSAAD" tests="4" failures="0" errors="0" skipped="0" time="0.142755472">
+        <testcase classname="src/Components/test/ChoresImages.test.tsx" name="ChoresImages &gt; renders an image for each item in choreImages" time="0.10182068">
+        </testcase>
+        <testcase classname="src/Components/test/ChoresImages.test.tsx" name="ChoresImages &gt; renders correct src for each image" time="0.017507105">
+        </testcase>
+        <testcase classname="src/Components/test/ChoresImages.test.tsx" name="ChoresImages &gt; renders 1-indexed ordinals for each image" time="0.010351819">
+        </testcase>
+        <testcase classname="src/Components/test/ChoresImages.test.tsx" name="ChoresImages &gt; renders an empty container when choreImages is empty" time="0.00854181">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/Components/test/ChoresLeft.test.tsx" timestamp="2026-06-02T03:52:34.795Z" hostname="DESKTOP-BSPSAAD" tests="4" failures="0" errors="0" skipped="0" time="0.085644377">
+        <testcase classname="src/Components/test/ChoresLeft.test.tsx" name="ChoresLeft &gt; renders each chore name" time="0.052417923">
+            <system-err>
+Warning: Each child in a list should have a unique &quot;key&quot; prop.
+
+Check the render method of `ChoresLeft`. See https://reactjs.org/link/warning-keys for more information.
+    in div (at ChoresLeft/index.tsx:5)
+    in ChoresLeft (at ChoresLeft.test.tsx:9)
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/Components/test/ChoresLeft.test.tsx" name="ChoresLeft &gt; renders the correct number of chore items" time="0.014087609">
+        </testcase>
+        <testcase classname="src/Components/test/ChoresLeft.test.tsx" name="ChoresLeft &gt; renders an empty container when no chores are passed" time="0.005964222">
+        </testcase>
+        <testcase classname="src/Components/test/ChoresLeft.test.tsx" name="ChoresLeft &gt; renders a single chore correctly" time="0.01087506">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/Components/test/Footer.test.tsx" timestamp="2026-06-02T03:52:34.805Z" hostname="DESKTOP-BSPSAAD" tests="6" failures="0" errors="0" skipped="0" time="0.131196656">
+        <testcase classname="src/Components/test/Footer.test.tsx" name="Footer &gt; renders the HOUSEHOLD brand heading" time="0.06990204">
+        </testcase>
+        <testcase classname="src/Components/test/Footer.test.tsx" name="Footer &gt; renders the copyright notice" time="0.009638233">
+        </testcase>
+        <testcase classname="src/Components/test/Footer.test.tsx" name="Footer &gt; renders the copyright link" time="0.013627217">
+        </testcase>
+        <testcase classname="src/Components/test/Footer.test.tsx" name="Footer &gt; renders the &quot;WHAT IS HOUSEHOLD?&quot; section heading" time="0.012209437">
+        </testcase>
+        <testcase classname="src/Components/test/Footer.test.tsx" name="Footer &gt; renders the &quot;Remove the guesswork&quot; section heading" time="0.012573243">
+        </testcase>
+        <testcase classname="src/Components/test/Footer.test.tsx" name="Footer &gt; renders the footer logo image" time="0.00702902">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/Components/test/ImageSmall.test.tsx" timestamp="2026-06-02T03:52:34.814Z" hostname="DESKTOP-BSPSAAD" tests="8" failures="0" errors="0" skipped="0" time="0.202728127">
+        <testcase classname="src/Components/test/ImageSmall.test.tsx" name="ImageSmall &gt; renders the image with the correct src" time="0.104983799">
+        </testcase>
+        <testcase classname="src/Components/test/ImageSmall.test.tsx" name="ImageSmall &gt; renders a 1-indexed ordinal number when imageOrdinal is 0" time="0.015469451">
+        </testcase>
+        <testcase classname="src/Components/test/ImageSmall.test.tsx" name="ImageSmall &gt; renders the correct ordinal for higher indexes" time="0.010076202">
+        </testcase>
+        <testcase classname="src/Components/test/ImageSmall.test.tsx" name="ImageSmall &gt; does not render an ordinal when imageOrdinal is negative" time="0.005632658">
+        </testcase>
+        <testcase classname="src/Components/test/ImageSmall.test.tsx" name="ImageSmall &gt; renders reorder buttons when showButtons is true" time="0.013989428">
+        </testcase>
+        <testcase classname="src/Components/test/ImageSmall.test.tsx" name="ImageSmall &gt; does not render reorder buttons when showButtons is false" time="0.00517499">
+        </testcase>
+        <testcase classname="src/Components/test/ImageSmall.test.tsx" name="ImageSmall &gt; calls toggleLeft with the imageId when the left button is clicked" time="0.030452961">
+        </testcase>
+        <testcase classname="src/Components/test/ImageSmall.test.tsx" name="ImageSmall &gt; calls toggleRight with the imageId when the right button is clicked" time="0.012091145">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/Components/test/Nav.test.tsx" timestamp="2026-06-02T03:52:34.824Z" hostname="DESKTOP-BSPSAAD" tests="4" failures="0" errors="0" skipped="0" time="0.184146714">
+        <testcase classname="src/Components/test/Nav.test.tsx" name="Nav &gt; renders the Household brand link" time="0.135334837">
+        </testcase>
+        <testcase classname="src/Components/test/Nav.test.tsx" name="Nav &gt; renders the AssignmentBoard navigation link" time="0.018765616">
+        </testcase>
+        <testcase classname="src/Components/test/Nav.test.tsx" name="Nav &gt; renders the Auth component" time="0.01232865">
+        </testcase>
+        <testcase classname="src/Components/test/Nav.test.tsx" name="Nav &gt; AssignmentBoard link points to /assignmentBoard" time="0.014507629">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/helpers/test/AccordionHelper.test.ts" timestamp="2026-06-02T03:52:34.829Z" hostname="DESKTOP-BSPSAAD" tests="7" failures="0" errors="0" skipped="0" time="0.018926093">
+        <testcase classname="src/helpers/test/AccordionHelper.test.ts" name="mergeAssignmentsWithImages &gt; &apos;attaches the image url when choreId m…&apos;" time="0.00726431">
+        </testcase>
+        <testcase classname="src/helpers/test/AccordionHelper.test.ts" name="mergeAssignmentsWithImages &gt; &apos;leaves assignment unchanged when no i…&apos;" time="0.001706668">
+        </testcase>
+        <testcase classname="src/helpers/test/AccordionHelper.test.ts" name="mergeAssignmentsWithImages &gt; &apos;handles multiple assignments where on…&apos;" time="0.0013854">
+        </testcase>
+        <testcase classname="src/helpers/test/AccordionHelper.test.ts" name="mergeAssignmentsWithImages &gt; &apos;returns empty array when assignments …&apos;" time="0.000551287">
+        </testcase>
+        <testcase classname="src/helpers/test/AccordionHelper.test.ts" name="mergeAssignmentsWithImages &gt; &apos;returns assignments unchanged when im…&apos;" time="0.000576597">
+        </testcase>
+        <testcase classname="src/helpers/test/AccordionHelper.test.ts" name="mergeAssignmentsWithImages &gt; &apos;uses the first matching image when mu…&apos;" time="0.000717067">
+        </testcase>
+        <testcase classname="src/helpers/test/AccordionHelper.test.ts" name="mergeAssignmentsWithImages &gt; does not mutate the input assignments array" time="0.00069488">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/helpers/test/ChoreInfoHelper.test.ts" timestamp="2026-06-02T03:52:34.840Z" hostname="DESKTOP-BSPSAAD" tests="8" failures="0" errors="0" skipped="0" time="0.011413335">
+        <testcase classname="src/helpers/test/ChoreInfoHelper.test.ts" name="parseChoreDescription &gt; &apos;splits a description into steps on pe…&apos;" time="0.004065657">
+        </testcase>
+        <testcase classname="src/helpers/test/ChoreInfoHelper.test.ts" name="parseChoreDescription &gt; &apos;filters out numeric-only segments&apos;" time="0.001143956">
+        </testcase>
+        <testcase classname="src/helpers/test/ChoreInfoHelper.test.ts" name="parseChoreDescription &gt; &apos;returns a single-element array when t…&apos;" time="0.000846772">
+        </testcase>
+        <testcase classname="src/helpers/test/ChoreInfoHelper.test.ts" name="parseChoreDescription &gt; &apos;filters trailing empty segment when d…&apos;" time="0.000402691">
+        </testcase>
+        <testcase classname="src/helpers/test/ChoreInfoHelper.test.ts" name="parseChoreDescription &gt; &apos;filters empty segments from consecuti…&apos;" time="0.000599779">
+        </testcase>
+        <testcase classname="src/helpers/test/ChoreInfoHelper.test.ts" name="parseChoreDescription &gt; &apos;returns empty array for an empty stri…&apos;" time="0.000424939">
+        </testcase>
+        <testcase classname="src/helpers/test/ChoreInfoHelper.test.ts" name="parseChoreDescription &gt; &apos;handles a description that is only pe…&apos;" time="0.000356448">
+        </testcase>
+        <testcase classname="src/helpers/test/ChoreInfoHelper.test.ts" name="parseChoreDescription &gt; &apos;preserves whitespace within steps&apos;" time="0.000343359">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/helpers/test/FormsHelper.test.ts" timestamp="2026-06-02T03:52:34.847Z" hostname="DESKTOP-BSPSAAD" tests="24" failures="0" errors="0" skipped="0" time="0.079040629">
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="sortCategories &gt; &apos;sorts two items alphabetically&apos;" time="0.014196296">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="sortCategories &gt; &apos;leaves already-sorted list unchanged&apos;" time="0.001270685">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="sortCategories &gt; &apos;handles a single-element list&apos;" time="0.000783596">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="sortCategories &gt; &apos;handles an empty list&apos;" time="0.000660937">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="sortCategories &gt; &apos;sorts more than two items&apos;" time="0.000754209">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="sortCategories &gt; does not mutate the original array" time="0.000804021">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="buildChorePayload &gt; &apos;builds a new-chore payload without an…&apos;" time="0.00085992">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="buildChorePayload &gt; &apos;includes Id when updating an existing…&apos;" time="0.000735872">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="buildChorePayload &gt; &apos;parses category string to an integer&apos;" time="0.001063526">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="buildChorePayload &gt; &apos;includes Id when choreId is 0&apos;" time="0.001335358">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="buildChorePayload &gt; &apos;preserves empty string values from th…&apos;" time="0.000666722">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="choresToSelectOptions &gt; &apos;maps a chore to a value/label option&apos;" time="0.001375613">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="choresToSelectOptions &gt; &apos;defaults value to 0 when id is undefi…&apos;" time="0.000693559">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="choresToSelectOptions &gt; &apos;defaults label to empty string when n…&apos;" time="0.000574291">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="choresToSelectOptions &gt; &apos;returns an empty array for empty input&apos;" time="0.000761497">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="choresToSelectOptions &gt; &apos;maps multiple chores in order&apos;" time="0.000618668">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="filterAssignmentsByWeek &gt; &apos;returns all assignments matching the …&apos;" time="0.000810408">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="filterAssignmentsByWeek &gt; &apos;returns a single match for an unshare…&apos;" time="0.000452455">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="filterAssignmentsByWeek &gt; &apos;returns empty array when no assignmen…&apos;" time="0.000631766">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="filterAssignmentsByWeek &gt; returns empty array when given empty input" time="0.000438969">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="filterAssignmentsByUser &gt; &apos;returns all assignments belonging to …&apos;" time="0.01739491">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="filterAssignmentsByUser &gt; &apos;returns a single match when user has …&apos;" time="0.015927866">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="filterAssignmentsByUser &gt; &apos;returns empty array for a user with n…&apos;" time="0.00048523">
+        </testcase>
+        <testcase classname="src/helpers/test/FormsHelper.test.ts" name="filterAssignmentsByUser &gt; returns empty array when given empty input" time="0.001604777">
+        </testcase>
+    </testsuite>
+</testsuites>

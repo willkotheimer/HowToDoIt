@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mergeAssignmentsWithImages } from '../MaterialAccordionHelper';
+import { mergeAssignmentsWithImages } from '../AccordionHelper';
 
 describe('mergeAssignmentsWithImages', () => {
   const cases: {

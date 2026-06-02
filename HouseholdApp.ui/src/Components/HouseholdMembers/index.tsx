@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import {
   Nav, NavItem, NavLink, TabContent, TabPane,
 } from 'reactstrap';
-import CustomizedAccordions from '../MaterialAccordion';
+import CustomizedAccordions from '../Accordion';
 import { useAssignmentsByHouseholdFromUserId, useSetAssignmentAsDone } from '../../data/assignmentData';
 import images from '../../data/imageData';
 import { useQuery } from '@tanstack/react-query';

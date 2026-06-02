@@ -2,7 +2,11 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
-import CustomizedAccordions from '../MaterialAccordion';
+import CustomizedAccordions from '../Accordion';
+
+vi.mock('../../context/AuthContext', () => ({
+  useAuth: () => ({ authed: true, user: null, uid: '', userHousehold: [], householdId: 0 }),
+}));
 
 const completeTask = vi.fn();
 
@@ -38,7 +42,7 @@ const renderAccordion = (assignments: object[], imgs = images) =>
     </MemoryRouter>,
   );
 
-describe('MaterialAccordion', () => {
+describe('Accordion', () => {
   it('renders a card for each assignment', () => {
     renderAccordion([incompleteAssignment, completedAssignment]);
     expect(document.querySelectorAll('.card')).toHaveLength(2);
@@ -91,14 +95,14 @@ describe('MaterialAccordion', () => {
     expect(completeTask).toHaveBeenCalledWith(expect.objectContaining({ choreId: 1 }));
   });
 
-  it('leave-open: opening a second panel does not close the first', () => {
+  it('opening a second panel closes the first', () => {
     renderAccordion([incompleteAssignment, completedAssignment]);
     const headers = document.querySelectorAll('.card-header');
     fireEvent.click(headers[0]); // open panel 0
-    fireEvent.click(headers[1]); // open panel 1 — panel 0 should stay open
-    // Both panels open: incomplete shows Complete Task, both show Details
     expect(screen.getByText('Complete Task')).toBeInTheDocument();
-    expect(screen.getAllByText('Details')).toHaveLength(2);
+    fireEvent.click(headers[1]); // open panel 1 — panel 0 should close
+    expect(screen.queryByText('Complete Task')).not.toBeInTheDocument();
+    expect(screen.getByText('Details')).toBeInTheDocument();
   });
 
   it('clicking an open header closes that panel', () => {
