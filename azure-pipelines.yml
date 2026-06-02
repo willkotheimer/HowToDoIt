@@ -23,9 +23,9 @@ stages:
           vmImage: ubuntu-latest
         steps:
           - task: UseDotNet@2
-            displayName: Use .NET 3.1
+            displayName: Use .NET 8.0
             inputs:
-              version: 3.1.x
+              version: 8.x
 
           - script: dotnet restore
             displayName: dotnet restore
