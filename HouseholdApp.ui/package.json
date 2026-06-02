@@ -71,6 +71,7 @@
     "eslint-config-airbnb-base": "^14.2.0",
     "happy-dom": "^20.9.0",
     "sass": "^1.77.6",
+    "serve": "^14.2.6",
     "typescript": "^5.5.4",
     "vitest": "^2.1.9"
   }

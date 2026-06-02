@@ -97,11 +97,11 @@ stages:
             displayName: Install Playwright + Chromium deps
             workingDirectory: HouseholdApp.ui
 
-          - script: npx serve -s build -l 3000 &
+          - script: node_modules/.bin/serve -s build -l 3000 &
             displayName: Serve production build
             workingDirectory: HouseholdApp.ui
 
-          - script: npx wait-on http://localhost:3000 --timeout 30000
+          - script: npx wait-on http://localhost:3000 --timeout 60000
             displayName: Wait for server
             workingDirectory: HouseholdApp.ui
 
@@ -144,6 +144,7 @@ stages:
                     appType: webAppLinux
                     appName: household-api
                     package: $(Pipeline.Workspace)/api
+                    appSettings: -ConnectionStrings__DefaultConnection "$(SQL_CONNECTION_STRING)"
 
   # ── Deploy frontend to Azure Static Web Apps ─────────────────────────────────
   - stage: DeployFrontend

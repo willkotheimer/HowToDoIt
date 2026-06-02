@@ -1,7 +1,11 @@
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
+using HouseHoldApp.DataAccess;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace HouseHoldApp.Tests.Integration
@@ -12,7 +16,22 @@ namespace HouseHoldApp.Tests.Integration
 
         public CategoryControllerIntegrationTests(WebApplicationFactory<HouseHoldApp.Startup> factory)
         {
-            _factory = factory;
+            _factory = factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    var descriptor = services.FirstOrDefault(d => d.ServiceType == typeof(DbContextOptions<HouseholdContext>));
+                    if (descriptor != null) services.Remove(descriptor);
+
+                    services.AddDbContext<HouseholdContext>(options =>
+                        options.UseInMemoryDatabase("IntegrationTestDb"));
+
+                    var sp = services.BuildServiceProvider();
+                    using var scope = sp.CreateScope();
+                    var db = scope.ServiceProvider.GetRequiredService<HouseholdContext>();
+                    db.Database.EnsureCreated();
+                });
+            });
         }
 
         [Fact]
