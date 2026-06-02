@@ -11,7 +11,7 @@ test.describe('Smoke: route loading', () => {
 
   test('dashboard renders in sandbox mode', async ({ sandboxPage: page }) => {
     await page.goto('/');
-    await expect(page.getByText('HOUSEHOLD')).toBeVisible();
+    await expect(page.getByRole('main').getByRole('heading', { name: 'HOUSEHOLD', exact: true })).toBeVisible();
     // Sandbox banner confirms unauthenticated state
     await expect(page.getByText(/sandbox mode/i)).toBeVisible();
   });
@@ -23,7 +23,7 @@ test.describe('Smoke: route loading', () => {
 
   test('assignment board renders', async ({ sandboxPage: page }) => {
     await page.goto('/assignmentBoard');
-    await expect(page.getByText('Household Chores')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Household Chores', exact: true })).toBeVisible();
   });
 
   test('chore details page renders', async ({ sandboxPage: page }) => {
@@ -35,7 +35,7 @@ test.describe('Smoke: route loading', () => {
     const routes = ['/', '/splash', '/assignmentBoard'];
     for (const route of routes) {
       await page.goto(route);
-      await expect(page.getByRole('link', { name: 'Household' })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Household', exact: true })).toBeVisible();
       await expect(page.getByRole('link', { name: /AssignmentBoard/i })).toBeVisible();
     }
   });
