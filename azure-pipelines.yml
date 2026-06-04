@@ -101,8 +101,10 @@ stages:
             displayName: Serve production build
             workingDirectory: HouseholdApp.ui
 
-          - script: npx wait-on http://localhost:3000 --timeout 60000
-            displayName: Wait for server
+          - script: |
+            npm start &
+             npx wait-on http://localhost:3000 --timeout 60000
+            displayName: Start and Wait for server
             workingDirectory: HouseholdApp.ui
 
           - script: npm run test:e2e
