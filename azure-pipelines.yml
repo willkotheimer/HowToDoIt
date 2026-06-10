@@ -107,8 +107,6 @@ stages:
             workingDirectory: HouseholdApp.ui
 
           - script: npm run test:e2e
-
-          - script: npm run test:e2e
             displayName: Playwright smoke tests
             workingDirectory: HouseholdApp.ui
             env:
