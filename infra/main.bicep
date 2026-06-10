@@ -96,4 +96,5 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-02-01-preview' = {
 
 // ── Outputs ───────────────────────────────────────────────────────────────────
 output apiAppHostName string = apiApp.properties.defaultHostName
-output sqlConnectionString string = 'Server=tcp:${sqlServer.properties.fullyQualifiedDomainName},1433;Database=${sqlDatabaseName};User ID=${sqlAdminLogin};Password=${sqlAdminPassword};Encrypt=True;TrustServerCertificate=False;'
+output sqlServerFqdn string = sqlServer.properties.fullyQualifiedDomainName
+output sqlDatabaseName string = sqlDatabaseName
