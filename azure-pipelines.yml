@@ -193,9 +193,10 @@ stages:
               steps:
                 - checkout: self
 
-                - download: current
-                  artifact: frontend
-                  path: $(Build.SourcesDirectory)
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifact: frontend
+                    targetPath: $(Build.SourcesDirectory)/frontend
 
                 - task: AzureStaticWebApp@0
                   displayName: Deploy to Static Web Apps
