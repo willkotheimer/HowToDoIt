@@ -10,6 +10,9 @@ export default defineConfig({
       src: path.resolve(__dirname, 'src'),
     },
   },
+  build: {
+    outDir: 'build',
+  },
   server: {
     port: 3000,
   },
