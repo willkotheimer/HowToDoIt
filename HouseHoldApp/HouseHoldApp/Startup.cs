@@ -22,6 +22,16 @@ namespace HouseHoldApp
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins(
+                        "http://localhost:3000",
+                        "https://localhost:3000",
+                        "https://household-app.azurewebsites.net"
+                    ));
+            });
+
             services.AddControllers();
 
             // Add EF Core
@@ -61,12 +71,13 @@ namespace HouseHoldApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 
