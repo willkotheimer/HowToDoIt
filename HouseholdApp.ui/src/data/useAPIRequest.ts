@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { baseUrl } from '../helpers/config.json';
+const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 

@@ -1,4 +1,4 @@
-import { baseUrl } from '../helpers/config.json';
+const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
 
 async function fetcher<T>(url: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(url, {
