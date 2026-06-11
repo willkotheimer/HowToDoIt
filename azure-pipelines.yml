@@ -50,7 +50,7 @@ stages:
               testResultsFiles: '$(Agent.TempDirectory)/TestResults/**/*.trx'
 
           - script: >
-              dotnet publish --no-build --configuration $(buildConfiguration)
+              dotnet publish HouseHoldApp/HouseHoldApp.csproj --no-build --configuration $(buildConfiguration)
               --output $(Build.ArtifactStagingDirectory)/api
             displayName: dotnet publish
             workingDirectory: HouseHoldApp
