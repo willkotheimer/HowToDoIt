@@ -46,6 +46,12 @@ namespace HouseHoldApp.Controllers
 
 
 
+        [HttpGet("Household/{id}")]
+        public IActionResult GetUsersByHouseholdId(int id)
+        {
+            return Ok(_repo.GetUsersByHouseholdId(id));
+        }
+
         [HttpGet("user/{id}")]
         public IActionResult GetHouseHoldUserByUserId(int id)
         {

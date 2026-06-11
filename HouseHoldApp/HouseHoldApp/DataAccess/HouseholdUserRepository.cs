@@ -62,6 +62,26 @@ namespace HouseHoldApp.DataAccess
                 .ToList();
         }
 
+        public List<UserHousehold> GetUsersByHouseholdId(int householdId)
+        {
+            return _context.HouseHoldUsers
+                .Where(hhu => hhu.HouseholdId == householdId)
+                .Join(_context.Users,
+                      hhu => hhu.UserId,
+                      u => u.Id,
+                      (hhu, u) => new UserHousehold
+                      {
+                          Id = u.Id,
+                          Firstname = u.Firstname,
+                          Lastname = u.Lastname,
+                          Email = u.Email,
+                          FirebaseKey = u.FirebaseKey,
+                          HouseholdId = hhu.HouseholdId
+                      })
+                .OrderByDescending(u => u.Lastname)
+                .ToList();
+        }
+
         public void AddAHouseHoldUser(HouseHoldUser householdUser)
         {
             _context.HouseHoldUsers.Add(householdUser);
