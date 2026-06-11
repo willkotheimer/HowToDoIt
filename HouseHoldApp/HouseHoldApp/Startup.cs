@@ -28,7 +28,7 @@ namespace HouseHoldApp
                     policy.AllowAnyHeader().AllowAnyMethod().WithOrigins(
                         "http://localhost:3000",
                         "https://localhost:3000",
-                        "https://household-app.azurewebsites.net"
+                        "https://proud-mushroom-0c6ba0d10.7.azurestaticapps.net"
                     ));
             });
 
