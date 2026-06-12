@@ -29,6 +29,8 @@ namespace HouseHoldApp.DataAccess
             var assignments = _context.Assignments
                 .Include(a => a.Chore)
                 .Where(a => householdUserIds.Contains(a.UserId))
+                .ToList()
+                .Where(a => a.Chore != null)
                 .ToList();
 
             var users = _context.Users
