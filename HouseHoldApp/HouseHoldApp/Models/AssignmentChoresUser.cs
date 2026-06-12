@@ -12,7 +12,7 @@ namespace HouseHoldApp.Models
         public string Lastname { get; set; }
         public string FirebaseKey { get; set; }
         public string Id { get; set; }
-        public string userId { get; set; }
+        public int userId { get; set; }
         public int Week { get; set; }
         public bool isCompleted { get; set; }
         public int Rating { get; set; }

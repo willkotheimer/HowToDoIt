@@ -7,6 +7,7 @@ import HouseholdPieChart from '../../Components/HouseholdPieChart';
 import AppModal from '../../Components/AppModal';
 import ChoreForm from '../../Components/Forms/ChoreForm';
 import AssignmentForm from '../../Components/Forms/AssignmentForm';
+import AvailableChores from '../../Components/AvailableChores';
 import { useAuth } from '../../context/AuthContext';
 
 export default function UserDashboardView() {
@@ -66,7 +67,7 @@ export default function UserDashboardView() {
           )}
 
           <div className="dashboardLayout">
-            {/* Left: stats in white box */}
+            {/* Left: stats */}
             <div className="dashboardLeft">
               <div className="Greetings">
                 <span className="logo"><img src={logo} alt="Household logo" /></span>
@@ -107,7 +108,7 @@ export default function UserDashboardView() {
             {/* Divider */}
             <div className="dashboardDivider" />
 
-            {/* Right: assign chores — visible to all, sandbox users write to localStorage */}
+            {/* Right: assign chores + your tasks */}
             <div className="dashboardRight">
               <h2>Assign the Chores</h2>
               <AppModal key="addChore" title="Add Chore" buttonLabel="Add Chore">
@@ -132,26 +133,26 @@ export default function UserDashboardView() {
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
 
-          {/* Bottom: your tasks */}
-          <div className="bottom">
-            <div className="groups">
-              <div className="title">Your Tasks</div>
-              <div className="bottomGroup">
-                <div className="bottomContainers">
-                  <div>REMAINING TASKS</div>
-                  <div><h1>{myAssignments.length - mycompleted}</h1></div>
-                </div>
-                <div className="bottomContainers">
-                  <div>FINISHED TASKS</div>
-                  <div><h1>{mycompleted}</h1></div>
+              {/* Your Tasks — moved here from the bottom */}
+              <div className="yourTasksSidebar">
+                <h3>Your Tasks</h3>
+                <div className="yourTasksStats">
+                  <div className="ytStat">
+                    <div className="ytLabel">Remaining</div>
+                    <div className="ytValue">{myAssignments.length - mycompleted}</div>
+                  </div>
+                  <div className="ytStat">
+                    <div className="ytLabel">Finished</div>
+                    <div className="ytValue">{mycompleted}</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
+          {/* Available Chores rolodex */}
+          <AvailableChores />
         </div>
       )}
     </>

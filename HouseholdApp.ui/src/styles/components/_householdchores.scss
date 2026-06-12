@@ -62,7 +62,7 @@
 }
 
 .dashboardRight {
-    flex: 0 0 280px;
+    flex: 0 0 320px;
     color: #fff;
 
     h2 {
@@ -76,6 +76,51 @@
         border-color: #18a840 !important;
         color: #fff !important;
         font-weight: bold;
+    }
+}
+
+.yourTasksSidebar {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+
+    h3 {
+        color: #fff;
+        font-weight: 900;
+        font-size: 1.4rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 16px;
+    }
+}
+
+.yourTasksStats {
+    display: flex;
+    gap: 14px;
+}
+
+.ytStat {
+    flex: 1;
+    background: #1e2160;
+    border-radius: 18px;
+    padding: 18px 12px;
+    text-align: center;
+    box-shadow: 5px 5px 7px 1px #28117d;
+
+    .ytLabel {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #93c5fd;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+    .ytValue {
+        font-size: 2.8rem;
+        font-weight: 900;
+        color: #fff;
+        margin-top: 6px;
+        line-height: 1;
     }
 }
 

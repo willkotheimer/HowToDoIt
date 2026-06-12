@@ -17,8 +17,8 @@ namespace HouseHoldApp.Models
             {
                 UserId = assignment.UserId;
                 Week = assignment.Week;
-                IsCompleted = assignment.IsCompleted;
-                Rating = assignment.Rating;
+                IsCompleted = assignment.IsCompleted ?? false;
+                Rating = assignment.Rating ?? 0;
                 ChoreId = assignment.ChoreId;
                 Id = assignment.Id;
                 Name = assignment.Chore.Name;
