@@ -17,13 +17,12 @@ namespace HouseHoldApp.DataAccess
 
         public async Task<List<AssignmentsChores>> GetAssignmentChoresByHouseholdIdAsync(int id)
         {
-            var results = await _context.Assignments
+            var assignments = await _context.Assignments
                 .Include(a => a.Chore)
                 .Where(a => a.Chore.HouseHoldId == id)
-                .Select(a => new AssignmentsChores(a))
                 .ToListAsync();
 
-            return results;
+            return assignments.Select(a => new AssignmentsChores(a)).ToList();
         }
     }
 }

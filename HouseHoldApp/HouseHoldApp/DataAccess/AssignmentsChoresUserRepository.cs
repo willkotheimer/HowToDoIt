@@ -20,38 +20,43 @@ namespace HouseHoldApp.DataAccess
                 .Select(hu => hu.HouseholdId)
                 .FirstOrDefault();
 
-            return _context.Users
-                .Join(_context.Assignments,
-                      u => u.Id,
-                      a => a.UserId,
-                      (u, a) => new { u, a })
-                .Join(_context.Chores,
-                      x => x.a.ChoreId,
-                      c => c.Id,
-                      (x, c) => new { x.u, x.a, c })
-                .Join(_context.Categories,
-                      x => x.c.Category,
-                      cat => cat.Id,
-                      (x, cat) => new { x.u, x.a, x.c, cat })
-                .Join(_context.HouseHoldUsers.Where(hu => hu.HouseholdId == householdId),
-                      x => x.u.Id,
-                      hu => hu.UserId,
-                      (x, hu) => new AssignmentsChoresUser
-                      {
-                          Firstname = x.u.Firstname,
-                          Lastname = x.u.Lastname,
-                          FirebaseKey = x.u.FirebaseKey,
-                          userId = x.a.UserId.ToString(),
-                          Week = x.a.Week,
-                          isCompleted = x.a.IsCompleted,
-                          Rating = x.a.Rating,
-                          choreId = x.c.Id,
-                          assignmentId = x.a.Id,
-                          Chorename = x.c.Name,
-                          ChoreDescription = x.c.Description,
-                          HouseHoldId = hu.HouseholdId,
-                          CategoryName = x.cat.CategoryName
-                      })
+            var householdUserIds = _context.HouseHoldUsers
+                .Where(hu => hu.HouseholdId == householdId)
+                .Select(hu => hu.UserId)
+                .ToList();
+
+            var assignments = _context.Assignments
+                .Include(a => a.Chore)
+                .Where(a => householdUserIds.Contains(a.UserId))
+                .ToList();
+
+            var users = _context.Users
+                .Where(u => householdUserIds.Contains(u.Id))
+                .ToDictionary(u => u.Id);
+
+            var categoryIds = assignments.Select(a => a.Chore.Category).Distinct().ToList();
+            var categories = _context.Categories
+                .Where(c => categoryIds.Contains(c.Id))
+                .ToDictionary(c => c.Id);
+
+            return assignments
+                .Where(a => users.ContainsKey(a.UserId) && categories.ContainsKey(a.Chore.Category))
+                .Select(a => new AssignmentsChoresUser
+                {
+                    Firstname = users[a.UserId].Firstname,
+                    Lastname = users[a.UserId].Lastname,
+                    FirebaseKey = users[a.UserId].FirebaseKey,
+                    userId = a.UserId.ToString(),
+                    Week = a.Week,
+                    isCompleted = a.IsCompleted,
+                    Rating = a.Rating,
+                    choreId = a.Chore.Id,
+                    assignmentId = a.Id,
+                    Chorename = a.Chore.Name,
+                    ChoreDescription = a.Chore.Description,
+                    HouseHoldId = householdId,
+                    CategoryName = categories[a.Chore.Category].CategoryName
+                })
                 .OrderBy(x => x.CategoryName)
                 .ThenBy(x => x.choreId)
                 .ToList();
