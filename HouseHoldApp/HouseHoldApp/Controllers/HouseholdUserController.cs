@@ -77,7 +77,7 @@ namespace HouseHoldApp.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{id}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteHouseHoldUser(HouseHoldUser householduser)
         {
             _repo.DeleteHouseHoldUser(householduser);

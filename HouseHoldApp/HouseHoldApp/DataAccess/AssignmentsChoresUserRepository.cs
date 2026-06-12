@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HouseHoldApp.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HouseHoldApp.DataAccess
 {
