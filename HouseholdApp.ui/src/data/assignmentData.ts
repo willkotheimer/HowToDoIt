@@ -81,6 +81,24 @@ export function useCreateAssignment() {
   );
 }
 
+export function useUpdateAssignment() {
+  const { authed } = useAuth();
+  const { patch } = useAPIRequest();
+  const queryClient = useQueryClient();
+  const invalidate = () => {
+    queryClient.invalidateQueries(['assignmentsByUserHousehold']);
+    queryClient.invalidateQueries(['assignmentsByUser']);
+    queryClient.invalidateQueries(['assignmentsByHousehold']);
+  };
+  return useMutation(
+    (assignment: Partial<Assignment>) => {
+      if (!authed) return Promise.resolve(assignment as Assignment);
+      return patch<Assignment>(`${assignmentsURL}`, assignment);
+    },
+    { onSuccess: invalidate },
+  );
+}
+
 export function useSetAssignmentAsDone() {
   const { authed } = useAuth();
   const { patch } = useAPIRequest();
@@ -113,5 +131,6 @@ export default {
   useAssignmentsByUserId,
   useAssignmentsByHouseHoldId,
   useCreateAssignment,
+  useUpdateAssignment,
   useSetAssignmentAsDone,
 };

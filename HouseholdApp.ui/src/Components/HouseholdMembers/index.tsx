@@ -1,19 +1,39 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   Nav, NavItem, NavLink, TabContent, TabPane,
 } from 'reactstrap';
 import CustomizedAccordions from '../Accordion';
-import { useAssignmentsByHouseholdFromUserId, useSetAssignmentAsDone } from '../../data/assignmentData';
+import {
+  useAssignmentsByHouseholdFromUserId,
+  useSetAssignmentAsDone,
+  useUpdateAssignment,
+} from '../../data/assignmentData';
 import images from '../../data/imageData';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
 import { sanitizeAssignmentNames } from '../../data/sandbox/members';
 
+interface ToastMsg {
+  id: number;
+  text: string;
+  type: 'assign' | 'complete';
+}
+
+let toastSeq = 0;
+
 export default function AddHouseholdMembers({ uid, user, userHousehold }) {
   const { authed } = useAuth();
   const location = useLocation();
   const returnState = (location.state || {}) as { person?: string; category?: string; openChoreId?: number };
+
+  const [toasts, setToasts] = useState<ToastMsg[]>([]);
+
+  function pushToast(text: string, type: ToastMsg['type']) {
+    const id = ++toastSeq;
+    setToasts((prev) => [...prev, { id, text, type }]);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3500);
+  }
 
   const userId = useMemo(
     () => uid
@@ -25,6 +45,7 @@ export default function AddHouseholdMembers({ uid, user, userHousehold }) {
   const { data: rawAssignmentsUsers = [] } = useAssignmentsByHouseholdFromUserId(userId);
   const { data: imageArray = [] } = useQuery(['mainImages'], images.getMainImageByChoreId);
   const setAssignmentDoneMutation = useSetAssignmentAsDone();
+  const updateAssignmentMutation = useUpdateAssignment();
 
   const assignmentsUsers = useMemo(
     () => (!authed ? sanitizeAssignmentNames(rawAssignmentsUsers) : rawAssignmentsUsers),
@@ -57,19 +78,49 @@ export default function AddHouseholdMembers({ uid, user, userHousehold }) {
     setActiveCategory('');
   };
 
-  const completeTask = (assignment) => {
-    setAssignmentDoneMutation.mutate({
+  const completeTask = useCallback((assignment) => {
+    const payload = {
       id: assignment.assignmentId,
       userId: parseInt(assignment.userId, 10),
       week: assignment.week,
       isCompleted: assignment.isCompleted,
       rating: assignment.rating,
       choreId: assignment.choreId,
+    };
+    setAssignmentDoneMutation.mutate(payload, {
+      onSuccess: () => pushToast(`Task completed for ${assignment.firstname}`, 'complete'),
     });
-  };
+  }, [setAssignmentDoneMutation]);
+
+  const assignTask = useCallback((assignment, newUserId: number) => {
+    const member = userHousehold?.find((m) => m.id === newUserId);
+    const payload = {
+      id: assignment.assignmentId ?? assignment.id,
+      userId: newUserId,
+      week: assignment.week,
+      isCompleted: assignment.isCompleted,
+      rating: assignment.rating ?? 0,
+      choreId: assignment.choreId,
+    };
+    updateAssignmentMutation.mutate(payload, {
+      onSuccess: () => pushToast(`Task assigned to ${member?.firstname ?? 'user'}`, 'assign'),
+    });
+  }, [updateAssignmentMutation, userHousehold]);
 
   return (
     <div className="createHousehold">
+      {/* Toast stack */}
+      {toasts.length > 0 && (
+        <div className="ab-toast-stack">
+          {toasts.map((t) => (
+            <div key={t.id} className={`ab-toast ab-toast--${t.type}`}>
+              <i className={`fas ${t.type === 'complete' ? 'fa-check-circle' : 'fa-user-check'}`} />
+              {t.text}
+            </div>
+          ))}
+        </div>
+      )}
+
       <h1>Household Chores</h1>
       {people.length === 0 ? (
         <p style={{ color: '#fff' }}>No assignments found.</p>
@@ -119,6 +170,8 @@ export default function AddHouseholdMembers({ uid, user, userHousehold }) {
                               images={imageArray}
                               userAssignments={items}
                               completeTask={completeTask}
+                              assignTask={assignTask}
+                              householdMembers={userHousehold ?? []}
                               person={name}
                               category={cat}
                               initialOpenChoreId={isActive ? returnState.openChoreId : undefined}

@@ -4,9 +4,9 @@ import { describe, it, expect } from 'vitest';
 import Footer from '../Footer';
 
 describe('Footer', () => {
-  it('renders the HOUSEHOLD brand heading', () => {
+  it('renders the brand heading', () => {
     render(<Footer />);
-    expect(screen.getByRole('heading', { name: 'HOUSEHOLD' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'THE PLAY BOOK' })).toBeInTheDocument();
   });
 
   it('renders the copyright notice', () => {
@@ -16,7 +16,7 @@ describe('Footer', () => {
 
   it('renders the copyright link', () => {
     render(<Footer />);
-    expect(screen.getByRole('link', { name: /HOUSEHOLD/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /The Play Book/i })).toBeInTheDocument();
   });
 
   it('renders the "WHAT IS HOUSEHOLD?" section heading', () => {

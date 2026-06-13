@@ -15,14 +15,14 @@ describe('Nav', () => {
       </MemoryRouter>,
     );
 
-  it('renders the Household brand link', () => {
+  it('renders the brand logo image', () => {
     renderNav();
-    expect(screen.getAllByText('Household').length).toBeGreaterThan(0);
+    expect(document.querySelector('.brand img')).toBeInTheDocument();
   });
 
-  it('renders the AssignmentBoard navigation link', () => {
+  it('renders the Assignment Board navigation link', () => {
     renderNav();
-    expect(screen.getByText('AssignmentBoard')).toBeInTheDocument();
+    expect(screen.getByText('Assignment Board')).toBeInTheDocument();
   });
 
   it('renders the Auth component', () => {
@@ -30,9 +30,9 @@ describe('Nav', () => {
     expect(screen.getByTestId('auth-mock')).toBeInTheDocument();
   });
 
-  it('AssignmentBoard link points to /assignmentBoard', () => {
+  it('Assignment Board link points to /assignmentBoard', () => {
     renderNav();
-    const link = screen.getByText('AssignmentBoard').closest('a');
+    const link = screen.getByText('Assignment Board').closest('a');
     expect(link).toHaveAttribute('href', '/assignmentBoard');
   });
 });

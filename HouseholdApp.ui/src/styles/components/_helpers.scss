@@ -1,3 +1,85 @@
+// ── Global: dark-gray dropdowns / selects ────────────────────────────────────
+
+$select-bg:      #2d2d2d;
+$select-bg-hover: #3a3a3a;
+$select-text:    #f0f0f0;
+$select-accent:  #2784de;
+
+// Native select + options
+select {
+  color: $select-text !important;
+  background-color: $select-bg !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+select option {
+  color: $select-text !important;
+  background-color: $select-bg !important;
+}
+
+// React-Select v4 control (the visible input box)
+[class*="-control"] {
+  background-color: $select-bg !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  * { color: $select-text !important; }
+}
+
+// Values and placeholder inside the control
+[class*="-ValueContainer"],
+[class*="-singleValue"],
+[class*="-placeholder"],
+[class*="-Input"],
+[class*="-Input"] input {
+  color: $select-text !important;
+  background-color: transparent !important;
+
+  *, input { color: $select-text !important; }
+}
+
+// Dropdown menu panel
+[class*="-menu"],
+[class*="-MenuList"] {
+  color: $select-text !important;
+  background-color: $select-bg !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+// Individual options
+[class*="-option"] {
+  color: $select-text !important;
+  background-color: $select-bg !important;
+
+  &:hover,
+  &[class*="--is-focused"] {
+    background-color: $select-bg-hover !important;
+    color: #fff !important;
+  }
+
+  &[class*="--is-selected"] {
+    background-color: $select-accent !important;
+    color: #fff !important;
+  }
+}
+
+// Multi-select chips
+[class$="-multiValue"],
+[class*="-MultiValue"],
+[class*="multiValue"] {
+  background-color: #444 !important;
+  color: $select-text !important;
+
+  div, span { color: $select-text !important; }
+}
+
+// Dropdown arrow + separator
+[class*="-IndicatorsContainer"],
+[class*="-indicatorContainer"],
+[class*="-indicatorSeparator"] {
+  color: rgba(255, 255, 255, 0.5) !important;
+
+  svg { color: rgba(255, 255, 255, 0.5) !important; fill: rgba(255, 255, 255, 0.5) !important; }
+}
+
 // ── Chore form (modal) ────────────────────────────────────────────────────────
 .chore-form {
     color: #333;

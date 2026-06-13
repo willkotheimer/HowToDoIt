@@ -1,7 +1,5 @@
 // ── The Play Book landing page ────────────────────────────────────────────────
 
-$app-gradient: linear-gradient(162deg, #87bde4 0%, #2784de 35%, #4131b4 100%);
-
 .tpb-page {
   min-height: calc(100vh - 60px);
   background: $app-gradient;
@@ -97,13 +95,14 @@ $app-gradient: linear-gradient(162deg, #87bde4 0%, #2784de 35%, #4131b4 100%);
 
 .playbook-page {
   min-height: 100vh;
-  background: $app-gradient;
+  background: #0c0028;
   padding: 0 0 80px;
 }
 
 // ── Header ───────────────────────────────────────────────────────────────────
 
 .playbook-header {
+  background: $app-gradient;
   padding: 48px 40px 40px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }

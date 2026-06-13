@@ -1,0 +1,263 @@
+// ── Chore Chart page ──────────────────────────────────────────────────────────
+
+.cc-page {
+  min-height: calc(100vh - 60px);
+  background: $app-gradient;
+  padding: 0 0 60px;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
+.cc-header {
+  text-align: center;
+  padding: 56px 24px 40px;
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.15);
+}
+
+.cc-title {
+  font-family: 'Righteous', cursive;
+  font-size: 4.5rem;
+  margin: 0 0 12px;
+  line-height: 1;
+}
+
+.cc-title-chore { color: #60a5fa; }  // blue chalk
+.cc-title-chart { color: #f97316; }  // orange chalk
+
+.cc-subtitle {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+// ── Board layout ──────────────────────────────────────────────────────────────
+
+.cc-board {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  padding: 40px 32px 0;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.cc-divider {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  padding-top: 80px;
+
+  .cc-arrow {
+    font-size: 1.6rem;
+    color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+// ── Column ────────────────────────────────────────────────────────────────────
+
+.cc-column {
+  flex: 1;
+  border-radius: 20px;
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.15s, background 0.15s;
+  min-height: 400px;
+}
+
+.cc-column--todo {
+  border-color: rgba(96, 165, 250, 0.4);
+}
+
+.cc-column--done {
+  border-color: rgba(74, 222, 128, 0.4);
+}
+
+.cc-column--over {
+  border-color: #4ade80;
+  background: rgba(74, 222, 128, 0.06);
+  border-style: solid;
+}
+
+// ── Column header ─────────────────────────────────────────────────────────────
+
+.cc-col-header {
+  font-family: 'Righteous', cursive;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+
+  i { font-size: 1.1rem; }
+}
+
+.cc-col-header--todo { color: #60a5fa; }
+.cc-col-header--done { color: #4ade80; }
+
+.cc-col-count {
+  margin-left: auto;
+  font-family: 'Righteous', cursive;
+  font-size: 1.1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+// ── Column body ───────────────────────────────────────────────────────────────
+
+.cc-col-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+
+.cc-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 24px;
+  color: rgba(255, 255, 255, 0.2);
+  text-align: center;
+
+  i { font-size: 2rem; }
+  p { font-family: 'Work Sans', sans-serif; font-size: 0.9rem; margin: 0; }
+}
+
+.cc-empty--done {
+  color: rgba(74, 222, 128, 0.3);
+}
+
+// ── Chore card ────────────────────────────────────────────────────────────────
+
+.cc-card {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: grab;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  user-select: none;
+
+  &:active { cursor: grabbing; }
+
+  &:hover:not(.cc-card--done) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.cc-card--done {
+  cursor: default;
+  opacity: 0.8;
+  background: rgba(74, 222, 128, 0.06);
+  border-color: rgba(74, 222, 128, 0.15);
+}
+
+.cc-card--dragging {
+  opacity: 0.4;
+  transform: scale(0.97);
+}
+
+// Left accent bar
+.cc-card-accent {
+  width: 5px;
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+// Image / icon block
+.cc-card-media {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.cc-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cc-card-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+
+  i { font-size: 1.8rem; opacity: 0.7; }
+}
+
+.cc-card-done-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(74, 222, 128, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i {
+    font-size: 2rem;
+    color: #fff;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  }
+}
+
+// Name + complete button
+.cc-card-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  gap: 8px;
+}
+
+.cc-card-name {
+  font-family: 'Righteous', cursive;
+  font-size: 0.95rem;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.cc-card-complete {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(74, 222, 128, 0.15);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  color: #4ade80;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.15s;
+
+  &:hover {
+    background: rgba(74, 222, 128, 0.35);
+    transform: scale(1.1);
+  }
+}

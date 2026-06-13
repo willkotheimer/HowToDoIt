@@ -59,7 +59,7 @@ namespace HouseHoldApp.Tests.Integration
         {
             var client = BuildFactory("AssignmentsChoresDb").CreateClient();
 
-            var response = await client.GetAsync("/api/AssignmentsChores/household/1");
+            var response = await client.GetAsync("/api/AssignmentsChores/playbook/1");
 
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();
@@ -71,7 +71,7 @@ namespace HouseHoldApp.Tests.Integration
         {
             var client = BuildFactory("AssignmentsChoresUserDb").CreateClient();
 
-            var response = await client.GetAsync("/api/AssignmentsChoresUser/household/user/1");
+            var response = await client.GetAsync("/api/AssignmentsChoresUser/playbook/user/1");
 
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();
