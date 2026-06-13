@@ -14,7 +14,7 @@ namespace HouseHoldApp.Controllers
             _repo = repo;
         }
 
-        [HttpGet("household/user/{id}")]
+        [HttpGet("playbook/user/{id}")]
         public IActionResult GetAssignmentChoresUserByFirebaseKey(int id)
         {
             var assignmentList = _repo.GetAssignmentChoresUserById(id);

@@ -15,7 +15,7 @@ namespace HouseHoldApp.Controllers
             _repo = repo;
         }
 
-        [HttpGet("household/{id}")]
+        [HttpGet("playbook/{id}")]
         public async Task<IActionResult> GetAssignmentsByHouseHoldId(int id)
         {
             var assignmentList = await _repo.GetAssignmentChoresByHouseholdIdAsync(id);

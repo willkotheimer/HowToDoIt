@@ -46,7 +46,7 @@ namespace HouseHoldApp.Controllers
 
 
 
-        [HttpGet("Household/{id}")]
+        [HttpGet("playbook/{id}")]
         public IActionResult GetUsersByHouseholdId(int id)
         {
             return Ok(_repo.GetUsersByHouseholdId(id));

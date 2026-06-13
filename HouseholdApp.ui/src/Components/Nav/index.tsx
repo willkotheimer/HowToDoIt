@@ -10,13 +10,18 @@ export default function Nav(props) {
     <>
     <div className="nav navbar-container p-2 d-flex justify-content-center align-items-center">
       <header className="brand-container">
-        <NavLink exact to="/splash" activeClassName="active" className='brand'><img alt={logo} src={logo} /></NavLink>
+        <NavLink exact to="/" activeClassName="active" className='brand'><img alt="The Play Book" src={logo} /></NavLink>
       </header>
       <nav className="navbar">
         <div className="navbar-items">
-        <NavLink exact to="/" activeClassName="active" className='brand'>Household</NavLink>
+          <NavLink exact to="/dashboard" activeClassName="active" className="navbar-item">
+            Dashboard
+          </NavLink>
           <NavLink exact to="/assignmentBoard" activeClassName="active" className="navbar-item">
-            AssignmentBoard
+            Assignment Board
+          </NavLink>
+          <NavLink exact to="/playbook" activeClassName="active" className="navbar-item">
+            Runbook
           </NavLink>
         </div>
       </nav>

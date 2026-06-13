@@ -14,10 +14,10 @@ const assignmentsURL = '/Assignments';
 const assignmentsChores = '/AssignmentsChores';
 const assignmentChoresUserURL = '/AssignmentsChoresUser';
 
-const getAssignmentsByHouseholdFromUserId = async (id: number) => getJson<Assignment[]>(`${assignmentChoresUserURL}/household/user/${id}`);
+const getAssignmentsByHouseholdFromUserId = async (id: number) => getJson<Assignment[]>(`${assignmentChoresUserURL}/playbook/user/${id}`);
 const getAssignmentsByUserId = async (id: number) => getJson<Assignment[]>(`${assignmentsURL}/user/${id}`);
 const setAssignmentAsDone = async (assignment: Partial<Assignment>) => patchJson<Assignment>(`${assignmentsURL}/done`, assignment);
-const getAssignmentsByHouseHoldId = async (id: number) => getJson<Assignment[]>(`${assignmentsChores}/household/${id}`);
+const getAssignmentsByHouseHoldId = async (id: number) => getJson<Assignment[]>(`${assignmentsChores}/playbook/${id}`);
 const createAssignment = async (assignment: Partial<Assignment>) => postJson<Assignment>(`${assignmentsURL}`, assignment);
 
 export function useAssignmentsByHouseholdFromUserId(userId: number, enabled = true) {
@@ -26,7 +26,7 @@ export function useAssignmentsByHouseholdFromUserId(userId: number, enabled = tr
   return useQuery<Assignment[]>(
     ['assignmentsByUserHousehold', userId],
     async () => {
-      const apiData = await get<Assignment[]>(`${assignmentChoresUserURL}/household/user/${userId}`);
+      const apiData = await get<Assignment[]>(`${assignmentChoresUserURL}/playbook/user/${userId}`);
       return authed ? apiData : mergeSandboxAssignmentsForUser(apiData, userId);
     },
     { enabled: Boolean(enabled && userId) },
@@ -52,7 +52,7 @@ export function useAssignmentsByHouseHoldId(householdId: number, enabled = true)
   return useQuery<Assignment[]>(
     ['assignmentsByHousehold', householdId],
     async () => {
-      const apiData = await get<Assignment[]>(`${assignmentsChores}/household/${householdId}`);
+      const apiData = await get<Assignment[]>(`${assignmentsChores}/playbook/${householdId}`);
       return authed ? apiData : mergeSandboxAssignments(apiData);
     },
     { enabled: Boolean(enabled && householdId) },

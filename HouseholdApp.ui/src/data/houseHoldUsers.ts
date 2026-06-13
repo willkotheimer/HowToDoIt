@@ -26,7 +26,7 @@ export function useUsersByHouseholdId(householdId: number, enabled = true) {
   const { get } = useAPIRequest();
   return useQuery<HouseholdUser[]>(
     ['usersByHousehold', householdId],
-    () => get<HouseholdUser[]>(`${householdURL}/Household/${householdId}`),
+    () => get<HouseholdUser[]>(`${householdURL}/playbook/${householdId}`),
     { enabled: Boolean(enabled && householdId) },
   );
 }

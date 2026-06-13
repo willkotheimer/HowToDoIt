@@ -72,7 +72,7 @@ export default function UserDashboardView() {
               <div className="Greetings">
                 <span className="logo"><img src={logo} alt="Household logo" /></span>
                 <div>
-                  <h1 className="headline">HOUSEHOLD</h1>
+                  <h1 className="headline">THE PLAY BOOK</h1>
                   <h4 className="mygreeting">Hi {user?.displayName?.split(' ')[0] ?? 'there'}!</h4>
                   <div className="subtitle">Household Stats for Week {week.thisWeek()}</div>
                 </div>

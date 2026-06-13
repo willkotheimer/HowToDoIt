@@ -14,8 +14,8 @@ import {
 
 const choresURL = '/Chores';
 
-const getChoresByHousehold = async (id: number) => getJson<Chore[]>(`${choresURL}/household/${id}`);
-const getUnassignedChoresByWeekAndHouseHold = async (week: number, householdId: number) => getJson<Chore[]>(`${choresURL}/household/${householdId}/${week}/unassigned`);
+const getChoresByHousehold = async (id: number) => getJson<Chore[]>(`${choresURL}/playbook/${id}`);
+const getUnassignedChoresByWeekAndHouseHold = async (week: number, householdId: number) => getJson<Chore[]>(`${choresURL}/playbook/${householdId}/${week}/unassigned`);
 const getChoreById = async (choreId: number) => getJson<Chore>(`${choresURL}/${choreId}`);
 const addChore = async (chore: Partial<Chore>) => postJson<Chore>(`${choresURL}`, chore);
 const updateChore = async (chore: Partial<Chore>) => patchJson<Chore>(`${choresURL}`, chore);
@@ -26,7 +26,7 @@ export function useChoresByHousehold(householdId: number, enabled = true) {
   return useQuery<Chore[]>(
     ['chores', householdId],
     async () => {
-      const apiData = await get<Chore[]>(`${choresURL}/household/${householdId}`);
+      const apiData = await get<Chore[]>(`${choresURL}/playbook/${householdId}`);
       return authed ? apiData : mergeSandboxChores(apiData);
     },
     { enabled: Boolean(enabled && householdId) },
@@ -39,7 +39,7 @@ export function useUnassignedChoresByWeekAndHouseHold(week: number, householdId:
   return useQuery<Chore[]>(
     ['unassignedChores', householdId, week],
     async () => {
-      const apiData = await get<Chore[]>(`${choresURL}/household/${householdId}/${week}/unassigned`);
+      const apiData = await get<Chore[]>(`${choresURL}/playbook/${householdId}/${week}/unassigned`);
       return authed ? apiData : mergeSandboxUnassigned(apiData, week);
     },
     { enabled: Boolean(enabled && householdId) },

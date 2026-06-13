@@ -34,7 +34,7 @@ namespace HouseHoldApp.Controllers
             return Ok(Chore);
         }
 
-         [HttpGet("household/{id}/{week}/unassigned")]
+         [HttpGet("playbook/{id}/{week}/unassigned")]
         public IActionResult GetUnassignedChoreByWeek(int id, int week)
         {
             var Chore = _repo.GetUnassignedChoreByWeek(id, week);
@@ -44,7 +44,7 @@ namespace HouseHoldApp.Controllers
             }
             return Ok(Chore);
         }
-        [HttpGet("household/{id}")]
+        [HttpGet("playbook/{id}")]
         public IActionResult GetChoreByHouseholdId(int id)
         {
             var Chore = _repo.GetChoreByHouseholdId(id);
