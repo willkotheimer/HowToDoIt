@@ -4,9 +4,6 @@ import week from '../../data/weekNum';
 import { useChoresByHousehold, useUnassignedChoresByWeekAndHouseHold } from '../../data/choresData';
 import { useAssignmentsByHouseHoldId } from '../../data/assignmentData';
 import HouseholdPieChart from '../../Components/HouseholdPieChart';
-import AppModal from '../../Components/AppModal';
-import ChoreForm from '../../Components/Forms/ChoreForm';
-import AssignmentForm from '../../Components/Forms/AssignmentForm';
 import AvailableChores from '../../Components/AvailableChores';
 import { useAuth } from '../../context/AuthContext';
 
@@ -103,38 +100,7 @@ export default function UserDashboardView() {
                   <div><h1>{householdChores}</h1></div>
                 </div>
               </div>
-            </div>
 
-            {/* Divider */}
-            <div className="dashboardDivider" />
-
-            {/* Right: assign chores + your tasks */}
-            <div className="dashboardRight">
-              <h2>Assign the Chores</h2>
-              <AppModal key="addChore" title="Add Chore" buttonLabel="Add Chore">
-                <ChoreForm key="choreform" uid={uid} />
-              </AppModal>
-              <div className="assignList">
-                {userHousehold.map((person, index) => (
-                  <div key={index} className="assignRow">
-                    <span>{person.firstname}</span>
-                    <AppModal
-                      title="Assign Chore"
-                      key={`modal-${index}`}
-                      buttonLabel={`${person.firstname}'s Chores`}
-                    >
-                      <AssignmentForm
-                        householdId={householdId}
-                        key={`assignForm-${person.firstname}`}
-                        person={person}
-                        uid={uid}
-                      />
-                    </AppModal>
-                  </div>
-                ))}
-              </div>
-
-              {/* Your Tasks — moved here from the bottom */}
               <div className="yourTasksSidebar">
                 <h3>Your Tasks</h3>
                 <div className="yourTasksStats">

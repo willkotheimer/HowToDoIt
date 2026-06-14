@@ -1,3 +1,158 @@
+// ── Task Board ───────────────────────────────────────────────────────────────
+
+.task-board {
+  min-height: 100vh;
+  background: #0c0028;
+  padding: 0 0 80px;
+}
+
+.task-board-header {
+  background: $app-gradient;
+  padding: 40px 40px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  .btn {
+    background: #20c14d !important;
+    border-color: #18a840 !important;
+    font-family: 'Righteous', cursive;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 12px 28px;
+    border-radius: 12px;
+    white-space: nowrap;
+    color: #fff !important;
+  }
+}
+
+.task-board-title {
+  font-family: 'Righteous', cursive;
+  font-size: 3rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  margin: 0 0 6px;
+}
+
+.task-board-subtitle {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
+
+.task-board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  padding: 32px 40px 0;
+}
+
+.task-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  }
+}
+
+.task-card-bar {
+  height: 5px;
+  width: 100%;
+}
+
+.task-card-images {
+  display: flex;
+  gap: 2px;
+  height: 120px;
+  overflow: hidden;
+}
+
+.task-card-thumb {
+  flex: 1;
+  min-width: 0;
+  object-fit: cover;
+  height: 100%;
+}
+
+.task-card-body {
+  padding: 14px 16px 16px;
+}
+
+.task-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.task-card-category {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.task-card-name {
+  font-family: 'Righteous', cursive;
+  font-size: 1.1rem;
+  color: #fff;
+  margin: 0 0 8px;
+  line-height: 1.25;
+}
+
+.task-card-desc {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+  margin: 0 0 14px;
+}
+
+.task-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  > div {
+    flex: 1;
+
+    .btn {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 6px 14px;
+      background: #1e2160 !important;
+      border-color: rgba(255, 255, 255, 0.2) !important;
+      color: #fff !important;
+      width: 100%;
+    }
+  }
+}
+
+.task-board-empty {
+  grid-column: 1 / -1;
+  font-family: 'Work Sans', sans-serif;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1rem;
+  padding: 48px 0;
+  text-align: center;
+}
+
 // ── Toast stack ───────────────────────────────────────────────────────────────
 
 .ab-toast-stack {

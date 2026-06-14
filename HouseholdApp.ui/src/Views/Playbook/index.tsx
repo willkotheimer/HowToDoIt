@@ -1,87 +1,146 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import week from '../../data/weekNum';
 import { useChoresByHousehold } from '../../data/choresData';
-import { useAssignmentsByHouseHoldId } from '../../data/assignmentData';
 import { useCategories } from '../../data/categoryData';
-import PlaybookGrid from '../../Components/PlaybookGrid';
-import StoryboardPanel from '../../Components/StoryboardPanel';
+import { useAssignmentsByHouseholdFromUserId, useSetAssignmentAsDone } from '../../data/assignmentData';
+import { useImagesByChoreId } from '../../data/imageData';
 import { useAuth } from '../../context/AuthContext';
 import { buildCategoryColorMap } from '../../helpers/categoryColors';
-import type { Chore } from '../../Types';
+import type { Assignment, Chore, Category } from '../../Types';
+
+function CardImages({ choreId }: { choreId: number }) {
+  const { data: images = [] } = useImagesByChoreId(choreId);
+  if (images.length === 0) {
+    return (
+      <div className="my-card-img-placeholder">
+        <span className="my-card-img-icon">📋</span>
+      </div>
+    );
+  }
+  return (
+    <div className="my-card-images">
+      {images.slice(0, 2).map((img) => (
+        <img key={img.id} src={img.image} alt="" className="my-card-image" />
+      ))}
+    </div>
+  );
+}
+
+function AssignmentCard({
+  assignment,
+  chore,
+  category,
+  color,
+  onMarkDone,
+}: {
+  assignment: Assignment;
+  chore?: Chore;
+  category?: Category;
+  color: string;
+  onMarkDone: () => void;
+}) {
+  const choreName = assignment.chorename ?? chore?.name ?? chore?.Name ?? `Task #${assignment.choreId}`;
+  const desc = chore?.description ?? chore?.Description ?? '';
+
+  return (
+    <div className={`my-card${assignment.isCompleted ? ' my-card--done' : ''}`}>
+      <div className="my-card-bar" style={{ backgroundColor: color }} />
+      <CardImages choreId={assignment.choreId} />
+      <div className="my-card-body">
+        <div className="my-card-meta">
+          {category && (
+            <span className="my-card-category" style={{ backgroundColor: color }}>
+              {category.categoryName}
+            </span>
+          )}
+          {assignment.isCompleted && <span className="my-card-done-badge">Done</span>}
+        </div>
+        <h3 className="my-card-name">{choreName}</h3>
+        {desc && (
+          <p className="my-card-desc">
+            {desc.slice(0, 100)}{desc.length > 100 ? '…' : ''}
+          </p>
+        )}
+        {!assignment.isCompleted && (
+          <button className="my-card-mark-done" onClick={onMarkDone}>
+            Mark Done
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function PlaybookView() {
-  const { householdId } = useAuth();
-  const [activeChoreId, setActiveChoreId] = useState<number | null>(null);
+  const { uid, householdId, userHousehold } = useAuth();
+  const currentWeek = week.thisWeek();
 
-  const { data: chores = [] } = useChoresByHousehold(householdId);
+  const myId = useMemo(
+    () => userHousehold?.find((uh) => uh.firebaseKey === uid)?.id,
+    [userHousehold, uid],
+  );
+
+  const { data: rawAssignments = [] } = useAssignmentsByHouseholdFromUserId(myId ?? 0, !!myId);
+  const { data: allChores = [] } = useChoresByHousehold(householdId);
   const { data: categories = [] } = useCategories();
-  const { data: assignments = [] } = useAssignmentsByHouseHoldId(householdId);
+  const markDone = useSetAssignmentAsDone();
 
-  const assignedChoreIds = useMemo<Set<number>>(() => {
-    const thisWeek = week.thisWeek();
-    return new Set(
-      assignments
-        .filter((a) => a.week === thisWeek)
-        .map((a) => a.choreId),
-    );
-  }, [assignments]);
+  const myAssignments = useMemo(
+    () => rawAssignments.filter((a) => a.week === currentWeek),
+    [rawAssignments, currentWeek],
+  );
 
   const colorMap = useMemo(
     () => buildCategoryColorMap(categories.map((c) => c.id)),
     [categories],
   );
 
-  const activeChore: Chore | null = useMemo(
-    () => chores.find((c) => (c.id ?? c.Id) === activeChoreId) ?? null,
-    [chores, activeChoreId],
+  const cards = useMemo(
+    () =>
+      myAssignments.map((a) => {
+        const chore = allChores.find((c) => (c.id ?? c.Id) === a.choreId);
+        const catId = chore?.category ?? chore?.Category;
+        const category = catId !== undefined ? categories.find((c) => c.id === catId) : undefined;
+        const color = category ? colorMap.get(category.id) ?? '#1d4ed8' : '#1d4ed8';
+        return { assignment: a, chore, category, color };
+      }),
+    [myAssignments, allChores, categories, colorMap],
   );
 
-  const activeCategory = activeChore
-    ? categories.find((c) => c.id === (activeChore.category ?? activeChore.Category))
-    : null;
-
-  const activeColor = activeCategory ? colorMap.get(activeCategory.id) ?? '#1d4ed8' : '#1d4ed8';
-
-  function closeOverlay() {
-    setActiveChoreId(null);
-  }
+  const doneCount = myAssignments.filter((a) => a.isCompleted).length;
 
   return (
     <div className="playbook-page">
       <div className="playbook-header">
-        <div className="playbook-header-text">
-          <h1 className="playbook-title">The Playbook</h1>
-          <p className="playbook-subtitle">
-            Your household's chore reference guide — week {week.thisWeek()}
-          </p>
-        </div>
+        <h1 className="playbook-title">My Playbook</h1>
+        <p className="playbook-subtitle">
+          Week {currentWeek} — {doneCount} of {myAssignments.length} tasks done
+        </p>
       </div>
 
-      <PlaybookGrid
-        chores={chores}
-        categories={categories}
-        assignedChoreIds={assignedChoreIds}
-        activeChoreId={activeChoreId}
-        onSelectChore={setActiveChoreId}
-      />
-
-      {activeChore && (
-        <div className="playbook-overlay" onClick={closeOverlay}>
-          <div className="playbook-overlay-panel" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="playbook-overlay-close"
-              onClick={closeOverlay}
-              aria-label="Close"
-            >
-              ✕
-            </button>
-            <StoryboardPanel
-              chore={activeChore}
-              color={activeColor}
-              categoryName={activeCategory?.categoryName ?? ''}
-              isAssigned={assignedChoreIds.has(activeChore.id ?? activeChore.Id ?? 0)}
+      {myAssignments.length === 0 ? (
+        <div className="my-playbook-empty">
+          <p>No tasks assigned to you this week.</p>
+          <p>Head to <strong>Profiles</strong> to set up your week.</p>
+        </div>
+      ) : (
+        <div className="my-playbook-grid">
+          {cards.map(({ assignment, chore, category, color }) => (
+            <AssignmentCard
+              key={assignment.id ?? assignment.assignmentId ?? assignment.choreId}
+              assignment={assignment}
+              chore={chore}
+              category={category}
+              color={color}
+              onMarkDone={() =>
+                markDone.mutate({
+                  id: assignment.id,
+                  assignmentId: assignment.assignmentId,
+                  isCompleted: true,
+                })
+              }
             />
-          </div>
+          ))}
         </div>
       )}
     </div>

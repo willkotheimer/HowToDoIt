@@ -541,6 +541,156 @@
   &:hover { transform: scale(1.04); }
 }
 
+// ── My Playbook (personal weekly assignments) ────────────────────────────────
+
+.my-playbook-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  padding: 32px 40px 0;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.my-playbook-empty {
+  padding: 80px 40px;
+  text-align: center;
+
+  p {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0 0 8px;
+
+    strong { color: #fff; }
+  }
+}
+
+.my-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  }
+
+  &--done {
+    opacity: 0.65;
+    filter: grayscale(30%);
+  }
+}
+
+.my-card-bar {
+  height: 5px;
+  width: 100%;
+}
+
+.my-card-img-placeholder {
+  height: 130px;
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.my-card-img-icon {
+  font-size: 2.2rem;
+  opacity: 0.22;
+}
+
+.my-card-images {
+  display: flex;
+  gap: 2px;
+  height: 130px;
+  overflow: hidden;
+}
+
+.my-card-image {
+  flex: 1;
+  min-width: 0;
+  object-fit: cover;
+  height: 100%;
+}
+
+.my-card-body {
+  padding: 14px 16px 18px;
+}
+
+.my-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.my-card-category {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.my-card-done-badge {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #4ade80;
+  letter-spacing: 0.5px;
+}
+
+.my-card-name {
+  font-family: 'Righteous', cursive;
+  font-size: 1.15rem;
+  color: #fff;
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.my-card-desc {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+  margin: 0 0 14px;
+}
+
+.my-card-mark-done {
+  font-family: 'Righteous', cursive;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #fff;
+  background: #20c14d;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 20px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  width: 100%;
+
+  &:hover {
+    background: #18a840;
+    transform: translateY(-2px);
+  }
+}
+
 // ── Dashboard AvailableChores teaser ─────────────────────────────────────────
 
 .ac-teaser {

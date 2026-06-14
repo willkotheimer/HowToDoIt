@@ -18,7 +18,7 @@ export default function Nav(props) {
             Dashboard
           </NavLink>
           <NavLink exact to="/assignmentBoard" activeClassName="active" className="navbar-item">
-            Assignment Board
+            Task Board
           </NavLink>
           <NavLink exact to="/playbook" activeClassName="active" className="navbar-item">
             Runbook
