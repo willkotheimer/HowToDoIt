@@ -2,22 +2,22 @@ import { test, expect } from '../fixtures';
 
 test.describe('Smoke: route loading', () => {
 
-  test('splash page renders', async ({ sandboxPage: page }) => {
-    await page.goto('/splash');
-    // Splash renders the badge login button and the image strip
-    await expect(page.locator('.splash')).toBeVisible();
-    await expect(page.locator('.splashStrip')).toBeVisible();
+  test('landing page renders', async ({ sandboxPage: page }) => {
+    await page.goto('/');
+    // The Play Book landing page has the hero section and photo strip
+    await expect(page.locator('.tpb-hero')).toBeVisible();
+    await expect(page.locator('.tpb-strip')).toBeVisible();
   });
 
   test('dashboard renders in sandbox mode', async ({ sandboxPage: page }) => {
-    await page.goto('/');
-    await expect(page.getByRole('main').getByRole('heading', { name: 'HOUSEHOLD', exact: true })).toBeVisible();
+    await page.goto('/dashboard');
+    await expect(page.getByRole('heading', { name: 'THE PLAY BOOK', exact: true })).toBeVisible();
     // Sandbox banner confirms unauthenticated state
     await expect(page.getByText(/sandbox mode/i)).toBeVisible();
   });
 
   test('dashboard shows assign-chores panel', async ({ sandboxPage: page }) => {
-    await page.goto('/');
+    await page.goto('/dashboard');
     await expect(page.getByText('Assign the Chores')).toBeVisible();
   });
 
@@ -32,18 +32,19 @@ test.describe('Smoke: route loading', () => {
   });
 
   test('nav is present on every route', async ({ sandboxPage: page }) => {
-    const routes = ['/', '/splash', '/assignmentBoard'];
+    const routes = ['/', '/dashboard', '/assignmentBoard'];
     for (const route of routes) {
       await page.goto(route);
-      await expect(page.getByRole('link', { name: 'Household', exact: true })).toBeVisible();
-      await expect(page.getByRole('link', { name: /AssignmentBoard/i })).toBeVisible();
+      // Brand logo link — accessible name comes from the img alt attribute
+      await expect(page.getByRole('link', { name: 'The Play Book', exact: true })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Assignment Board', exact: true })).toBeVisible();
     }
   });
 
   test('sign-in button is visible when logged out', async ({ sandboxPage: page }) => {
-    await page.goto('/splash');
-    // Auth component renders the Sign In badge button on splash
-    await expect(page.locator('.splashHero .button')).toBeVisible();
+    await page.goto('/');
+    // Auth component renders a "Sign In" button in the nav when no user is logged in
+    await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
   });
 
 });
