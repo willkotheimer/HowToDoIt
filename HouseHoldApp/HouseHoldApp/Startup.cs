@@ -62,6 +62,10 @@ namespace HouseHoldApp
             services.AddScoped<HouseholdRepository>();
             services.AddScoped<CategoryRepository>();
             services.AddScoped<AssignmentsChoresUserRepository>();
+            services.AddScoped<ProfileRepository>();
+            services.AddScoped<ProfileChoreRepository>();
+            services.AddScoped<ProfileAssignmentRepository>();
+            services.AddScoped<HouseholdSettingsRepository>();
         }
 
 

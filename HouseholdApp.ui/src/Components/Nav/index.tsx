@@ -20,8 +20,14 @@ export default function Nav(props) {
           <NavLink exact to="/assignmentBoard" activeClassName="active" className="navbar-item">
             Assignment Board
           </NavLink>
-<NavLink exact to="/playbook" activeClassName="active" className="navbar-item">
+          <NavLink exact to="/playbook" activeClassName="active" className="navbar-item">
             Runbook
+          </NavLink>
+          <NavLink exact to="/profiles" activeClassName="active" className="navbar-item">
+            Profiles
+          </NavLink>
+          <NavLink exact to="/settings" activeClassName="active" className="navbar-item">
+            Settings
           </NavLink>
         </div>
       </nav>

@@ -15,6 +15,10 @@ namespace HouseHoldApp.DataAccess
         public DbSet<Chores> Chores { get; set; }
         public DbSet<Assignments> Assignments { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Profile> Profiles { get; set; }
+        public DbSet<ProfileChore> ProfileChores { get; set; }
+        public DbSet<ProfileAssignment> ProfileAssignments { get; set; }
+        public DbSet<HouseholdSettings> HouseholdSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +37,14 @@ namespace HouseHoldApp.DataAccess
                 .HasOne(hu => hu.Household)
                 .WithMany(h => h.HouseHoldUsers)
                 .HasForeignKey(hu => hu.HouseholdId);
+
+            modelBuilder.Entity<ProfileChore>()
+                .HasIndex(pc => pc.ChoreId)
+                .IsUnique();
+
+            modelBuilder.Entity<HouseholdSettings>()
+                .HasIndex(hs => hs.HouseholdId)
+                .IsUnique();
         }
     }
 }
