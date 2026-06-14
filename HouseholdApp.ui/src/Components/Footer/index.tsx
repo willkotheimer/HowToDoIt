@@ -7,7 +7,7 @@ export default function Footer(props) {
   <div className="container-fluid text-center text-md-left">
     <div className="d-flex">
     <div className="col-md-6 mt-md-0 mt-3"><img className="footerLogo" src={logo} alt="The Play Book logo" />
-    <h1 className="text-uppercase font-weight-bold">THE PLAY BOOK</h1>
+    <h2 className="text-uppercase font-weight-bold">THE PLAY BOOK</h2>
     <div className="footer-copyright text-center py-3">© 2024 Copyright:
     <a href="/"> The Play Book</a>
   </div>

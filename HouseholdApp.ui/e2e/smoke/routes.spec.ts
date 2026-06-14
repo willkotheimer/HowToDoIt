@@ -35,8 +35,8 @@ test.describe('Smoke: route loading', () => {
     const routes = ['/', '/dashboard', '/assignmentBoard'];
     for (const route of routes) {
       await page.goto(route);
-      // Brand logo link — accessible name comes from the img alt attribute
-      await expect(page.getByRole('link', { name: 'The Play Book', exact: true })).toBeVisible();
+      // Brand logo link — scoped to banner to avoid matching the footer copyright link
+      await expect(page.getByRole('banner').getByRole('link', { name: 'The Play Book', exact: true })).toBeVisible();
       await expect(page.getByRole('link', { name: 'Assignment Board', exact: true })).toBeVisible();
     }
   });
