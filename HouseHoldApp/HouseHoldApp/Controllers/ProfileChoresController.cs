@@ -26,6 +26,10 @@ namespace HouseHoldApp.Controllers
         public IActionResult GetByProfile(int profileId)
             => Ok(_repo.GetByProfileId(profileId));
 
+        [HttpGet("bychore/{choreId}")]
+        public IActionResult GetByChore(int choreId)
+            => Ok(_repo.GetByChoreId(choreId));
+
         [HttpGet("unassigned/{householdId}")]
         public IActionResult GetUnassigned(int householdId)
             => Ok(_repo.GetUnassignedByHouseholdId(householdId));
@@ -40,11 +44,7 @@ namespace HouseHoldApp.Controllers
             int maxChores = settings?.MaxChoresPerProfile ?? 10;
             int currentCount = _repo.GetByProfileId(profileChore.ProfileId).Count;
 
-            // If the chore is already in this exact profile, allow (repo will no-op the move)
-            bool alreadyHere = _repo.GetByProfileId(profileChore.ProfileId)
-                .Exists(pc => pc.ChoreId == profileChore.ChoreId);
-
-            if (!alreadyHere && currentCount >= maxChores)
+            if (currentCount >= maxChores)
                 return BadRequest($"Profile is at its maximum of {maxChores} chores.");
 
             _repo.Add(profileChore);
@@ -55,6 +55,13 @@ namespace HouseHoldApp.Controllers
         public IActionResult Remove(int id)
         {
             _repo.Remove(id);
+            return NoContent();
+        }
+
+        [HttpDelete("bychore/{choreId}/profile/{profileId}")]
+        public IActionResult RemoveByChoreAndProfile(int choreId, int profileId)
+        {
+            _repo.RemoveByChoreAndProfile(choreId, profileId);
             return NoContent();
         }
     }

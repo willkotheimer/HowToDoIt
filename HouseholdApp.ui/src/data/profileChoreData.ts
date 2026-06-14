@@ -13,6 +13,16 @@ export function useProfileChores(profileId: number) {
   );
 }
 
+// Profiles that contain a given chore (one chore can belong to multiple profiles).
+export function useChoreProfiles(choreId: number) {
+  const { get } = useAPIRequest();
+  return useQuery<ProfileChore[]>(
+    ['choreProfiles', choreId],
+    () => get<ProfileChore[]>(`${url}/bychore/${choreId}`),
+    { enabled: Boolean(choreId) },
+  );
+}
+
 export function useUnassignedToProfile(householdId: number) {
   const { get } = useAPIRequest();
   return useQuery<Chore[]>(
@@ -30,6 +40,7 @@ export function useAddChoreToProfile() {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['profileChores']);
+        queryClient.invalidateQueries(['choreProfiles']);
         queryClient.invalidateQueries(['unassignedToProfile']);
       },
     },
@@ -44,6 +55,23 @@ export function useRemoveChoreFromProfile() {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['profileChores']);
+        queryClient.invalidateQueries(['choreProfiles']);
+        queryClient.invalidateQueries(['unassignedToProfile']);
+      },
+    },
+  );
+}
+
+export function useRemoveChoreFromProfileByIds() {
+  const { del } = useAPIRequest();
+  const queryClient = useQueryClient();
+  return useMutation(
+    ({ choreId, profileId }: { choreId: number; profileId: number }) =>
+      del<void>(`${url}/bychore/${choreId}/profile/${profileId}`),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['profileChores']);
+        queryClient.invalidateQueries(['choreProfiles']);
         queryClient.invalidateQueries(['unassignedToProfile']);
       },
     },

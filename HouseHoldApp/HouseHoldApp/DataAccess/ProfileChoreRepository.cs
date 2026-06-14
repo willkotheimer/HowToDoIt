@@ -22,6 +22,15 @@ namespace HouseHoldApp.DataAccess
                 .ToList();
         }
 
+        // Returns every profile this chore belongs to.
+        public List<ProfileChore> GetByChoreId(int choreId)
+        {
+            return _context.ProfileChores
+                .Where(pc => pc.ChoreId == choreId)
+                .ToList();
+        }
+
+        // Chores that belong to no profile for this household.
         public List<Chores> GetUnassignedByHouseholdId(int householdId)
         {
             var assignedChoreIds = _context.ProfileChores
@@ -34,13 +43,13 @@ namespace HouseHoldApp.DataAccess
                 .ToList();
         }
 
-        // If the chore already belongs to another profile it is moved here automatically.
+        // A chore may belong to multiple profiles — no uniqueness enforced here.
         public void Add(ProfileChore profileChore)
         {
-            var existing = _context.ProfileChores
-                .FirstOrDefault(pc => pc.ChoreId == profileChore.ChoreId);
-            if (existing != null)
-                _context.ProfileChores.Remove(existing);
+            // Avoid inserting a duplicate (same chore already in this same profile).
+            bool alreadyLinked = _context.ProfileChores.Any(
+                pc => pc.ProfileId == profileChore.ProfileId && pc.ChoreId == profileChore.ChoreId);
+            if (alreadyLinked) return;
 
             _context.ProfileChores.Add(profileChore);
             _context.SaveChanges();
@@ -49,6 +58,18 @@ namespace HouseHoldApp.DataAccess
         public void Remove(int id)
         {
             var pc = _context.ProfileChores.FirstOrDefault(x => x.Id == id);
+            if (pc != null)
+            {
+                _context.ProfileChores.Remove(pc);
+                _context.SaveChanges();
+            }
+        }
+
+        // Remove a specific chore from a specific profile (used by the task form).
+        public void RemoveByChoreAndProfile(int choreId, int profileId)
+        {
+            var pc = _context.ProfileChores
+                .FirstOrDefault(x => x.ChoreId == choreId && x.ProfileId == profileId);
             if (pc != null)
             {
                 _context.ProfileChores.Remove(pc);

@@ -38,10 +38,6 @@ namespace HouseHoldApp.DataAccess
                 .WithMany(h => h.HouseHoldUsers)
                 .HasForeignKey(hu => hu.HouseholdId);
 
-            modelBuilder.Entity<ProfileChore>()
-                .HasIndex(pc => pc.ChoreId)
-                .IsUnique();
-
             modelBuilder.Entity<HouseholdSettings>()
                 .HasIndex(hs => hs.HouseholdId)
                 .IsUnique();
