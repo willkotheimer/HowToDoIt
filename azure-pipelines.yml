@@ -175,7 +175,8 @@ stages:
                     appType: webAppLinux
                     appName: household-api
                     package: $(Pipeline.Workspace)/api
-                    appSettings: -ConnectionStrings__DefaultConnection "$(SQL_CONNECTION_STRING)"
+                    startUpCommand: 'dotnet HouseHoldApp.dll'
+                    appSettings: -WEBSITE_RUN_FROM_PACKAGE 1 -SCM_DO_BUILD_DURING_DEPLOYMENT false -ConnectionStrings__DefaultConnection "$(SQL_CONNECTION_STRING)"
 
   # ── Deploy frontend to Azure Static Web Apps ─────────────────────────────────
   - stage: DeployFrontend
