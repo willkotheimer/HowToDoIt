@@ -93,32 +93,31 @@ stages:
             displayName: Build production bundle
             workingDirectory: HouseholdApp.ui
 
-          # Playwright smoke tests disabled while profile-assignment feature is in progress
-          # - script: npx playwright install --with-deps chromium
-          #   displayName: Install Playwright + Chromium deps
-          #   workingDirectory: HouseholdApp.ui
+          - script: npx playwright install --with-deps chromium
+            displayName: Install Playwright + Chromium deps
+            workingDirectory: HouseholdApp.ui
 
-          # - script: node_modules/.bin/serve -s build -l 3000 &
-          #   displayName: Serve production build
-          #   workingDirectory: HouseholdApp.ui
+          - script: node_modules/.bin/serve -s build -l 3000 &
+            displayName: Serve production build
+            workingDirectory: HouseholdApp.ui
 
-          # - script: |
-          #     npx wait-on http://localhost:3000 --timeout 60000
-          #   displayName: Start and Wait for server
-          #   workingDirectory: HouseholdApp.ui
+          - script: |
+              npx wait-on http://localhost:3000 --timeout 60000
+            displayName: Start and Wait for server
+            workingDirectory: HouseholdApp.ui
 
-          # - script: npm run test:e2e
-          #   displayName: Playwright smoke tests
-          #   workingDirectory: HouseholdApp.ui
-          #   env:
-          #     CI: true
+          - script: npm run test:e2e
+            displayName: Playwright smoke tests
+            workingDirectory: HouseholdApp.ui
+            env:
+              CI: true
 
-          # - task: PublishTestResults@2
-          #   displayName: Publish Playwright results
-          #   condition: succeededOrFailed()
-          #   inputs:
-          #     testResultsFormat: JUnit
-          #     testResultsFiles: HouseholdApp.ui/playwright-results/results.xml
+          - task: PublishTestResults@2
+            displayName: Publish Playwright results
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: JUnit
+              testResultsFiles: HouseholdApp.ui/playwright-results/results.xml
 
           - publish: HouseholdApp.ui/build
             displayName: Publish frontend artifact

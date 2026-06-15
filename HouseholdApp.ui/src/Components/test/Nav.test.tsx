@@ -20,9 +20,9 @@ describe('Nav', () => {
     expect(document.querySelector('.brand img')).toBeInTheDocument();
   });
 
-  it('renders the Assignment Board navigation link', () => {
+  it('renders the Task Board navigation link', () => {
     renderNav();
-    expect(screen.getByText('Assignment Board')).toBeInTheDocument();
+    expect(screen.getByText('Task Board')).toBeInTheDocument();
   });
 
   it('renders the Auth component', () => {
@@ -30,9 +30,9 @@ describe('Nav', () => {
     expect(screen.getByTestId('auth-mock')).toBeInTheDocument();
   });
 
-  it('Assignment Board link points to /assignmentBoard', () => {
+  it('Task Board link points to /assignmentBoard', () => {
     renderNav();
-    const link = screen.getByText('Assignment Board').closest('a');
+    const link = screen.getByText('Task Board').closest('a');
     expect(link).toHaveAttribute('href', '/assignmentBoard');
   });
 });
