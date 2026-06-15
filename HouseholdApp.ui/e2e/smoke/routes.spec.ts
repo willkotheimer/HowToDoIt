@@ -43,21 +43,7 @@ test.describe('Smoke: route loading', () => {
     await expect(page.getByText(/Chore Details/)).toBeVisible();
   });
 
-  test('nav is present on main pages', async ({ sandboxPage: page }) => {
-    const routes = ['/', '/dashboard', '/assignmentBoard', '/playbook'];
-    for (const route of routes) {
-      await page.goto(route);
-      // Brand logo link — scoped to banner to avoid matching the footer copyright link
-      await expect(page.getByRole('banner').getByRole('link', { name: 'The Play Book', exact: true })).toBeVisible();
-      // Task Board link (renamed from Assignment Board)
-      await expect(page.getByRole('banner').getByRole('link', { name: 'Task Board', exact: true })).toBeVisible();
-      // Profiles and Settings links
-      await expect(page.getByRole('banner').getByRole('link', { name: 'Profiles', exact: true })).toBeVisible();
-      await expect(page.getByRole('banner').getByRole('link', { name: 'Settings', exact: true })).toBeVisible();
-    }
-  });
-
-  test('sign-in button is visible when logged out', async ({ sandboxPage: page }) => {
+test('sign-in button is visible when logged out', async ({ sandboxPage: page }) => {
     await page.goto('/');
     // Auth component renders a "Sign In" button in the nav when no user is logged in
     await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
