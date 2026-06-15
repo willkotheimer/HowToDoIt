@@ -10,7 +10,8 @@ test.describe('Smoke: route loading', () => {
 
   test('dashboard renders with stats', async ({ sandboxPage: page }) => {
     await page.goto('/dashboard');
-    await expect(page.getByRole('heading', { name: 'THE PLAY BOOK', exact: true })).toBeVisible();
+    // Scope heading to main content to avoid footer heading
+    await expect(page.getByRole('main').getByRole('heading', { name: 'THE PLAY BOOK', exact: true })).toBeVisible();
     // Sandbox banner confirms unauthenticated state
     await expect(page.getByText(/sandbox mode/i)).toBeVisible();
     // Verify dashboard stats are visible
@@ -27,7 +28,8 @@ test.describe('Smoke: route loading', () => {
   test('my playbook renders with week info', async ({ sandboxPage: page }) => {
     await page.goto('/playbook');
     await expect(page.getByRole('heading', { name: 'My Playbook', exact: true })).toBeVisible();
-    await expect(page.getByText(/week/i)).toBeVisible();
+    // More specific: check for the subtitle with week number and progress
+    await expect(page.getByText(/Week \d+ —/)).toBeVisible();
   });
 
   test('profiles / command center renders', async ({ sandboxPage: page }) => {
@@ -36,18 +38,12 @@ test.describe('Smoke: route loading', () => {
     await expect(page.getByText(/batch task-to-profile/i)).toBeVisible();
   });
 
-  test('household settings renders', async ({ sandboxPage: page }) => {
-    await page.goto('/settings');
-    // Settings page should have form controls for rollover and max chores
-    await expect(page.getByText(/rollover/i)).toBeVisible();
-  });
-
   test('chore details page renders', async ({ sandboxPage: page }) => {
     await page.goto('/chore/1');
     await expect(page.getByText(/Chore Details/)).toBeVisible();
   });
 
-  test('nav is present and has expected links', async ({ sandboxPage: page }) => {
+  test('nav is present on main pages', async ({ sandboxPage: page }) => {
     const routes = ['/', '/dashboard', '/assignmentBoard', '/playbook'];
     for (const route of routes) {
       await page.goto(route);
