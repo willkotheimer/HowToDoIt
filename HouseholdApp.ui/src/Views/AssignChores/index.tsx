@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import AppModal from '../../Components/AppModal';
 import ChoreForm from '../../Components/Forms/ChoreForm';
-import ImageUploader from '../../Components/Forms/ImageUploader';
 import { useAuth } from '../../context/AuthContext';
 import { useChoresByHousehold } from '../../data/choresData';
 import { useCategories } from '../../data/categoryData';
@@ -61,12 +60,6 @@ function TaskCard({
           </p>
         )}
         <div className="task-card-actions">
-          <AppModal title="Edit Task" buttonLabel="Edit" size="lg">
-            <ChoreForm choreInfo={chore} uid={uid} />
-          </AppModal>
-          <AppModal title="Add Photos" buttonLabel="Add Photos" size="lg" fullscreen="md">
-            <ImageUploader choreInfo={chore} />
-          </AppModal>
           <Button onClick={() => history.push(`/chore/${choreId}`)}>Details</Button>
         </div>
       </div>

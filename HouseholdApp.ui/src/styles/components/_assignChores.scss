@@ -117,7 +117,7 @@
 .task-card-desc {
   font-family: 'Work Sans', sans-serif;
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: #87bde4;
   line-height: 1.5;
   margin: 0 0 14px;
 }
@@ -129,18 +129,20 @@
 
   > div {
     flex: 1;
+  }
 
-    .btn {
-      font-family: 'Work Sans', sans-serif;
-      font-size: 0.8rem;
-      font-weight: 600;
-      border-radius: 8px;
-      padding: 6px 14px;
-      background: #1e2160 !important;
-      border-color: rgba(255, 255, 255, 0.2) !important;
-      color: #fff !important;
-      width: 100%;
-    }
+  .btn {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 14px;
+    width: 100%;
+    background: #2784de !important;
+    border-color: #2784de !important;
+    color: #fff !important;
+
+    &:hover { background: #1f6fc0 !important; }
   }
 }
 
