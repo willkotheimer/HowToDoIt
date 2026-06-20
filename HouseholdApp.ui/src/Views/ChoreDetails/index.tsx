@@ -103,13 +103,15 @@ export default function ChoreDetailsView({ props }) {
           </div>
         </div>
         <div className="bottom">
-          {authed && (
-            <AppModal title="Add Image" buttonLabel="Add Image" size="lg" fullscreen="md">
-              <Uploader choreInfo={choreInfo} onUpdate={refetchChoreImages} />
-            </AppModal>
-          )}
-          {/* Reorder available to all */}
-          <button className="btn btn-danger" onClick={toggleChoresOrder}>Reorder Images</button>
+          <div className="image-actions">
+            {authed && (
+              <AppModal title="Add Image" buttonLabel="Add Image" size="lg" fullscreen="md">
+                <Uploader choreInfo={choreInfo} onUpdate={refetchChoreImages} />
+              </AppModal>
+            )}
+            {/* Reorder available to all */}
+            <button className="btn btn-danger" onClick={toggleChoresOrder}>Reorder Images</button>
+          </div>
           <div className="groups">
             {orderedChoreImages.length > 0 && (
               <ChoreImages

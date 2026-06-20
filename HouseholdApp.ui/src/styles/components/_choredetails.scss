@@ -170,8 +170,24 @@
         flex-direction: column;
         gap: 16px;
 
-        > .btn, > button {
+        // Action row (Add Image + Reorder) — sits above the decorative divider.
+        .image-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-start;
             align-self: flex-start;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+
+            // Add Image (AppModal-wrapped) — green to match the app's action buttons.
+            > div .btn {
+                background-color: #20c14d !important;
+                border-color: #18a840 !important;
+                color: #fff !important;
+                font-weight: 600;
+            }
         }
 
         .groups {
