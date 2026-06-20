@@ -34,6 +34,8 @@ namespace HouseHoldApp.DataAccess
         public void Add(ProfileAssignment pa)
         {
             _context.ProfileAssignments.Add(pa);
+            // Dispatch the profile's chores as individual weekly assignments.
+            CreateAssignmentsForProfile(pa.ProfileId, pa.UserId, pa.Week);
             _context.SaveChanges();
         }
 
@@ -42,9 +44,56 @@ namespace HouseHoldApp.DataAccess
             var pa = _context.ProfileAssignments.FirstOrDefault(x => x.Id == id);
             if (pa != null)
             {
+                // Remove the profile's not-yet-completed assignments for this week;
+                // keep completed ones for the week's record.
+                RemoveIncompleteAssignmentsForProfile(pa.ProfileId, pa.UserId, pa.Week);
                 _context.ProfileAssignments.Remove(pa);
                 _context.SaveChanges();
             }
+        }
+
+        // Create one Assignment per chore in the profile, skipping any chore the
+        // user already has an assignment for that exact week (dedupe by ChoreId).
+        // Caller is responsible for SaveChanges.
+        private void CreateAssignmentsForProfile(int profileId, int userId, int week)
+        {
+            var choreIds = _context.ProfileChores
+                .Where(pc => pc.ProfileId == profileId)
+                .Select(pc => pc.ChoreId)
+                .ToList();
+
+            foreach (var choreId in choreIds)
+            {
+                var alreadyAssigned = _context.Assignments
+                    .Any(a => a.UserId == userId && a.ChoreId == choreId && a.Week == week);
+                if (!alreadyAssigned)
+                {
+                    _context.Assignments.Add(new Assignments
+                    {
+                        UserId = userId,
+                        ChoreId = choreId,
+                        Week = week,
+                        IsCompleted = false,
+                    });
+                }
+            }
+        }
+
+        private void RemoveIncompleteAssignmentsForProfile(int profileId, int userId, int week)
+        {
+            var choreIds = _context.ProfileChores
+                .Where(pc => pc.ProfileId == profileId)
+                .Select(pc => pc.ChoreId)
+                .ToList();
+
+            var toRemove = _context.Assignments
+                .Where(a => a.UserId == userId
+                    && a.Week == week
+                    && choreIds.Contains(a.ChoreId)
+                    && a.IsCompleted != true)
+                .ToList();
+
+            _context.Assignments.RemoveRange(toRemove);
         }
 
         public void RolloverWeek(int householdId, int fromWeek, int toWeek)
@@ -70,6 +119,8 @@ namespace HouseHoldApp.DataAccess
                     Week = toWeek,
                     HouseholdId = pa.HouseholdId
                 });
+                // Recreate the dispatched assignments for the new week.
+                CreateAssignmentsForProfile(pa.ProfileId, pa.UserId, toWeek);
             }
 
             _context.SaveChanges();

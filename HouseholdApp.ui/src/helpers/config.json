@@ -1,14 +1,5 @@
 {
    "baseUrl": "https://localhost:44316/api",
-   "householdId": 1,
-   "firebaseConfig" : {
-      "apiKey": "AIzaSyCcyOuRRdzVVMv6BtOGRWs5od67tCO2kvo",
-      "authDomain": "household-app-b4381.firebaseapp.com",
-      "projectId": "household-app-b4381",
-      "storageBucket": "household-app-b4381.appspot.com",
-      "messagingSenderId": "541422500183",
-      "appId": "1:541422500183:web:6715ad9483032c43cba612",
-      "measurementId": "G-2JQE0JQFYM"
-    }
+   "householdId": 1
 }
 

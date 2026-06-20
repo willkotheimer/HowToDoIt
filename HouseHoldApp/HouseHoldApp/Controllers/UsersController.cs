@@ -45,6 +45,18 @@ namespace HouseHoldApp.Controllers
             return Ok(user);
         }
 
+        [HttpGet("email/{email}")]
+        public IActionResult GetUserByEmail(string email)
+        {
+            var user = _repo.GetUserByEmail(email);
+
+            if (user == null)
+            {
+                return NotFound("This User does not exist");
+            }
+            return Ok(user);
+        }
+
         [HttpGet("UserHousehold/{id}")]
         public IActionResult GetUsersInUsersHouseHold(int id)
         {
@@ -68,6 +80,15 @@ namespace HouseHoldApp.Controllers
         public IActionResult UpdateUser(Users user)
         {
             _repo.UpdateUser(user);
+            return NoContent();
+        }
+
+        // Re-links an existing user record to the caller's Entra object id.
+        // Protected by the global write filter (requires a valid token).
+        [HttpPatch("link")]
+        public IActionResult LinkUser(LinkUserRequest request)
+        {
+            _repo.LinkFirebaseKey(request.Id, request.FirebaseKey);
             return NoContent();
         }
     }

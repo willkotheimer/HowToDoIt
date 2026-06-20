@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using HouseHoldApp.DataAccess;
+using HouseHoldApp.Services;
+using HouseHoldApp.Filters;
 namespace HouseHoldApp
 {
     public class Startup
@@ -32,7 +34,9 @@ namespace HouseHoldApp
                     ));
             });
 
-            services.AddControllers();
+            // Require auth on all state-changing requests; reads stay anonymous.
+            services.AddControllers(options =>
+                options.Filters.Add<RequireAuthForWritesFilter>());
 
             // Add EF Core
             services.AddDbContext<HouseholdContext>(options =>
@@ -42,16 +46,29 @@ namespace HouseHoldApp
               .AddJwtBearer(options =>
               {
                   options.IncludeErrorDetails = true;
-                  options.Authority = "https://securetoken.google.com/toboggan-42319";
+                  // Microsoft Entra External ID (CIAM). The middleware discovers the
+                  // issuer + signing keys from the authority's OIDC metadata.
+                  options.Authority = Configuration["Entra:Authority"];
+
+                  // Accept both the App ID URI (api://<client-id>) and the bare
+                  // client-id GUID, since Entra v2 may issue either as the audience.
+                  var audience = Configuration["Entra:Audience"];
+                  var validAudiences = new System.Collections.Generic.List<string> { audience };
+                  if (audience != null && audience.StartsWith("api://"))
+                  {
+                      validAudiences.Add(audience.Substring("api://".Length));
+                  }
+
                   options.TokenValidationParameters = new TokenValidationParameters
                   {
                       ValidateLifetime = true,
                       ValidateAudience = true,
+                      ValidAudiences = validAudiences,
                       ValidateIssuer = true,
-                      ValidAudience = "toboggan-42319",
-                      ValidIssuer = "https://securetoken.google.com/toboggan-42319"
                   };
               });
+
+            services.AddSingleton<IBlobStorageService, BlobStorageService>();
 
             services.AddScoped<AssignmentsChoresRepository>();
             services.AddScoped<HouseHoldUserRepository>();
@@ -82,6 +99,8 @@ namespace HouseHoldApp
             app.UseRouting();
 
             app.UseCors();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

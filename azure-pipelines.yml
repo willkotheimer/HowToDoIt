@@ -92,6 +92,12 @@ stages:
           - script: npm run build
             displayName: Build production bundle
             workingDirectory: HouseholdApp.ui
+            env:
+              # Entra External ID config baked into the SPA bundle at build time.
+              # Values are defined as pipeline variables (or a variable group), not committed.
+              VITE_ENTRA_TENANT_ID: $(VITE_ENTRA_TENANT_ID)
+              VITE_ENTRA_AUTHORITY: $(VITE_ENTRA_AUTHORITY)
+              VITE_ENTRA_CLIENT_ID: $(VITE_ENTRA_CLIENT_ID)
 
           - script: npx playwright install --with-deps chromium
             displayName: Install Playwright + Chromium deps

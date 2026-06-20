@@ -1,14 +1,18 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { getAccessToken } from './api';
+
 const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 async function request<T>(endpoint: string, method: RequestMethod, body?: unknown): Promise<T> {
+  const token = await getAccessToken();
   const response = await fetch(`${baseUrl}${endpoint}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
