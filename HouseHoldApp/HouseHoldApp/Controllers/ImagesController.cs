@@ -75,6 +75,17 @@ namespace HouseHoldApp.Controllers
             return Created($"api/Images/{image.Id}", image);
         }
 
+        [HttpPatch("order")]
+        public IActionResult UpdateImageOrder(ImageOrderRequest request)
+        {
+            if (request?.ImageIds == null || request.ImageIds.Length == 0)
+            {
+                return BadRequest("No image order was provided.");
+            }
+            _repo.UpdateImageOrder(request.ImageIds);
+            return NoContent();
+        }
+
         [HttpDelete("{imageId}")]
         public async Task<IActionResult> DeleteImage(int imageId)
         {

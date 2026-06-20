@@ -20,7 +20,11 @@ namespace HouseHoldApp.DataAccess
 
         public List<Images> GetImageByChoreId(int choreId)
         {
-            return _context.Images.Where(i => i.ChoreId == choreId).ToList();
+            return _context.Images
+                .Where(i => i.ChoreId == choreId)
+                .OrderBy(i => i.SortOrder)
+                .ThenBy(i => i.Id)
+                .ToList();
         }
 
         public Images GetImageById(int id)
@@ -37,13 +41,27 @@ namespace HouseHoldApp.DataAccess
         {
             return _context.Images
                 .GroupBy(i => i.ChoreId)
-                .Select(g => g.OrderBy(i => i.ChoreId).First())
+                .Select(g => g.OrderBy(i => i.SortOrder).ThenBy(i => i.Id).First())
                 .ToList();
         }
 
         public void AddAnImage(Images image)
         {
             _context.Images.Add(image);
+            _context.SaveChanges();
+        }
+
+        // Persist a new display order: SortOrder = position in the given id list.
+        public void UpdateImageOrder(int[] orderedImageIds)
+        {
+            for (var i = 0; i < orderedImageIds.Length; i++)
+            {
+                var image = _context.Images.FirstOrDefault(img => img.Id == orderedImageIds[i]);
+                if (image != null)
+                {
+                    image.SortOrder = i;
+                }
+            }
             _context.SaveChanges();
         }
 

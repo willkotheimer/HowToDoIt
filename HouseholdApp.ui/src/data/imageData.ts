@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAPIRequest } from './useAPIRequest';
-import { getJson, postJson, deleteJson, postForm } from './api';
+import { getJson, postJson, deleteJson, postForm, patchJson } from './api';
 import type { ImageRecord } from '../Types';
 
 const imagesUrl = '/Images';
@@ -28,6 +28,13 @@ export function useAddImage() {
   const { post } = useAPIRequest();
   const queryClient = useQueryClient();
   return useMutation((image: Partial<ImageRecord>) => post<ImageRecord>(`${imagesUrl}`, image), {
+    onSuccess: () => queryClient.invalidateQueries(['imagesByChore']),
+  });
+}
+
+export function useUpdateImageOrder() {
+  const queryClient = useQueryClient();
+  return useMutation((imageIds: number[]) => patchJson<void>(`${imagesUrl}/order`, { ImageIds: imageIds }), {
     onSuccess: () => queryClient.invalidateQueries(['imagesByChore']),
   });
 }

@@ -17,5 +17,8 @@ namespace HouseHoldApp.Models
 
         [Required]
         public int Active { get; set; }
+
+        // Display order within a chore (lower = first). Defaulted to 0 in the DB.
+        public int SortOrder { get; set; }
     }
 }

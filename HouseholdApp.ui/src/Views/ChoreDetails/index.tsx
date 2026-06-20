@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Card, CardHeader, CardBody } from 'reactstrap';
 import images from '../../data/imageData';
 import { useChoreById } from '../../data/choresData';
-import { useImagesByChoreId } from '../../data/imageData';
+import { useImagesByChoreId, useUpdateImageOrder } from '../../data/imageData';
 import ChoreInfo from '../../Components/ChoreInfo';
 import AppModal from '../../Components/AppModal';
 import ChoreForm from '../../Components/Forms/ChoreForm';
@@ -40,6 +40,16 @@ export default function ChoreDetailsView({ props }) {
   const updateImageOrder = (newOrder: number[]) => {
     setImageOrder(newOrder);
     if (!authed) setSandboxImageOrder(choreId, newOrder);
+  };
+
+  const saveImageOrder = useUpdateImageOrder();
+
+  // Persist the current order to the backend (signed-in users).
+  const handleSaveOrder = async () => {
+    await saveImageOrder.mutateAsync(orderedChoreImages.map((img) => img.id));
+    await refetchChoreImages();
+    setImageOrder([]); // use the server order going forward
+    setChoreOrderButtons(false);
   };
 
   const toggleChoresOrder = () => setChoreOrderButtons((prev) => !prev);
@@ -111,6 +121,11 @@ export default function ChoreDetailsView({ props }) {
             )}
             {/* Reorder available to all */}
             <button className="btn btn-danger" onClick={toggleChoresOrder}>Reorder Images</button>
+            {authed && choreOrderButtons && (
+              <button className="btn btn-success" onClick={handleSaveOrder} disabled={saveImageOrder.isLoading}>
+                {saveImageOrder.isLoading ? 'Saving…' : 'Save Order'}
+              </button>
+            )}
           </div>
           <div className="groups">
             {orderedChoreImages.length > 0 && (
