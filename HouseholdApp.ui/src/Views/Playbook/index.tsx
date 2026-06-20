@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
 import week from '../../data/weekNum';
 import { useChoresByHousehold } from '../../data/choresData';
 import { useCategories } from '../../data/categoryData';
@@ -32,18 +33,33 @@ function AssignmentCard({
   category,
   color,
   onMarkDone,
+  onOpen,
 }: {
   assignment: Assignment;
   chore?: Chore;
   category?: Category;
   color: string;
   onMarkDone: () => void;
+  onOpen: () => void;
 }) {
   const choreName = assignment.chorename ?? chore?.name ?? chore?.Name ?? `Task #${assignment.choreId}`;
   const desc = chore?.description ?? chore?.Description ?? '';
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onOpen();
+    }
+  };
+
   return (
-    <div className={`my-card${assignment.isCompleted ? ' my-card--done' : ''}`}>
+    <div
+      className={`my-card my-card--clickable${assignment.isCompleted ? ' my-card--done' : ''}`}
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={handleKeyDown}
+    >
       <div className="my-card-bar" style={{ backgroundColor: color }} />
       <CardImages choreId={assignment.choreId} />
       <div className="my-card-body">
@@ -62,7 +78,13 @@ function AssignmentCard({
           </p>
         )}
         {!assignment.isCompleted && (
-          <button className="my-card-mark-done" onClick={onMarkDone}>
+          <button
+            className="my-card-mark-done"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMarkDone();
+            }}
+          >
             Mark Done
           </button>
         )}
@@ -73,6 +95,7 @@ function AssignmentCard({
 
 export default function PlaybookView() {
   const { uid, householdId, userHousehold } = useAuth();
+  const history = useHistory();
   const currentWeek = week.thisWeek();
 
   const myId = useMemo(
@@ -132,6 +155,9 @@ export default function PlaybookView() {
               chore={chore}
               category={category}
               color={color}
+              onOpen={() =>
+                history.push(`/chore/${assignment.choreId}`, { readOnly: true })
+              }
               onMarkDone={() =>
                 markDone.mutate({
                   id: assignment.id,
