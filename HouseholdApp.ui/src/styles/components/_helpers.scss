@@ -138,6 +138,32 @@ select option {
     }
 }
 
+// ── Modal header (shared) — big bold title like the page headings ─────────────
+.modal-header {
+    background: $app-gradient;
+    border-bottom: none;
+
+    .modal-title {
+        font-family: 'Righteous', cursive;
+        font-size: 2.25rem;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    }
+
+    // Keep the close (X) visible on the gradient.
+    .btn-close {
+        filter: brightness(0) invert(1);
+        opacity: 0.9;
+    }
+    .close {
+        color: #fff;
+        opacity: 0.9;
+        text-shadow: none;
+    }
+}
+
 /* image helpers */@at-root
 .smallImageHolder {
 padding: 12px;
