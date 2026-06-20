@@ -72,7 +72,7 @@
 
     .Greetings {
         display: flex;
-        align-items: flex-start;
+        align-items: stretch;
         gap: 24px;
         color: #fff;
     }
@@ -89,6 +89,9 @@
             flex: 0 0 220px;
             font-size: 1.25rem;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
 
             .timeLabel {
                 font-size: 0.9rem;

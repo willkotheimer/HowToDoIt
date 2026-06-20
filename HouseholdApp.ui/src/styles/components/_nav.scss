@@ -42,8 +42,15 @@
             margin-top: 6px;
         }
         .navbar-item {
+            display: block;
             margin-left: 0;
-            padding: 6px 0;
+            padding: 14px 8px;
+            font-size: 1.5rem;
+            font-family: 'Righteous', sans-serif;
+            letter-spacing: 0.5px;
+        }
+        .navbar-items .nav-item {
+            margin: 6px 0;
         }
         // Auth dropdown "Hi {name}" row reads better left-aligned in the stack
         .user-icon-container .row {
