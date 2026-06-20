@@ -18,7 +18,8 @@ export default function ChoreDetailsView({ props }) {
   const { user, authed } = useAuth();
   const history = useHistory();
   const location = useLocation();
-  const returnState = (location.state || {}) as { person?: string; category?: string; openChoreId?: number };
+  const returnState = (location.state || {}) as { person?: string; category?: string; openChoreId?: number; readOnly?: boolean };
+  const readOnly = !!returnState.readOnly;
   const { id } = props.match.params;
   const choreId = Number(id);
 
@@ -90,7 +91,7 @@ export default function ChoreDetailsView({ props }) {
         <div className="choreDetailsHeader">
           <img src={logo} alt="logo" className="headerLogo" />
           <h1>Chore Details: {choreInfo?.name}</h1>
-          <button className="choreCloseBtn" onClick={() => history.push('/assignmentBoard', returnState)}>✕</button>
+          <button className="choreCloseBtn" onClick={() => (readOnly ? history.push('/playbook') : history.push('/assignmentBoard', returnState))}>✕</button>
         </div>
       </CardHeader>
       <CardBody>
@@ -99,9 +100,11 @@ export default function ChoreDetailsView({ props }) {
             <div className="leftGroups">
               <div className="Greetings">
                 <div className="topContainers rightContainer">
-                  <AppModal title="Edit Chore" buttonLabel="Edit Chore" size="lg">
-                    <ChoreForm choreInfo={choreInfo} uid={user?.uid ?? ''} onUpdate={refetchChoreImages} />
-                  </AppModal>
+                  {!readOnly && (
+                    <AppModal title="Edit Chore" buttonLabel="Edit Chore" size="lg">
+                      <ChoreForm choreInfo={choreInfo} uid={user?.uid ?? ''} onUpdate={refetchChoreImages} />
+                    </AppModal>
+                  )}
                   <ChoreInfo choreInfo={choreInfo} />
                 </div>
                 <div className="topContainers leftContainer">
@@ -113,20 +116,22 @@ export default function ChoreDetailsView({ props }) {
           </div>
         </div>
         <div className="bottom">
-          <div className="image-actions">
-            {authed && (
-              <AppModal title="Add Image" buttonLabel="Add Image" size="lg" fullscreen="md">
-                <Uploader choreInfo={choreInfo} onUpdate={refetchChoreImages} />
-              </AppModal>
-            )}
-            {/* Reorder available to all */}
-            <button className="btn btn-danger" onClick={toggleChoresOrder}>Reorder Images</button>
-            {authed && choreOrderButtons && (
-              <button className="btn btn-success" onClick={handleSaveOrder} disabled={saveImageOrder.isLoading}>
-                {saveImageOrder.isLoading ? 'Saving…' : 'Save Order'}
-              </button>
-            )}
-          </div>
+          {!readOnly && (
+            <div className="image-actions">
+              {authed && (
+                <AppModal title="Add Image" buttonLabel="Add Image" size="lg" fullscreen="md">
+                  <Uploader choreInfo={choreInfo} onUpdate={refetchChoreImages} />
+                </AppModal>
+              )}
+              {/* Reorder available to all */}
+              <button className="btn btn-danger" onClick={toggleChoresOrder}>Reorder Images</button>
+              {authed && choreOrderButtons && (
+                <button className="btn btn-success" onClick={handleSaveOrder} disabled={saveImageOrder.isLoading}>
+                  {saveImageOrder.isLoading ? 'Saving…' : 'Save Order'}
+                </button>
+              )}
+            </div>
+          )}
           <div className="groups">
             {orderedChoreImages.length > 0 && (
               <ChoreImages

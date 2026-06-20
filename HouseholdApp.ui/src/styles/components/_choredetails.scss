@@ -72,7 +72,7 @@
 
     .Greetings {
         display: flex;
-        align-items: flex-start;
+        align-items: stretch;
         gap: 24px;
         color: #fff;
     }
@@ -89,6 +89,9 @@
             flex: 0 0 220px;
             font-size: 1.25rem;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
 
             .timeLabel {
                 font-size: 0.9rem;
@@ -192,6 +195,58 @@
 
         .groups {
             width: 100%;
+
+            // Image grid (ChoresImages renders a .d-flex of .smallFrame items).
+            // Wrap so multiple images flow onto new rows instead of overflowing.
+            .d-flex {
+                flex-wrap: wrap;
+                gap: 16px 0;
+            }
+        }
+    }
+
+    // ── Mobile: full width, stacked layout ──────────────────────────────────────
+    @media (max-width: 768px) {
+        .card-header {
+            padding: 16px 16px 12px;
+
+            .choreDetailsHeader h1 {
+                font-size: 1.4rem;
+            }
+        }
+
+        .top {
+            padding: 16px;
+        }
+
+        .leftGroups {
+            padding: 16px;
+        }
+
+        // Stack the info + estimated-time panels instead of sitting side by side.
+        .Greetings {
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .topContainers.leftContainer {
+            flex: 0 0 auto;
+            width: 100%;
+        }
+
+        .bottom {
+            padding: 0 16px 32px;
+
+            // Task 4: keep the action buttons off the divider on small screens.
+            .image-actions {
+                margin-top: 16px;
+                width: 100%;
+            }
+
+            // Center the wrapped image grid on narrow screens.
+            .groups .d-flex {
+                justify-content: center;
+            }
         }
     }
 }

@@ -448,6 +448,52 @@
   min-width: 200px;
 }
 
+// Stack the dispatch table into per-member cards on mobile so the fixed
+// column min-widths can't push content past the card edge.
+@media (max-width: 768px) {
+  .dispatch-table {
+    display: block;
+
+    thead {
+      display: none;
+    }
+
+    tbody,
+    .dispatch-row,
+    .dispatch-row td {
+      display: block;
+      width: 100%;
+    }
+
+    .dispatch-row {
+      margin-bottom: 12px;
+
+      td {
+        background: #1e2160;
+        padding: 12px 16px;
+
+        &:first-child {
+          border-radius: 12px 12px 0 0;
+        }
+        &:last-child {
+          border-radius: 0 0 12px 12px;
+        }
+      }
+    }
+  }
+
+  .dispatch-member,
+  .dispatch-progress {
+    min-width: 0;
+  }
+
+  .dispatch-profile select {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
 .text-muted {
   font-family: 'Work Sans', sans-serif;
   font-size: 0.82rem;
