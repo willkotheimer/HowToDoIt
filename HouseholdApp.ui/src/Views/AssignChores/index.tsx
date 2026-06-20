@@ -58,7 +58,7 @@ function TaskCard({
           </p>
         )}
         <div className="task-card-actions">
-          <AppModal title="Edit Task" buttonLabel="Edit">
+          <AppModal title="Edit Task" buttonLabel="Edit" size="lg">
             <ChoreForm choreInfo={chore} uid={uid} />
           </AppModal>
           <AppModal title="Add Photos" buttonLabel="Add Photos" size="lg" fullscreen="md">

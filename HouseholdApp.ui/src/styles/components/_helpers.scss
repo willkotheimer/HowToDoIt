@@ -82,26 +82,59 @@ select option {
 
 // ── Chore form (modal) ────────────────────────────────────────────────────────
 .chore-form {
-    color: #333;
+    background: $app-gradient;
+    color: #fff;
+    border-radius: 14px;
 
     .card-header {
-        color: #333;
-        background-color: #f0f2f5;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.18);
         font-weight: bold;
+        font-size: 1.3rem;
+        border-bottom: none;
+    }
+
+    // Widen the form (overrides the inline 75% width).
+    form {
+        width: 100% !important;
     }
 
     label {
-        color: #333;
+        color: #fff;
         font-weight: 600;
+        font-size: 1.05rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
 
+    // Keep input boxes light with dark text so typing stays readable.
     input,
     select,
     textarea {
-        color: #333 !important;
+        color: #1b1b1b !important;
         background-color: #fff !important;
+        font-size: 1.05rem;
 
-        &::placeholder { color: #aaa; }
+        &::placeholder { color: #888; }
+    }
+
+    // Profile chips legible on the gradient.
+    .profile-checkbox-item {
+        background: rgba(255, 255, 255, 0.18);
+        border-color: rgba(255, 255, 255, 0.55);
+        color: #fff;
+        font-size: 0.95rem;
+
+        input[type='checkbox'] { accent-color: #20c14d; }
+    }
+
+    button[type='submit'] {
+        min-width: 200px;
+        padding: 0.65rem 1.4rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        background-color: #20c14d !important;
+        border: 1px solid #18a840 !important;
+        color: #fff !important;
     }
 }
 

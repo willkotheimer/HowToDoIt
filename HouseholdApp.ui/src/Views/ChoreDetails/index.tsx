@@ -89,7 +89,7 @@ export default function ChoreDetailsView({ props }) {
             <div className="leftGroups">
               <div className="Greetings">
                 <div className="topContainers rightContainer">
-                  <AppModal title="Edit Chore" buttonLabel="Edit Chore">
+                  <AppModal title="Edit Chore" buttonLabel="Edit Chore" size="lg">
                     <ChoreForm choreInfo={choreInfo} uid={user?.uid ?? ''} onUpdate={refetchChoreImages} />
                   </AppModal>
                   <ChoreInfo choreInfo={choreInfo} />
