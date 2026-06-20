@@ -22,12 +22,21 @@ export function useProfileAssignmentsByUser(userId: number) {
   );
 }
 
+// Dispatching/removing a profile also creates/removes weekly assignments on the
+// backend, so refresh the assignment queries (Runbook + progress) too.
+const invalidateAfterDispatch = (queryClient: ReturnType<typeof useQueryClient>) => {
+  queryClient.invalidateQueries(['profileAssignments']);
+  queryClient.invalidateQueries(['assignmentsByUserHousehold']);
+  queryClient.invalidateQueries(['assignmentsByUser']);
+  queryClient.invalidateQueries(['assignmentsByHousehold']);
+};
+
 export function useAssignProfileToUser() {
   const { post } = useAPIRequest();
   const queryClient = useQueryClient();
   return useMutation(
     (pa: Omit<ProfileAssignment, 'id' | 'profile'>) => post<ProfileAssignment>(url, pa),
-    { onSuccess: () => queryClient.invalidateQueries(['profileAssignments']) },
+    { onSuccess: () => invalidateAfterDispatch(queryClient) },
   );
 }
 
@@ -36,7 +45,7 @@ export function useRemoveProfileAssignment() {
   const queryClient = useQueryClient();
   return useMutation(
     (id: number) => del<void>(`${url}/${id}`),
-    { onSuccess: () => queryClient.invalidateQueries(['profileAssignments']) },
+    { onSuccess: () => invalidateAfterDispatch(queryClient) },
   );
 }
 
