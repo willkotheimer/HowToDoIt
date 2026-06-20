@@ -1,4 +1,6 @@
 import React, { useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
+import { Button } from 'reactstrap';
 import AppModal from '../../Components/AppModal';
 import ChoreForm from '../../Components/Forms/ChoreForm';
 import ImageUploader from '../../Components/Forms/ImageUploader';
@@ -32,6 +34,7 @@ function TaskCard({
   colorMap: Map<number, string>;
   uid: string;
 }) {
+  const history = useHistory();
   const choreId = chore.id ?? chore.Id ?? 0;
   const catId = chore.category ?? chore.Category;
   const category = categories.find((c) => c.id === catId);
@@ -64,6 +67,7 @@ function TaskCard({
           <AppModal title="Add Photos" buttonLabel="Add Photos" size="lg" fullscreen="md">
             <ImageUploader choreInfo={chore} />
           </AppModal>
+          <Button onClick={() => history.push(`/chore/${choreId}`)}>Details</Button>
         </div>
       </div>
     </div>
