@@ -440,3 +440,8 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Local SQL seed/data scripts and dumps — kept locally, not tracked in the repo
+# (may contain real/PII data). Schema is reconstructable from the models + the
+# AzurePipelineSetup playbook examples.
+Seeds/
