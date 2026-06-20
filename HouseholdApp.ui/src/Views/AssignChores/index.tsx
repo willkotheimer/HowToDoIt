@@ -61,7 +61,7 @@ function TaskCard({
           <AppModal title="Edit Task" buttonLabel="Edit">
             <ChoreForm choreInfo={chore} uid={uid} />
           </AppModal>
-          <AppModal title="Add Photos" buttonLabel="Add Photos">
+          <AppModal title="Add Photos" buttonLabel="Add Photos" size="lg" fullscreen="md">
             <ImageUploader choreInfo={chore} />
           </AppModal>
         </div>

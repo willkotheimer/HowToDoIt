@@ -28,6 +28,15 @@ namespace HouseHoldApp.DataAccess
             return _context.Users.FirstOrDefault(u => u.FirebaseKey == firebaseKey);
         }
 
+        public Users GetUserByEmail(string email)
+        {
+            var matches = _context.Users.Where(u => u.Email == email).ToList();
+            // When duplicate records share an email, prefer the one that actually
+            // belongs to a household so we don't link an empty duplicate.
+            return matches.FirstOrDefault(u => _context.HouseHoldUsers.Any(hu => hu.UserId == u.Id))
+                   ?? matches.FirstOrDefault();
+        }
+
         public List<UserHousehold> GetUsersInUsersHouseHold(int id)
         {
             var householdId = _context.HouseHoldUsers
@@ -67,6 +76,18 @@ namespace HouseHoldApp.DataAccess
                 existing.Firstname = user.Firstname;
                 existing.Lastname = user.Lastname;
                 existing.Email = user.Email;
+                _context.SaveChanges();
+            }
+        }
+
+        // Re-link an existing user to a new identity-provider key (e.g. migrating
+        // a Firebase uid to an Entra object id matched by email on first sign-in).
+        public void LinkFirebaseKey(int id, string firebaseKey)
+        {
+            var existing = _context.Users.FirstOrDefault(u => u.Id == id);
+            if (existing != null)
+            {
+                existing.FirebaseKey = firebaseKey;
                 _context.SaveChanges();
             }
         }

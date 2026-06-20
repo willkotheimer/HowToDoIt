@@ -104,7 +104,7 @@ export default function ChoreDetailsView({ props }) {
         </div>
         <div className="bottom">
           {authed && (
-            <AppModal title="Add Image" buttonLabel="Add Image">
+            <AppModal title="Add Image" buttonLabel="Add Image" size="lg" fullscreen="md">
               <Uploader choreInfo={choreInfo} onUpdate={refetchChoreImages} />
             </AppModal>
           )}

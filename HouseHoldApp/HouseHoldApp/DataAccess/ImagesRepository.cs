@@ -23,6 +23,11 @@ namespace HouseHoldApp.DataAccess
             return _context.Images.Where(i => i.ChoreId == choreId).ToList();
         }
 
+        public Images GetImageById(int id)
+        {
+            return _context.Images.FirstOrDefault(i => i.Id == id);
+        }
+
         public Images GetOneImageByChoreId(int choreId)
         {
             return _context.Images.FirstOrDefault(i => i.ChoreId == choreId);

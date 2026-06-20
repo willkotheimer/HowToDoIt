@@ -17,8 +17,8 @@
 - **Frontend**: React 18, TypeScript, TanStack React Query, Reactstrap, SCSS
 - **Backend**: .NET 8 (C#), Entity Framework Core
 - **Database**: SQL Server
-- **Auth**: Firebase (JWT Bearer tokens)
-- **Storage**: Firebase Storage (image uploads)
+- **Auth**: Microsoft Entra External ID (MSAL, Google sign-in; JWT Bearer tokens validated by the API)
+- **Storage**: Azure Blob Storage (image uploads — uploaded via the API, served from a public-read container)
 - **Deployment**: Azure App Service (API), Azure Static Web Apps (frontend)
 - **CI/CD**: Azure Pipelines
 
@@ -29,8 +29,9 @@
 - **Node.js** 22.x
 - **.NET 8 SDK**
 - **SQL Server** (local or remote)
-- **Firebase project** (for Auth and Storage)
-- **Azure subscription** (for deployment)
+- **Microsoft Entra External ID tenant** (for Auth, with Google federation configured)
+- **Azure subscription** (for deployment and Blob Storage)
+- **Azurite** (optional — local Azure Storage emulator for image uploads in dev)
 
 ### Frontend Setup
 
@@ -63,11 +64,11 @@ dotnet ef database update
 
 **Frontend** (`.env.local`):
 ```
-REACT_APP_FIREBASE_API_KEY=...
-REACT_APP_FIREBASE_AUTH_DOMAIN=...
-REACT_APP_FIREBASE_PROJECT_ID=...
-REACT_APP_FIREBASE_STORAGE_BUCKET=...
-REACT_APP_API_URL=http://localhost:5000
+VITE_API_BASE_URL=https://localhost:5001/api
+VITE_ENTRA_CLIENT_ID=<spa-app-registration-client-id>
+VITE_ENTRA_TENANT_ID=<external-tenant-id>
+VITE_ENTRA_AUTHORITY=https://<tenant-subdomain>.ciamlogin.com/
+VITE_ENTRA_API_SCOPE=api://<spa-app-registration-client-id>/access_as_user
 ```
 
 **Backend** (`appsettings.json`):
@@ -76,11 +77,20 @@ REACT_APP_API_URL=http://localhost:5000
   "ConnectionStrings": {
     "DefaultConnection": "Server=localhost;Database=Household;Trusted_Connection=true;"
   },
-  "Firebase": {
-    "ProjectId": "your-firebase-project"
+  "Entra": {
+    "Authority": "https://<tenant-subdomain>.ciamlogin.com/<tenant-id>/v2.0",
+    "Audience": "api://<spa-app-registration-client-id>"
+  },
+  "AzureStorage": {
+    "ConnectionString": "UseDevelopmentStorage=true",
+    "ContainerName": "chore-images"
   }
 }
 ```
+
+> Auth uses Microsoft Entra External ID. The frontend signs in with MSAL (Google federation) and sends a bearer token; the API validates it and requires auth on all write (POST/PATCH/DELETE) endpoints, while reads stay anonymous so signed-out visitors can still view a household. In Azure, the Entra settings are injected into the App Service by the Bicep deployment.
+
+> Image uploads go through the API to Azure Blob Storage. For local development, run the **Azurite** emulator (`UseDevelopmentStorage=true`) or point `AzureStorage:ConnectionString` at a real storage account. In Azure, the connection string and container name are injected into the App Service automatically by the Bicep deployment.
 
 ## Testing
 
@@ -105,7 +115,7 @@ dotnet test
 2. **Azure CLI** installed and authenticated
 3. **Service Principal** for CI/CD (configured in Azure Pipelines)
 4. **SQL Database** on Azure
-5. **Azure Storage Account** for Firebase integration
+5. **Azure Storage Account** for image uploads (provisioned automatically by `infra/main.bicep`)
 
 ### Manual Deployment
 

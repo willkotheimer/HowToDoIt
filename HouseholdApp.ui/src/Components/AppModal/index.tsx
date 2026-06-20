@@ -14,6 +14,8 @@ export default function AppModal(props) {
     title,
     btnColor,
     deletePosition,
+    size,
+    fullscreen,
   } = props;
 
   const [modal, setModal] = useState(false);
@@ -31,7 +33,7 @@ export default function AppModal(props) {
       >
         {buttonLabel}
       </Button>
-      <Modal isOpen={modal} toggle={toggle} className={className}>
+      <Modal isOpen={modal} toggle={toggle} className={className} size={size} fullscreen={fullscreen}>
         <ModalHeader toggle={toggle}>{title}</ModalHeader>
         <ModalBody>
           {React.cloneElement(props.children, { toggle, modal })}
