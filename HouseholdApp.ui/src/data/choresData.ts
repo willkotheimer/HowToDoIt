@@ -88,7 +88,12 @@ export function useUpdateChore() {
       return patch<Chore>(`${choresURL}`, chore);
     },
     {
-      onSuccess: () => queryClient.invalidateQueries(['chores']),
+      onSuccess: () => {
+        // Refresh both the playbook list and any open single-chore view
+        // (ChoreDetails reads ['chore', choreId] via useChoreById).
+        queryClient.invalidateQueries(['chores']);
+        queryClient.invalidateQueries(['chore']);
+      },
     },
   );
 }
