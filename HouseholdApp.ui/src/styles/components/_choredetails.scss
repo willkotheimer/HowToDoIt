@@ -173,6 +173,12 @@
         flex-direction: column;
         gap: 16px;
 
+        // The global `.bottom` rule (Household Chores) applies a jagged
+        // clip-path + gradient; cancel it here so it doesn't overlay the
+        // action buttons (e.g. Save Order) at the top of this section.
+        background: none;
+        clip-path: none;
+
         // Action row (Add Image + Reorder) — sits above the decorative divider.
         .image-actions {
             display: flex;

@@ -51,6 +51,10 @@
     width: 35px;
     height: 34px;
     border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 
 .deletePosition:hover {
