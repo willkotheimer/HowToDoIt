@@ -445,3 +445,10 @@ $RECYCLE.BIN/
 # (may contain real/PII data). Schema is reconstructable from the models + the
 # AzurePipelineSetup playbook examples.
 Seeds/
+
+# Raw source images for seed generation (compressed copies live in HowToDoIt.ui/public/seed/)
+/images-seeds/*.png
+/images-seeds2/*.png
+/images-seeds3/*.png
+/seed-mockup.png
+/seed-mockup2.png

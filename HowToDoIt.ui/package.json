@@ -1,0 +1,80 @@
+{
+  "name": "howtodoit-ui",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@azure/msal-browser": "^5.14.0",
+    "@azure/msal-react": "^5.4.5",
+    "@fortawesome/fontawesome-free": "^5.15.1",
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
+    "@material-ui/core": "^4.11.4",
+    "@tanstack/react-query": "^4.37.0",
+    "axios": "^0.21.0",
+    "bootstrap": "^4.5.3",
+    "env-cmd": "^10.1.0",
+    "formik": "^2.4.4",
+    "install": "^0.13.0",
+    "lodash": "^4.17.21",
+    "npm": "^8.19.3",
+    "nvm": "0.0.4",
+    "prop-types": "^15.7.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-error-boundary": "^3.1.4",
+    "react-hook-form": "^7.8.1",
+    "react-images-upload": "^1.2.8",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
+    "react-select": "^4.3.1",
+    "react-strap": "0.0.1",
+    "react-string-replace": "^0.4.4",
+    "react-table": "^7.8.0",
+    "reactstrap": "^8.9.0",
+    "recharts": "^2.12.7",
+    "sass": "^1.77.6",
+    "toaster-js": "^2.2.3",
+    "web-vitals": "^0.2.4"
+  },
+  "scripts": {
+    "serve": "vite",
+    "build": "vite build",
+    "build:production": "env-cmd -f .env.production vite build",
+    "serve:development": "env-cmd -f .env.development vite",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:report": "playwright show-report"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^12.1.5",
+    "@types/react": "^16.14.33",
+    "@types/react-dom": "^16.9.14",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/react-select": "^4.0.18",
+    "@types/reactstrap": "^8.7.2",
+    "@vitejs/plugin-react": "^4.7.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "happy-dom": "^20.9.0",
+    "sass": "^1.77.6",
+    "serve": "^14.2.6",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.9"
+  }
+}
