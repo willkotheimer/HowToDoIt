@@ -17,15 +17,21 @@ namespace HowToDoItApp
         {
             var host = CreateHostBuilder(args).Build();
 
-            // In development, apply migrations and seed the example sequences so
-            // the app has data to browse locally. No-op once data exists.
+            // Apply pending migrations (creates the howtodoit schema + tables) and
+            // seed the example sequences. Idempotent — a no-op once data exists.
+            // Wrapped so a DB hiccup (unreachable / missing permission) is logged
+            // but never crashes the app: the SPA and read endpoints still serve.
             using (var scope = host.Services.CreateScope())
             {
-                var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
-                if (env.IsDevelopment())
+                var services = scope.ServiceProvider;
+                try
                 {
-                    var context = scope.ServiceProvider.GetRequiredService<HowToDoItContext>();
-                    DbSeeder.Seed(context);
+                    DbSeeder.Seed(services.GetRequiredService<HowToDoItContext>());
+                }
+                catch (Exception ex)
+                {
+                    services.GetRequiredService<ILogger<Program>>()
+                        .LogError(ex, "Startup migrate/seed failed; continuing without it.");
                 }
             }
 

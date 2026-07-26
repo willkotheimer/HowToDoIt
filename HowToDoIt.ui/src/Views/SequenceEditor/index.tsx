@@ -3,7 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import {
   Button, Input, Label, FormGroup, Spinner,
 } from 'reactstrap';
-import { useSequence, useCreateSequence, useUpdateSequence, useDeleteSequence } from '../../data/sequenceData';
+import { useSequence, useSequences, useCreateSequence, useUpdateSequence, useDeleteSequence } from '../../data/sequenceData';
 import { useCategories, useAddCategory } from '../../data/categoryData';
 import { useCreateStep, useReorderSteps } from '../../data/stepData';
 import StepEditor from '../../Components/StepEditor';
@@ -19,6 +19,8 @@ export default function SequenceEditor() {
 
   const { data: sequence, isLoading } = useSequence(sequenceId, isEdit);
   const { data: categories = [] } = useCategories();
+  const { data: allSequences = [] } = useSequences();
+  const existingDomains = Array.from(new Set(allSequences.map((s) => s.domain).filter(Boolean)));
 
   const createSequence = useCreateSequence();
   const updateSequence = useUpdateSequence();
@@ -28,6 +30,7 @@ export default function SequenceEditor() {
   const reorderSteps = useReorderSteps(sequenceId);
 
   const [title, setTitle] = useState('');
+  const [domain, setDomain] = useState('');
   const [description, setDescription] = useState('');
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [isPublic, setIsPublic] = useState(true);
@@ -38,6 +41,7 @@ export default function SequenceEditor() {
   useEffect(() => {
     if (sequence) {
       setTitle(sequence.title ?? '');
+      setDomain(sequence.domain ?? '');
       setDescription(sequence.description ?? '');
       setCategoryId(sequence.categoryId ?? null);
       setIsPublic(sequence.isPublic);
@@ -48,7 +52,7 @@ export default function SequenceEditor() {
   if (isEdit && isLoading) return <div className="editor__loading"><Spinner /> Loading…</div>;
 
   const saveMeta = async () => {
-    const payload = { title, description, categoryId, isPublic };
+    const payload = { title, domain, description, categoryId, isPublic };
     if (isEdit) {
       await updateSequence.mutateAsync({ id: sequenceId, ...payload });
     } else {
@@ -95,6 +99,18 @@ export default function SequenceEditor() {
         <FormGroup>
           <Label>Title</Label>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Change the die on Press #4" />
+        </FormGroup>
+        <FormGroup>
+          <Label>Domain</Label>
+          <Input
+            list="domain-options"
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
+            placeholder="e.g. Coffee Shop, Retail Store, Bike Shop"
+          />
+          <datalist id="domain-options">
+            {existingDomains.map((d) => <option key={d} value={d as string} />)}
+          </datalist>
         </FormGroup>
         <FormGroup>
           <Label>Description</Label>

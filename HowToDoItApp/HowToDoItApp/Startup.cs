@@ -98,6 +98,10 @@ namespace HowToDoItApp
 
             app.UseHttpsRedirection();
 
+            // Serve the bundled React SPA (wwwroot) alongside the API.
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseCors();
@@ -109,6 +113,9 @@ namespace HowToDoItApp
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                // Client-side routes (everything not matched by an API controller
+                // or a static file) fall back to the SPA entry point.
+                endpoints.MapFallbackToFile("index.html");
             });
         }
 

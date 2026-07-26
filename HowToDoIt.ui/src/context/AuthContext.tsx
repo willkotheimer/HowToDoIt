@@ -27,6 +27,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [canWrite, setCanWrite] = useState(false);
 
   useEffect(() => {
+    // Dev/E2E-only writer bypass so the editor UI can be reached (e.g. for
+    // Playwright walkthrough screenshots) without a real Entra sign-in. Stripped
+    // from production builds — import.meta.env.DEV is false there.
+    if (import.meta.env.DEV) {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('writer') === '1' || window.localStorage.getItem('e2e-writer') === '1') {
+        setUser({ uid: 'e2e', displayName: 'Demo Writer', email: ALLOWED_EMAILS[0] });
+        setCanWrite(true);
+        return;
+      }
+    }
     const account = accounts[0];
     if (account) {
       const claims = account.idTokenClaims as { email?: string; preferred_username?: string } | undefined;
