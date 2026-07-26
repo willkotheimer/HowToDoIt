@@ -156,7 +156,8 @@ $bp-sky: #18a0de;
   &:nth-child(even) {
     .sop__media { order: 2; }
     .sop__text { order: 1; text-align: right; }
-    .sop__arrow { transform: scaleX(-1); }
+    // Even rows have the image on the right, so the arrow points right (the
+    // un-flipped base). Only odd rows (image on the left) flip — see below.
   }
   &:nth-child(even) .sop__arrow { margin-left: auto; }
 }

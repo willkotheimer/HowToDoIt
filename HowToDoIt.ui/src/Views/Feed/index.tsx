@@ -3,15 +3,31 @@ import { useSequences, useSequence } from '../../data/sequenceData';
 import SequenceCard from '../../Components/SequenceCard';
 import type { WorkSequence } from '../../Types';
 
-const INITIAL = '<b>HowToDoIt</b> turns procedures into visual, step-by-step image workflows.';
-const NARRATION = '<b>Your sequence</b> tells the story better than you could. Complicated tasks collapse down to 5&ndash;10 images.';
-
 const DOMAIN_BLURBS: Record<string, string> = {
   'Coffee Shop': 'Opening, display, and bar procedures for a specialty café.',
   'Retail Store': 'Garment care, floor inventory, and checkout for a menswear boutique.',
+  'Online Store': 'Pack & ship, product listing, and returns for an e-commerce shop.',
 };
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+// A hero "step" — either a real WorkStep or a static walkthrough frame.
+type HeroStep = {
+  id: string | number;
+  title?: string;
+  description?: string;
+  images?: { id: string | number; imageUrl: string; sortOrder?: number }[];
+};
+
+// "How it works" onboarding — its own scrollytelling scene, placeholder images
+// for now (swap in app screenshots later).
+const WALKTHROUGH: HeroStep[] = [
+  { id: 'w1', title: 'Sign in', description: 'Sign in to unlock the create tools — only allowed writers can add or edit sequences.' },
+  { id: 'w2', title: 'Create a domain & category', description: 'Name the sequence, then group it by domain and category.' },
+  { id: 'w3', title: 'Upload your images', description: 'Drag in a photo for each step — they’re resized automatically before upload.' },
+  { id: 'w4', title: 'Order your photos', description: 'Arrange the images into the exact order of the task.' },
+  { id: 'w5', title: 'Add descriptions', description: 'Write a short caption for each step so anyone can follow along.' },
+];
 
 // Quarter-arc dashed guide arrow (points left toward the image via CSS scaleX).
 const Arrow = () => (
@@ -21,10 +37,13 @@ const Arrow = () => (
   </svg>
 );
 
+type Scene = { id: string; h1: string; initial: string; narration: string; steps: HeroStep[] };
+
+const sceneHeight = (steps: HeroStep[]) => (steps.length ? `${(steps.length - 1) * 60 + 110}vh` : '72vh');
+
 export default function Feed() {
   const { data: sequences = [] } = useSequences();
   const rootRef = useRef<HTMLDivElement>(null);
-  const narrRef = useRef<HTMLParagraphElement>(null);
 
   // Group sequences into domains (stable by id), domains ordered by first id.
   const domains = useMemo(() => {
@@ -37,15 +56,31 @@ export default function Feed() {
     return Array.from(map.entries()).map(([name, seqs]) => ({ name, sequences: seqs }));
   }, [sequences]);
 
-  // Featured sequence for the hero scrollytelling = first sequence of first domain.
+  // Coffee-shop demo = first sequence of the first domain.
   const featuredId = domains[0]?.sequences[0]?.id ?? 0;
   const { data: featured } = useSequence(featuredId, featuredId > 0);
-  const featuredSteps = useMemo(
+  const coffeeSteps: HeroStep[] = useMemo(
     () => [...(featured?.steps ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
     [featured],
   );
 
-  // ── Scroll wiring: narration swap, horizontal step push, invite fades,
+  // Two independent scrollytelling scenes, played one after the other.
+  const scenes: Scene[] = useMemo(() => [
+    {
+      id: 'howto', h1: 'How it works',
+      initial: '<b>Anyone</b> can build a sequence in five steps.',
+      narration: 'No manual to write — <b>capture the steps</b>, order them, and caption each.',
+      steps: WALKTHROUGH,
+    },
+    {
+      id: 'featured', h1: 'Your Sequence',
+      initial: '<b>HowToDoIt</b> turns procedures into visual, step-by-step image workflows.',
+      narration: '<b>Your sequence</b> tells the story better than you could. Complicated tasks collapse to 5&ndash;10 images.',
+      steps: coffeeSteps,
+    },
+  ], [coffeeSteps]);
+
+  // ── Scroll wiring: per-scene dwell push + narration swap, invite fades,
   //    scroll-spy nav, and abortable ("scroll wins") nav jumps. ──
   useEffect(() => {
     const root = rootRef.current;
@@ -53,40 +88,44 @@ export default function Feed() {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { root.classList.add('reduce-motion'); return undefined; }
 
-    const scene = root.querySelector<HTMLElement>('#sec-overview');
-    const slides = Array.from(root.querySelectorAll<HTMLElement>('.slide'));
+    const sceneEls = Array.from(root.querySelectorAll<HTMLElement>('.splash-scene'));
+    const sceneSlides = new Map(sceneEls.map((s) => [s, Array.from(s.querySelectorAll<HTMLElement>('.slide'))]));
     const dscenes = Array.from(root.querySelectorAll<HTMLElement>('.dscene'));
-    const N = slides.length;
-    let lastNarr: string | null = null;
     let ticking = false;
 
     const update = () => {
       ticking = false;
-      if (scene && N > 0) {
+      sceneEls.forEach((scene) => {
         const total = scene.offsetHeight - window.innerHeight;
         const p = total > 0 ? Math.min(Math.max(-scene.getBoundingClientRect().top / total, 0), 1) : 0;
-        const text = p < 0.04 ? INITIAL : NARRATION;
-        if (text !== lastNarr) { if (narrRef.current) narrRef.current.innerHTML = text; lastNarr = text; }
-        // Map scroll → active step with a DWELL: each step holds centered for
-        // the first part of its slot, then eases across to the next.
-        const start = 0.06; const end = 0.97;
-        const region = Math.min(Math.max((p - start) / (end - start), 0), 1);
-        let af = 0;
-        if (N > 1) {
-          const seg = region * (N - 1);
-          const t = Math.min(Math.floor(seg), N - 2);
-          const x = seg - t;
-          const hold = 0.55; // fraction of each step's slot spent holding
-          let f = 0;
-          if (x > hold) {
-            const y = (x - hold) / (1 - hold);
-            f = y < 0.5 ? 2 * y * y : 1 - ((-2 * y + 2) ** 2) / 2;
-          }
-          af = t + f;
+
+        // Narration swaps from the intro line to the narration as this scene scrolls.
+        const narr = scene.querySelector<HTMLElement>('.hero-narr p');
+        if (narr) {
+          const key = p < 0.04 ? 'initial' : 'narration';
+          if (narr.dataset.shown !== key) { narr.innerHTML = narr.dataset[key] || ''; narr.dataset.shown = key; }
         }
-        // Reversed: new step enters from the RIGHT, old exits LEFT.
-        slides.forEach((sl, i) => { sl.style.transform = `translateX(${(i - af) * 100}%)`; });
-      }
+
+        // Dwell push: each step holds centered, then eases to the next.
+        const slides = sceneSlides.get(scene) || [];
+        const N = slides.length;
+        if (N > 0) {
+          const start = 0.06; const end = 0.97;
+          const region = Math.min(Math.max((p - start) / (end - start), 0), 1);
+          let af = 0;
+          if (N > 1) {
+            const seg = region * (N - 1);
+            const t = Math.min(Math.floor(seg), N - 2);
+            const x = seg - t;
+            const hold = 0.55;
+            let f = 0;
+            if (x > hold) { const y = (x - hold) / (1 - hold); f = y < 0.5 ? 2 * y * y : 1 - ((-2 * y + 2) ** 2) / 2; }
+            af = t + f;
+          }
+          slides.forEach((sl, i) => { sl.style.transform = `translateX(${(i - af) * 100}%)`; });
+        }
+      });
+
       dscenes.forEach((sc) => {
         const inv = sc.querySelector<HTMLElement>('.domain-invite');
         if (!inv) return;
@@ -97,19 +136,19 @@ export default function Feed() {
     };
     const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
 
-    // Scroll-spy: highlight the active nav link.
+    // Scroll-spy: hero scenes highlight "Overview"; domain rows highlight themselves.
     const links = new Map<string, HTMLElement>();
     root.querySelectorAll<HTMLElement>('.splash-nav a').forEach((a) => links.set(a.dataset.target || '', a));
     const spy = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
-        if (e.isIntersecting) {
-          root.querySelectorAll('.splash-nav a').forEach((a) => a.classList.remove('is-active'));
-          const id = e.target.id.replace('sec-', '');
-          links.get(id)?.classList.add('is-active');
-        }
+        if (!e.isIntersecting) return;
+        root.querySelectorAll('.splash-nav a').forEach((a) => a.classList.remove('is-active'));
+        const el = e.target as HTMLElement;
+        const key = el.classList.contains('splash-scene') ? 'overview' : el.id.replace('sec-', '');
+        links.get(key)?.classList.add('is-active');
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
-    root.querySelectorAll<HTMLElement>('.splash-scene, .dscene').forEach((el) => spy.observe(el));
+    [...sceneEls, ...dscenes].forEach((el) => spy.observe(el));
 
     // Abortable smooth scroll — user scroll wins.
     const smoothTo = (targetY: number) => {
@@ -147,47 +186,51 @@ export default function Feed() {
       spy.disconnect();
       navLinks.forEach((a) => a.removeEventListener('click', navClick));
     };
-  }, [domains, featuredSteps]);
-
-  const sceneHeight = featuredSteps.length ? `${(featuredSteps.length - 1) * 82 + 120}vh` : '72vh';
+  }, [domains, scenes]);
 
   return (
     <div className="splash" ref={rootRef}>
       <div className="splash__shell">
         <nav className="splash-nav" aria-label="Sections">
           <h4>Browse</h4>
-          <a data-target="overview" className="is-active">Overview</a>
+          <a data-target="howto" className="is-active">Overview</a>
           {domains.map((d) => <a key={d.name} data-target={slug(d.name)}>{d.name}</a>)}
         </nav>
 
         <div className="splash__content">
-          <section id="sec-overview" className="splash-scene" style={{ height: sceneHeight }}>
-            <div className="splash-scene__pin">
-              <div className="hero-narr">
-                <h1>Your Sequence</h1>
-                <p ref={narrRef} dangerouslySetInnerHTML={{ __html: INITIAL }} />
-              </div>
-              <div className="stage">
-                {featuredSteps.map((st, i) => {
-                  const cover = [...(st.images ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))[0];
-                  return (
-                    <div className="slide" key={st.id}>
-                      <div className="slide__media">
-                        <div className="slide__frame">{cover && <img src={cover.imageUrl} alt={st.title ?? `Step ${i + 1}`} />}</div>
-                        <div className="slide__stepnum">Step <b>{i + 1}</b></div>
+          {scenes.map((scene) => (
+            <section id={`sec-${scene.id}`} className="splash-scene" key={scene.id} style={{ height: sceneHeight(scene.steps) }}>
+              <div className="splash-scene__pin">
+                <div className="hero-narr">
+                  <h1>{scene.h1}</h1>
+                  <p data-initial={scene.initial} data-narration={scene.narration} dangerouslySetInnerHTML={{ __html: scene.initial }} />
+                </div>
+                <div className="stage">
+                  {scene.steps.map((st, i) => {
+                    const cover = [...(st.images ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))[0];
+                    return (
+                      <div className="slide" key={st.id}>
+                        <div className="slide__media">
+                          <div className={`slide__frame${cover ? '' : ' is-empty'}`}>
+                            {cover
+                              ? <img src={cover.imageUrl} alt={st.title ?? `Step ${i + 1}`} />
+                              : <span className="slide__frame-ph">Screenshot</span>}
+                          </div>
+                          <div className="slide__stepnum">Step <b>{i + 1}</b></div>
+                        </div>
+                        <div className="slide__text">
+                          <Arrow />
+                          <h3 className="slide__title">{st.title || `Step ${i + 1}`}</h3>
+                          {st.description && <p className="slide__desc">{st.description}</p>}
+                        </div>
                       </div>
-                      <div className="slide__text">
-                        <Arrow />
-                        <h3 className="slide__title">{st.title || `Step ${i + 1}`}</h3>
-                        {st.description && <p className="slide__desc">{st.description}</p>}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+                <div className="scene-hint">Scroll to play ↓</div>
               </div>
-              <div className="scene-hint">Scroll to play ↓</div>
-            </div>
-          </section>
+            </section>
+          ))}
 
           {domains.map((d) => (
             <section id={`sec-${slug(d.name)}`} className="dscene" key={d.name}>

@@ -66,6 +66,7 @@ namespace HowToDoItApp.DataAccess
             if (existing == null) return;
 
             existing.Title = sequence.Title;
+            existing.Domain = sequence.Domain;
             existing.Description = sequence.Description;
             existing.CategoryId = sequence.CategoryId;
             existing.IsPublic = sequence.IsPublic;

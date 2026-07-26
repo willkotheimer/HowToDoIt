@@ -450,5 +450,10 @@ Seeds/
 /images-seeds/*.png
 /images-seeds2/*.png
 /images-seeds3/*.png
+/images-seeds4/*.png
 /seed-mockup.png
 /seed-mockup2.png
+
+# Playwright walkthrough capture output (compressed copies live in public/seed + docs/)
+/HowToDoIt.ui/e2e/walkthrough-shots/
+/HowToDoIt.ui/playwright-results/

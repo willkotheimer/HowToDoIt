@@ -16,6 +16,8 @@ export default defineConfig({
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    // The dev API runs on https://localhost:5001 with a self-signed cert.
+    ignoreHTTPSErrors: true,
   },
   projects: [
     {

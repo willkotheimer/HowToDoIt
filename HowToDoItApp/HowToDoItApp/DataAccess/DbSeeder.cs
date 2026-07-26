@@ -8,7 +8,8 @@ namespace HowToDoItApp.DataAccess
 {
     /// <summary>
     /// Applies pending migrations and seeds the example work sequences (coffee-shop
-    /// SOPs 101-103 and retail-clerk SOPs 201-203). Image URLs are relative
+    /// SOPs 101-103, retail-clerk SOPs 201-203, and online-store SOPs 401-403).
+    /// Image URLs are relative
     /// "/seed/*.jpg" paths served by the frontend's public/ folder, so the demo
     /// works locally without blob storage. Idempotent per title: only inserts
     /// sequences that don't already exist, so it can add new sets without wiping.
@@ -114,36 +115,36 @@ namespace HowToDoItApp.DataAccess
                         Step("203", 5, "Receipt issuance & bagging", "Issue the receipt and bag the folded items neatly."),
                     }),
 
-                // ── Bike Shop (301-303) ──────────────────────────────────────────
-                Seq("Fix a Flat", "Bike Shop", Cat("Wheels & Tires"),
-                    "Repair a flat and get the wheel rolling true again.",
+                // ── Online Store Fulfillment (401-403) ───────────────────────────
+                Seq("Pack & Ship an Order", "Online Store", Cat("Fulfillment"),
+                    "Fulfill an order accurately and get it out the door.",
                     new List<WorkStep>
                     {
-                        Step("301", 1, "Remove the wheel", "Release the brake, open the quick-release, and lift the wheel out of the dropouts."),
-                        Step("301", 2, "Unseat the tire & pull the tube", "Work a tire lever under the bead, run it around the rim, and pull out the punctured tube."),
-                        Step("301", 3, "Patch or replace the tube", "Find the hole, buff it, and press on a patch — or swap in a fresh tube."),
-                        Step("301", 4, "Reseat the tire", "Tuck the tube in and work the bead back over the rim by hand, checking nothing is pinched."),
-                        Step("301", 5, "Inflate & remount", "Inflate to the pressure on the sidewall, drop the wheel back in, and close the quick-release."),
+                        Step("401", 1, "Pull the item", "Pick the ordered item from the shelf using the pick list."),
+                        Step("401", 2, "Verify against the packing slip", "Check the item, SKU, and quantity against the packing slip."),
+                        Step("401", 3, "Protect & box it", "Wrap the item, cushion it, and seal it in a right-sized box."),
+                        Step("401", 4, "Print & apply the label", "Print the shipping label and stick it squarely on the box."),
+                        Step("401", 5, "Hand off to the carrier", "Log the tracking number and set the parcel out for pickup."),
                     }),
-                Seq("Adjust Rim Brakes", "Bike Shop", Cat("Brakes"),
-                    "Dial in rim brakes for crisp, even stopping power.",
+                Seq("List a New Product", "Online Store", Cat("Listings"),
+                    "Turn a new product into a clean, findable listing.",
                     new List<WorkStep>
                     {
-                        Step("302", 1, "Check pad wear", "Inspect the pads for wear and embedded grit; replace any worn past the line."),
-                        Step("302", 2, "Align the pads", "Set each pad to strike the rim squarely, just below the tire, with a slight toe-in."),
-                        Step("302", 3, "Set the pad gap", "Balance the spring tension so both pads sit an equal, close distance from the rim."),
-                        Step("302", 4, "Tension the cable", "Pull the cable snug at the caliper and lock the pinch bolt."),
-                        Step("302", 5, "Test & fine-tune", "Squeeze the lever, spin the wheel to check for rub, and fine-tune with the barrel adjuster."),
+                        Step("402", 1, "Photograph the product", "Shoot the product on a clean background from a few angles."),
+                        Step("402", 2, "Weigh & measure", "Weigh the item and note its dimensions for shipping."),
+                        Step("402", 3, "Write the listing", "Draft a clear title and description with the key details."),
+                        Step("402", 4, "Set price & inventory", "Set the price and enter the on-hand quantity."),
+                        Step("402", 5, "Publish", "Review and publish the listing to the store."),
                     }),
-                Seq("Clean & Lube the Chain", "Bike Shop", Cat("Drivetrain"),
-                    "Clean and lubricate the chain for a quiet, smooth-shifting drivetrain.",
+                Seq("Process a Return", "Online Store", Cat("Returns"),
+                    "Handle a return cleanly and close the loop with the customer.",
                     new List<WorkStep>
                     {
-                        // 303-1 "Shift to the small cog" skipped — no photo yet.
-                        Step("303", 2, "Degrease the chain", "Scrub the chain with a brush and degreaser, working each link and the cassette."),
-                        Step("303", 3, "Wipe it dry", "Backpedal the chain through a clean rag until it runs dry and bright."),
-                        Step("303", 4, "Apply lube", "Drip a drop of lube onto each roller while backpedaling slowly."),
-                        Step("303", 5, "Wipe the excess", "Backpedal, then wipe off the surplus so the chain is slick but not greasy."),
+                        Step("403", 1, "Receive the package", "Match the returned parcel to its return request (RMA)."),
+                        Step("403", 2, "Inspect the item", "Check the item's condition against the return reason."),
+                        Step("403", 3, "Restock or discard", "Return sellable items to stock; set damaged ones aside."),
+                        Step("403", 4, "Issue the refund", "Refund the customer for the approved amount."),
+                        Step("403", 5, "Close the ticket", "Note the outcome and close the return ticket."),
                     }),
             };
 
