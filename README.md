@@ -36,7 +36,7 @@
 ### Frontend Setup
 
 ```bash
-cd HouseholdApp.ui
+cd HowToDoIt.ui
 npm ci
 npm run dev
 ```
@@ -46,7 +46,7 @@ Frontend runs on `http://localhost:3000`
 ### Backend Setup
 
 ```bash
-cd HouseHoldApp
+cd HowToDoItApp
 dotnet restore
 dotnet build
 dotnet run
@@ -96,14 +96,14 @@ VITE_ENTRA_API_SCOPE=api://<spa-app-registration-client-id>/access_as_user
 
 ```bash
 # Frontend unit tests
-cd HouseholdApp.ui
+cd HowToDoIt.ui
 npm test
 
 # Frontend E2E smoke tests
 npm run test:e2e
 
 # Backend unit tests
-cd ../HouseHoldApp
+cd ../HowToDoItApp
 dotnet test
 ```
 
@@ -128,14 +128,14 @@ dotnet test
 
 2. **Build and Deploy Backend**:
    ```bash
-   cd HouseHoldApp
+   cd HowToDoItApp
    dotnet publish -c Release -o ./publish
    # Deploy publish folder to App Service via Azure Portal or CLI
    ```
 
 3. **Build and Deploy Frontend**:
    ```bash
-   cd HouseholdApp.ui
+   cd HowToDoIt.ui
    npm run build
    # Deploy build folder to Static Web Apps via Azure Portal or CLI
    ```

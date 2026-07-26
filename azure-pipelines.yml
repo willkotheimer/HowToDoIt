@@ -29,18 +29,18 @@ stages:
 
           - script: dotnet restore
             displayName: dotnet restore
-            workingDirectory: HouseHoldApp
+            workingDirectory: HowToDoItApp
 
           - script: dotnet build --no-restore --configuration $(buildConfiguration)
             displayName: dotnet build
-            workingDirectory: HouseHoldApp
+            workingDirectory: HowToDoItApp
 
           - script: >
               dotnet test --no-build --configuration $(buildConfiguration)
               --logger trx
               --results-directory $(Agent.TempDirectory)/TestResults
             displayName: dotnet test
-            workingDirectory: HouseHoldApp
+            workingDirectory: HowToDoItApp
 
           - task: PublishTestResults@2
             displayName: Publish xUnit results
@@ -50,10 +50,10 @@ stages:
               testResultsFiles: '$(Agent.TempDirectory)/TestResults/**/*.trx'
 
           - script: >
-              dotnet publish HouseHoldApp/HouseHoldApp.csproj --no-build --configuration $(buildConfiguration)
+              dotnet publish HowToDoItApp/HowToDoItApp.csproj --no-build --configuration $(buildConfiguration)
               --output $(Build.ArtifactStagingDirectory)/api
             displayName: dotnet publish
-            workingDirectory: HouseHoldApp
+            workingDirectory: HowToDoItApp
 
           - publish: $(Build.ArtifactStagingDirectory)/api
             displayName: Publish API artifact
@@ -76,22 +76,22 @@ stages:
 
           - script: npm ci
             displayName: npm ci
-            workingDirectory: HouseholdApp.ui
+            workingDirectory: HowToDoIt.ui
 
           - script: npm test
             displayName: Vitest unit tests
-            workingDirectory: HouseholdApp.ui
+            workingDirectory: HowToDoIt.ui
 
           - task: PublishTestResults@2
             displayName: Publish Vitest results
             condition: succeededOrFailed()
             inputs:
               testResultsFormat: JUnit
-              testResultsFiles: HouseholdApp.ui/vitest-results/results.xml
+              testResultsFiles: HowToDoIt.ui/vitest-results/results.xml
 
           - script: npm run build
             displayName: Build production bundle
-            workingDirectory: HouseholdApp.ui
+            workingDirectory: HowToDoIt.ui
             env:
               # Entra External ID config baked into the SPA bundle at build time.
               # Values are defined as pipeline variables (or a variable group), not committed.
@@ -102,20 +102,20 @@ stages:
 
           - script: npx playwright install --with-deps chromium
             displayName: Install Playwright + Chromium deps
-            workingDirectory: HouseholdApp.ui
+            workingDirectory: HowToDoIt.ui
 
           - script: node_modules/.bin/serve -s build -l 3000 &
             displayName: Serve production build
-            workingDirectory: HouseholdApp.ui
+            workingDirectory: HowToDoIt.ui
 
           - script: |
               npx wait-on http://localhost:3000 --timeout 60000
             displayName: Start and Wait for server
-            workingDirectory: HouseholdApp.ui
+            workingDirectory: HowToDoIt.ui
 
           - script: npm run test:e2e
             displayName: Playwright smoke tests
-            workingDirectory: HouseholdApp.ui
+            workingDirectory: HowToDoIt.ui
             env:
               CI: true
 
@@ -124,9 +124,9 @@ stages:
             condition: succeededOrFailed()
             inputs:
               testResultsFormat: JUnit
-              testResultsFiles: HouseholdApp.ui/playwright-results/results.xml
+              testResultsFiles: HowToDoIt.ui/playwright-results/results.xml
 
-          - publish: HouseholdApp.ui/build
+          - publish: HowToDoIt.ui/build
             displayName: Publish frontend artifact
             artifact: frontend
 
@@ -179,9 +179,9 @@ stages:
                   inputs:
                     azureSubscription: azure-service-connection
                     appType: webAppLinux
-                    appName: household-api
+                    appName: howtodoit-api
                     package: $(Pipeline.Workspace)/api
-                    startUpCommand: 'dotnet HouseHoldApp.dll'
+                    startUpCommand: 'dotnet HowToDoItApp.dll'
                     appSettings: -WEBSITE_RUN_FROM_PACKAGE 1 -SCM_DO_BUILD_DURING_DEPLOYMENT false -ConnectionStrings__DefaultConnection "$(SQL_CONNECTION_STRING)"
 
   # ── Deploy frontend to Azure Static Web Apps ─────────────────────────────────
