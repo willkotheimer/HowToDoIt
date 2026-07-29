@@ -42,6 +42,27 @@
     font-weight: 600;
   }
 
+  // Inputs sit on the dark panels: give them a readable dark-translucent field
+  // with white typed text and a legible (not grey-on-black) placeholder.
+  .form-control,
+  .form-select {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+
+    &::placeholder { color: rgba(255, 255, 255, 0.6); }
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.12);
+      border-color: #18a0de;
+      color: #fff;
+      box-shadow: 0 0 0 0.2rem rgba(24, 160, 222, 0.25);
+    }
+  }
+
+  // <select> renders its options in the OS menu (usually a light popup), so keep
+  // option text dark for that context.
+  .form-select option { color: #000; }
+
   &__new-category {
     display: flex;
     gap: 0.5rem;
