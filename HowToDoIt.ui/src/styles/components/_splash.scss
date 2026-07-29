@@ -86,6 +86,13 @@ $sp-sky: #18a0de;
   .slide { grid-template-columns: 1fr; gap: 1rem; align-content: center; }
   .slide__arrow { display: none; }
   .domain-row { grid-template-columns: 1fr; }
+
+  // Unpin the domain rows on mobile. In one column the three cards stack taller
+  // than the viewport, so a fixed-height sticky pin overflows and consecutive
+  // pinned scenes overlap during the stop phase. Let them flow instead.
+  .dscene { height: auto; }
+  .dscene__pin { position: static; height: auto; padding-top: 0.5rem; }
+  .domain-invite { opacity: 1 !important; } // JS sets inline opacity for the pinned fade; force-show when unpinned
 }
 
 // ── Footer ──
