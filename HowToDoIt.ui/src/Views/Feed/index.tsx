@@ -19,14 +19,15 @@ type HeroStep = {
   images?: { id: string | number; imageUrl: string; sortOrder?: number }[];
 };
 
-// "How it works" onboarding — its own scrollytelling scene, placeholder images
-// for now (swap in app screenshots later).
+// "How it works" onboarding — its own scrollytelling scene. Frames are real app
+// screenshots captured by e2e/screenshots.spec.ts (Playwright).
+const walkImg = (n: number) => [{ id: `hw${n}`, imageUrl: `/seed/howto-${n}.jpg`, sortOrder: 0 }];
 const WALKTHROUGH: HeroStep[] = [
-  { id: 'w1', title: 'Sign in', description: 'Sign in to unlock the create tools — only allowed writers can add or edit sequences.' },
-  { id: 'w2', title: 'Create a domain & category', description: 'Name the sequence, then group it by domain and category.' },
-  { id: 'w3', title: 'Upload your images', description: 'Drag in a photo for each step — they’re resized automatically before upload.' },
-  { id: 'w4', title: 'Order your photos', description: 'Arrange the images into the exact order of the task.' },
-  { id: 'w5', title: 'Add descriptions', description: 'Write a short caption for each step so anyone can follow along.' },
+  { id: 'w1', title: 'Sign in', description: 'Sign in to unlock the create tools — only allowed writers can add or edit sequences.', images: walkImg(1) },
+  { id: 'w2', title: 'Create a domain & category', description: 'Name the sequence, then group it by domain and category.', images: walkImg(2) },
+  { id: 'w3', title: 'Upload your images', description: 'Drag in a photo for each step — they’re resized automatically before upload.', images: walkImg(3) },
+  { id: 'w4', title: 'Order your photos', description: 'Arrange the images into the exact order of the task.', images: walkImg(4) },
+  { id: 'w5', title: 'Add descriptions', description: 'Write a short caption for each step so anyone can follow along.', images: walkImg(5) },
 ];
 
 // Quarter-arc dashed guide arrow (points left toward the image via CSS scaleX).

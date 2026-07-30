@@ -48,13 +48,6 @@ export default function StepEditor({
           <div className="step-editor__move">
             <Button size="sm" color="light" disabled={index === 0} onClick={() => onMove(step.id, -1)}>↑</Button>
             <Button size="sm" color="light" disabled={index === total - 1} onClick={() => onMove(step.id, 1)}>↓</Button>
-            <Button
-              size="sm"
-              color="danger"
-              onClick={() => { if (window.confirm('Delete this step and its images?')) deleteStep.mutate(step.id); }}
-            >
-              Delete
-            </Button>
           </div>
         </div>
 
@@ -87,9 +80,24 @@ export default function StepEditor({
           ))}
         </div>
 
-        <AppModal title="Add Images" buttonLabel="Add Images" size="lg" btnColor="secondary">
-          <ImageUploader stepId={step.id} sequenceId={sequenceId} />
-        </AppModal>
+        <div className="step-editor__foot">
+          <AppModal
+            title="Add Images"
+            buttonLabel="Add Images"
+            size="lg"
+            btnColor="secondary"
+            className="add-images-modal"
+          >
+            <ImageUploader stepId={step.id} sequenceId={sequenceId} />
+          </AppModal>
+          <Button
+            size="sm"
+            color="danger"
+            onClick={() => { if (window.confirm('Delete this step and its images?')) deleteStep.mutate(step.id); }}
+          >
+            Delete step
+          </Button>
+        </div>
       </CardBody>
     </Card>
   );

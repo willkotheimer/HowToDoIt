@@ -1,0 +1,90 @@
+// Step cards in the sequence editor. These were bare reactstrap <Card>s (default
+// white), which clashed with the blueprint canvas. Give them a dark-blue panel,
+// white lettering, and a footer row with "Add Images" (left) and "Delete step"
+// (right) instead of a delete button stacked above the step title.
+.step-editor {
+  background: $step-panel;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  color: #fff;
+  margin-bottom: 1.25rem;
+
+  .card-body { color: #fff; }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  &__number {
+    font-family: 'Righteous', cursive;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 1rem;
+  }
+
+  &__move { display: flex; gap: 0.4rem; }
+
+  // Title/description inputs: legible on the dark card.
+  .form-control {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+
+    &::placeholder { color: rgba(255, 255, 255, 0.6); }
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.12);
+      border-color: $step-accent;
+      color: #fff;
+      box-shadow: 0 0 0 0.2rem rgba(24, 160, 222, 0.25);
+    }
+  }
+
+  &__images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  &__thumb {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+
+  &__thumb-actions {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.45);
+
+    button {
+      border: none;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      width: 24px; height: 24px;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &.danger { background: rgba(220, 53, 69, 0.85); }
+      &:disabled { opacity: 0.4; cursor: not-allowed; }
+    }
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+  }
+}
