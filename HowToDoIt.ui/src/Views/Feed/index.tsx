@@ -30,6 +30,17 @@ const WALKTHROUGH: HeroStep[] = [
   { id: 'w5', title: 'Add descriptions', description: 'Write a short caption for each step so anyone can follow along.', images: walkImg(5) },
 ];
 
+// "How it works" narration — one bold action phrase per walkthrough step. The
+// four phrases map to steps 2–5 (Create/Upload/Order/Describe); the scroll
+// handler bolds the phrase for the currently-centred slide (see buildHowtoNarration).
+const HOWTO_LEAD = 'No manual to write — ';
+const HOWTO_PHRASES = ['capture the steps', 'upload the images', 'order them', 'add descriptions'];
+const HOWTO_TAIL = ' for each.';
+const buildHowtoNarration = (active: number) => {
+  const parts = HOWTO_PHRASES.map((ph, i) => (i === active ? `<b>${ph}</b>` : ph));
+  return `${HOWTO_LEAD}${parts.slice(0, -1).join(', ')}, and ${parts[parts.length - 1]}${HOWTO_TAIL}`;
+};
+
 // Quarter-arc dashed guide arrow (points left toward the image via CSS scaleX).
 const Arrow = () => (
   <svg className="slide__arrow" viewBox="0 0 58 52" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -38,7 +49,18 @@ const Arrow = () => (
   </svg>
 );
 
-type Scene = { id: string; h1: string; initial: string; narration: string; steps: HeroStep[] };
+type Scene = {
+  id: string;
+  h1: string;
+  steps: HeroStep[];
+  // 'phrases' → intro line, then one bold action phrase per centred slide (with
+  // the progress track). 'words' → the whole line karaokes word-by-word as you
+  // scroll, the brand word staying lit.
+  mode: 'phrases' | 'words';
+  initial?: string;   // phrases: intro line before scrolling
+  narration?: string; // phrases: initial (non-scrolling) narration fallback
+  text?: string;      // words: the full line to walk through
+};
 
 export default function Feed() {
   const { data: sequences = [] } = useSequences();
@@ -59,14 +81,15 @@ export default function Feed() {
   const scenes: Scene[] = useMemo(() => [
     {
       id: 'howto', h1: 'How it works',
+      mode: 'phrases',
       initial: '<b>Anyone</b> can build a sequence in five steps.',
-      narration: 'No manual to write — <b>capture the steps</b>, order them, and caption each.',
+      narration: buildHowtoNarration(0),
       steps: WALKTHROUGH,
     },
     {
       id: 'featured', h1: 'Your Sequence',
-      initial: '<b>HowToDoIt</b> turns procedures into visual, step-by-step image workflows.',
-      narration: '<b>Your sequence</b> tells the story better than you could. Complicated tasks collapse to 5&ndash;10 images.',
+      mode: 'words',
+      text: 'HowToDoIt turns procedures into visual, step-by-step image workflows. Your sequence tells the story better than you could. Complicated tasks collapse to 5–10 images.',
       steps: coffeeSteps,
     },
   ], [coffeeSteps]);
@@ -90,20 +113,14 @@ export default function Feed() {
         const total = scene.offsetHeight - window.innerHeight;
         const p = total > 0 ? Math.min(Math.max(-scene.getBoundingClientRect().top / total, 0), 1) : 0;
 
-        // Narration swaps from the intro line to the narration as this scene scrolls.
-        const narr = scene.querySelector<HTMLElement>('.hero-narr p');
-        if (narr) {
-          const key = p < 0.04 ? 'initial' : 'narration';
-          if (narr.dataset.shown !== key) { narr.innerHTML = narr.dataset[key] || ''; narr.dataset.shown = key; }
-        }
-
-        // Dwell push: each step holds centered, then eases to the next.
+        // Dwell push: each step holds centered, then eases to the next. `af` is
+        // the active slide fraction (0 … N-1) used to drive the narration below.
         const slides = sceneSlides.get(scene) || [];
         const N = slides.length;
+        let af = 0;
         if (N > 0) {
           const start = 0.06; const end = 0.97;
           const region = Math.min(Math.max((p - start) / (end - start), 0), 1);
-          let af = 0;
           if (N > 1) {
             const seg = region * (N - 1);
             const t = Math.min(Math.floor(seg), N - 2);
@@ -114,6 +131,36 @@ export default function Feed() {
             af = t + f;
           }
           slides.forEach((sl, i) => { sl.style.transform = `translateX(${(i - af) * 100}%)`; });
+        }
+
+        // Narration. 'words' scenes karaoke word-by-word; 'phrases' scenes show
+        // an intro line, then bold the action phrase for the centred slide and
+        // light the matching progress dot.
+        const wordsEl = scene.querySelector<HTMLElement>('.hero-narr__words');
+        if (wordsEl) {
+          const words = wordsEl.children;
+          const active = Math.min(Math.floor(p * words.length), words.length - 1);
+          if (wordsEl.dataset.active !== String(active)) {
+            for (let i = 0; i < words.length; i += 1) {
+              words[i].classList.toggle('is-lit', i === 0 || i === active);
+            }
+            wordsEl.dataset.active = String(active);
+          }
+        } else {
+          const narr = scene.querySelector<HTMLElement>('.hero-narr p');
+          if (narr) {
+            if (p < 0.04) {
+              if (narr.dataset.shown !== 'initial') { narr.innerHTML = narr.dataset.initial || ''; narr.dataset.shown = 'initial'; }
+            } else {
+              const phrase = Math.min(Math.max(Math.round(af) - 1, 0), HOWTO_PHRASES.length - 1);
+              const key = `d${phrase}`;
+              if (narr.dataset.shown !== key) {
+                narr.innerHTML = buildHowtoNarration(phrase);
+                narr.dataset.shown = key;
+                scene.querySelectorAll('.howto-track__dot').forEach((d, i) => d.classList.toggle('is-active', i === phrase));
+              }
+            }
+          }
         }
       });
 
@@ -194,7 +241,30 @@ export default function Feed() {
               <div className="splash-scene__pin">
                 <div className="hero-narr">
                   <h1>{scene.h1}</h1>
-                  <p data-initial={scene.initial} data-narration={scene.narration} dangerouslySetInnerHTML={{ __html: scene.initial }} />
+                  {scene.mode === 'phrases' && (
+                    <div className="howto-track" aria-hidden="true">
+                      <span className="howto-track__line" />
+                      <span className="howto-track__arrow" />
+                      {[0, 1, 2, 3].map((i) => (
+                        <span key={i} className="howto-track__dot" style={{ left: `${12 + i * 25}%` }} />
+                      ))}
+                    </div>
+                  )}
+                  {scene.mode === 'words' ? (
+                    <p className="hero-narr__words">
+                      {scene.text!.split(' ').map((w, i) => (
+                        // eslint-disable-next-line react/no-array-index-key
+                        <span key={i} className={i === 0 ? 'is-brand is-lit' : undefined}>{`${w} `}</span>
+                      ))}
+                    </p>
+                  ) : (
+                    <p
+                      data-initial={scene.initial}
+                      data-narration={scene.narration}
+                      data-dynamic="1"
+                      dangerouslySetInnerHTML={{ __html: scene.initial! }}
+                    />
+                  )}
                 </div>
                 <div className="stage">
                   {scene.steps.map((st, i) => {

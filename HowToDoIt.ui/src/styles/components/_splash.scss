@@ -38,13 +38,42 @@ $sp-sky: #18a0de;
   display: flex; flex-direction: column; justify-content: center; gap: 1.25rem; overflow: hidden;
 }
 .hero-narr {
-  background: #827dbd; border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 14px;
-  padding: clamp(1.1rem, 2.5vw, 1.75rem) clamp(1.25rem, 3vw, 2rem); box-shadow: 0 20px 46px -26px rgba(0, 0, 0, 0.85);
+  padding: 0 0 clamp(0.4rem, 1.5vw, 0.8rem);
 
-  h1 { @include display-font; text-transform: uppercase; font-size: clamp(1.6rem, 3.8vw, 2.6rem); color: #fff; margin: 0 0 0.4rem; text-shadow: 0 2px 14px rgba(0, 0, 0, 0.28); }
-  p { margin: 0; color: rgba(255, 255, 255, 0.92); font-size: clamp(0.98rem, 1.6vw, 1.15rem); min-height: 2.6em; transition: opacity 0.25s ease; }
+  h1 { @include display-font; text-transform: uppercase; font-size: clamp(1.6rem, 3.8vw, 2.6rem); color: #fff; margin: 0 0 0.4rem; text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45); }
+  p { margin: 0; color: rgba(255, 255, 255, 0.72); font-size: clamp(0.98rem, 1.6vw, 1.15rem); min-height: 2.6em; transition: opacity 0.25s ease; }
   p b { color: #fff; font-weight: 800; }
 }
+
+// Per-step progress track under the "How it works" heading: a line to a right
+// arrow, divided by four dots (one per action phrase); the active dot lights up.
+.howto-track {
+  position: relative; height: 18px; margin: 0.15rem 0 0.9rem;
+
+  &__line { position: absolute; left: 2px; right: 16px; top: 50%; height: 2px; transform: translateY(-50%); background: rgba(24, 160, 222, 0.55); }
+  &__arrow {
+    position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+    width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+    border-left: 12px solid rgba(24, 160, 222, 0.85);
+  }
+  &__dot {
+    position: absolute; top: 50%; transform: translate(-50%, -50%); width: 13px; height: 13px; border-radius: 50%;
+    background: #0b2745; border: 2px solid rgba(24, 160, 222, 0.8);
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &.is-active { background: $sp-sky; border-color: #fff; box-shadow: 0 0 10px rgba(24, 160, 222, 0.75); }
+  }
+}
+
+// Karaoke narration: words dim by default, the active one lit, the brand word
+// (first) always lit in the accent colour.
+.hero-narr__words {
+  span { color: rgba(255, 255, 255, 0.30); transition: color 0.25s ease, text-shadow 0.25s ease; }
+  span.is-lit { color: #fff; text-shadow: 0 0 12px rgba(24, 160, 222, 0.5); }
+  span.is-brand, span.is-brand.is-lit { color: $sp-sky; font-weight: 700; text-shadow: none; }
+}
+.reduce-motion .hero-narr__words span { color: rgba(255, 255, 255, 0.92); text-shadow: none; }
+.reduce-motion .hero-narr__words span.is-brand { color: $sp-sky; }
 .stage { position: relative; flex: 1; min-height: 0; }
 .slide {
   position: absolute; inset: 0; display: grid; grid-template-columns: 1.15fr 0.85fr;
