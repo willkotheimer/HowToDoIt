@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useSequences, useSequence } from '../../data/sequenceData';
 import SequenceCard from '../../Components/SequenceCard';
+import CountdownLeader from '../../Components/CountdownLeader';
 import { slug, sceneHeight, groupSequencesByDomain } from '../../Helpers/feedHelper';
 import { sortBySortOrder, firstBySortOrder } from '../../Helpers/sequenceHelper';
 
@@ -22,7 +23,7 @@ type HeroStep = {
 // screenshots captured by e2e/screenshots.spec.ts (Playwright).
 const walkImg = (n: number) => [{ id: `hw${n}`, imageUrl: `/seed/howto-${n}.jpg`, sortOrder: 0 }];
 const WALKTHROUGH: HeroStep[] = [
-  { id: 'w1', title: 'Sign in', description: 'Sign in to unlock the create tools — only allowed writers can add or edit sequences.', images: walkImg(1) },
+  { id: 'w1', title: 'Sign in', description: 'Sign in to unlock the create tools — only allowed writers can add or edit sequences.' },
   { id: 'w2', title: 'Create a domain & category', description: 'Name the sequence, then group it by domain and category.', images: walkImg(2) },
   { id: 'w3', title: 'Upload your images', description: 'Drag in a photo for each step — they’re resized automatically before upload.', images: walkImg(3) },
   { id: 'w4', title: 'Order your photos', description: 'Arrange the images into the exact order of the task.', images: walkImg(4) },
@@ -204,7 +205,7 @@ export default function Feed() {
                           <div className={`slide__frame${cover ? '' : ' is-empty'}`}>
                             {cover
                               ? <img src={cover.imageUrl} alt={st.title ?? `Step ${i + 1}`} />
-                              : <span className="slide__frame-ph">Screenshot</span>}
+                              : <CountdownLeader n={i + 1} />}
                           </div>
                           <div className="slide__stepnum">Step <b>{i + 1}</b></div>
                         </div>

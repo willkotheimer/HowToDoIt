@@ -4,6 +4,7 @@ import { Spinner } from 'reactstrap';
 import { useSequence } from '../../data/sequenceData';
 import { useAuth } from '../../context/AuthContext';
 import { sortBySortOrder, firstBySortOrder } from '../../Helpers/sequenceHelper';
+import CountdownLeader from '../../Components/CountdownLeader';
 
 // Quarter-circle dashed guide arrow (vertical tangent -> horizontal chevron
 // pointing at the image). Direction flips per row via CSS.
@@ -61,7 +62,7 @@ export default function SequenceDetail() {
                   {cover ? (
                     <div className="frame"><img className="frame__img" src={cover.imageUrl} alt={step.title ?? `Step ${index + 1}`} /></div>
                   ) : (
-                    <div className="frame frame--empty">No image</div>
+                    <div className="frame frame--empty"><CountdownLeader n={index + 1} /></div>
                   )}
                 </div>
                 <div className="sop__text">
