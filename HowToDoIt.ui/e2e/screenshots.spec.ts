@@ -25,14 +25,11 @@ test('capture current-look screenshots', async ({ page, request }) => {
   test.setTimeout(120_000);
   await page.setViewportSize({ width: 1280, height: 800 });
 
-  // ── Step 1: Sign in — signed-out create page shows the "sign in to unlock"
-  //    gate + the Sign In control in the nav. (Avoids a recursive shot of the
-  //    feed, which is itself where this walkthrough lives.) ──
-  await page.goto('/create');
-  await page.waitForTimeout(1500);
-  await page.screenshot({ path: path.join(OUT, 'howto-1-signin.png') });
+  // Step 1 ("Sign in") intentionally has no screenshot — the feed renders a
+  // film-countdown placeholder for it (CountdownLeader), which reads better than
+  // a shot of a mostly-empty signed-out page.
 
-  // Enable the dev-only writer bypass for the remaining (editor) shots.
+  // Enable the dev-only writer bypass for the editor shots (steps 2–5).
   await page.addInitScript(() => window.localStorage.setItem('e2e-writer', '1'));
 
   // ── Step 2: Create a domain & category (fill only — no POST to prod) ──

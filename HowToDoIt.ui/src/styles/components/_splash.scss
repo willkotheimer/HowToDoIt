@@ -38,13 +38,41 @@ $sp-sky: #18a0de;
   display: flex; flex-direction: column; justify-content: center; gap: 1.25rem; overflow: hidden;
 }
 .hero-narr {
-  background: #827dbd; border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 14px;
-  padding: clamp(1.1rem, 2.5vw, 1.75rem) clamp(1.25rem, 3vw, 2rem); box-shadow: 0 20px 46px -26px rgba(0, 0, 0, 0.85);
+  // Rounded box outline on the blueprint canvas — the purple fill is gone, but
+  // a subtle translucent backdrop keeps the outlined-box look.
+  background: rgba(9, 32, 60, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 14px;
+  padding: clamp(1rem, 2.4vw, 1.5rem) clamp(1.25rem, 3vw, 2rem);
+  box-shadow: 0 18px 42px -26px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(2px);
 
-  h1 { @include display-font; text-transform: uppercase; font-size: clamp(1.6rem, 3.8vw, 2.6rem); color: #fff; margin: 0 0 0.4rem; text-shadow: 0 2px 14px rgba(0, 0, 0, 0.28); }
-  p { margin: 0; color: rgba(255, 255, 255, 0.92); font-size: clamp(0.98rem, 1.6vw, 1.15rem); min-height: 2.6em; transition: opacity 0.25s ease; }
+  h1 { @include display-font; text-transform: uppercase; font-size: clamp(1.6rem, 3.8vw, 2.6rem); color: #fff; margin: 0 0 0.4rem; text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45); }
+  p { margin: 0; color: rgba(255, 255, 255, 0.72); font-size: clamp(0.98rem, 1.6vw, 1.15rem); min-height: 2.6em; transition: opacity 0.25s ease; }
   p b { color: #fff; font-weight: 800; }
+  p b.brand { color: $sp-sky; }
 }
+
+// Per-step progress track under the "How it works" heading: a line to a right
+// arrow, divided by four dots (one per action phrase); the active dot lights up.
+.howto-track {
+  position: relative; height: 18px; margin: 0.15rem 0 0.9rem;
+
+  &__line { position: absolute; left: 2px; right: 16px; top: 50%; height: 2px; transform: translateY(-50%); background: rgba(24, 160, 222, 0.55); }
+  &__arrow {
+    position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+    width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+    border-left: 12px solid rgba(24, 160, 222, 0.85);
+  }
+  &__dot {
+    position: absolute; top: 50%; transform: translate(-50%, -50%); width: 13px; height: 13px; border-radius: 50%;
+    background: #0b2745; border: 2px solid rgba(24, 160, 222, 0.8);
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &.is-active { background: $sp-sky; border-color: #fff; box-shadow: 0 0 10px rgba(24, 160, 222, 0.75); }
+  }
+}
+
 .stage { position: relative; flex: 1; min-height: 0; }
 .slide {
   position: absolute; inset: 0; display: grid; grid-template-columns: 1.15fr 0.85fr;
@@ -56,9 +84,8 @@ $sp-sky: #18a0de;
   box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.8); aspect-ratio: 16 / 10; background: rgba(255, 255, 255, 0.04);
   img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
-  &.is-empty { display: grid; place-items: center; background: rgba(255, 255, 255, 0.05); border-style: dashed; }
+  &.is-empty { background: radial-gradient(120% 120% at 50% 45%, #123a63 0%, #0b2745 72%); }
 }
-.slide__frame-ph { color: rgba(255, 255, 255, 0.38); font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .slide__stepnum { @include display-font; text-transform: uppercase; font-size: clamp(1.4rem, 3vw, 2.2rem); color: #fff; b { color: $sp-sky; } }
 .slide__text { align-self: center; min-width: 0; padding-right: clamp(0.5rem, 1.5vw, 1.5rem); }
 .slide__arrow { display: block; width: 64px; height: 52px; color: #a9c4ef; margin: 0 0 0.6rem; transform: scaleX(-1); }

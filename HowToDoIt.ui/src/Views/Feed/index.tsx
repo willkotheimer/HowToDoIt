@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useSequences, useSequence } from '../../data/sequenceData';
 import SequenceCard from '../../Components/SequenceCard';
+import CountdownLeader from '../../Components/CountdownLeader';
 import { slug, sceneHeight, groupSequencesByDomain } from '../../Helpers/feedHelper';
 import { sortBySortOrder, firstBySortOrder } from '../../Helpers/sequenceHelper';
 
@@ -22,12 +23,41 @@ type HeroStep = {
 // screenshots captured by e2e/screenshots.spec.ts (Playwright).
 const walkImg = (n: number) => [{ id: `hw${n}`, imageUrl: `/seed/howto-${n}.jpg`, sortOrder: 0 }];
 const WALKTHROUGH: HeroStep[] = [
-  { id: 'w1', title: 'Sign in', description: 'Sign in to unlock the create tools — only allowed writers can add or edit sequences.', images: walkImg(1) },
+  { id: 'w1', title: 'Sign in', description: 'Sign in to unlock the create tools — only allowed writers can add or edit sequences.' },
   { id: 'w2', title: 'Create a domain & category', description: 'Name the sequence, then group it by domain and category.', images: walkImg(2) },
   { id: 'w3', title: 'Upload your images', description: 'Drag in a photo for each step — they’re resized automatically before upload.', images: walkImg(3) },
   { id: 'w4', title: 'Order your photos', description: 'Arrange the images into the exact order of the task.', images: walkImg(4) },
   { id: 'w5', title: 'Add descriptions', description: 'Write a short caption for each step so anyone can follow along.', images: walkImg(5) },
 ];
+
+// Builds a narration line where one segment is bold. `segments[i]` is bold when
+// i === active; `joins[i]` is the literal text between segment i and i+1.
+const buildNarration = (segments: string[], joins: string[], active: number, prefix = '') =>
+  prefix + segments
+    .map((seg, i) => (i === active ? `<b>${seg}</b>` : seg) + (joins[i] ?? ''))
+    .join('');
+
+// "How it works" — one bold segment per walkthrough step (5 slides). The scroll
+// handler bolds the segment for the currently-centred slide; segments 1–4 also
+// light the matching progress dot (segment 0 = "Sign in" lights none).
+const HOWTO_SEGMENTS = ['No manual to write', 'capture the steps', 'upload the images', 'order them', 'add descriptions for each.'];
+const HOWTO_JOINS = [' — ', ', ', ', ', ', and '];
+const buildHowtoNarration = (active: number) => buildNarration(HOWTO_SEGMENTS, HOWTO_JOINS, active);
+
+// "Your Sequence" — phrase segments bolded one at a time as the scene scrolls,
+// with the "HowToDoIt" brand word always lit. A line break splits the middle
+// sentence for rhythm.
+const FEATURED_SEGMENTS = [
+  'turns procedures into visual',
+  'step-by-step',
+  'image workflows',
+  'Your sequence tells the story',
+  'better than you could.',
+  'Complicated tasks collapse to 5–10 images.',
+];
+const FEATURED_JOINS = [', ', ' ', '. ', '<br/>', ' '];
+const buildFeaturedNarration = (active: number) =>
+  buildNarration(FEATURED_SEGMENTS, FEATURED_JOINS, active, '<b class="brand">HowToDoIt</b> ');
 
 // Quarter-arc dashed guide arrow (points left toward the image via CSS scaleX).
 const Arrow = () => (
@@ -37,7 +67,16 @@ const Arrow = () => (
   </svg>
 );
 
-type Scene = { id: string; h1: string; initial: string; narration: string; steps: HeroStep[] };
+type Scene = {
+  id: string;
+  h1: string;
+  steps: HeroStep[];
+  // 'howto' → an intro line, then one bold segment per centred slide, with the
+  // progress track. 'featured' → phrase segments bolded one at a time as the
+  // scene scrolls (brand word always lit).
+  mode: 'howto' | 'featured';
+  initial?: string; // howto: intro line before scrolling begins
+};
 
 export default function Feed() {
   const { data: sequences = [] } = useSequences();
@@ -58,14 +97,13 @@ export default function Feed() {
   const scenes: Scene[] = useMemo(() => [
     {
       id: 'howto', h1: 'How it works',
+      mode: 'howto',
       initial: '<b>Anyone</b> can build a sequence in five steps.',
-      narration: 'No manual to write — <b>capture the steps</b>, order them, and caption each.',
       steps: WALKTHROUGH,
     },
     {
       id: 'featured', h1: 'Your Sequence',
-      initial: '<b>HowToDoIt</b> turns procedures into visual, step-by-step image workflows.',
-      narration: '<b>Your sequence</b> tells the story better than you could. Complicated tasks collapse to 5&ndash;10 images.',
+      mode: 'featured',
       steps: coffeeSteps,
     },
   ], [coffeeSteps]);
@@ -89,20 +127,14 @@ export default function Feed() {
         const total = scene.offsetHeight - window.innerHeight;
         const p = total > 0 ? Math.min(Math.max(-scene.getBoundingClientRect().top / total, 0), 1) : 0;
 
-        // Narration swaps from the intro line to the narration as this scene scrolls.
-        const narr = scene.querySelector<HTMLElement>('.hero-narr p');
-        if (narr) {
-          const key = p < 0.04 ? 'initial' : 'narration';
-          if (narr.dataset.shown !== key) { narr.innerHTML = narr.dataset[key] || ''; narr.dataset.shown = key; }
-        }
-
-        // Dwell push: each step holds centered, then eases to the next.
+        // Dwell push: each step holds centered, then eases to the next. `af` is
+        // the active slide fraction (0 … N-1) used to drive the narration below.
         const slides = sceneSlides.get(scene) || [];
         const N = slides.length;
+        let af = 0;
         if (N > 0) {
           const start = 0.06; const end = 0.97;
           const region = Math.min(Math.max((p - start) / (end - start), 0), 1);
-          let af = 0;
           if (N > 1) {
             const seg = region * (N - 1);
             const t = Math.min(Math.floor(seg), N - 2);
@@ -113,6 +145,28 @@ export default function Feed() {
             af = t + f;
           }
           slides.forEach((sl, i) => { sl.style.transform = `translateX(${(i - af) * 100}%)`; });
+        }
+
+        // Narration. 'featured' bolds one phrase at a time by scroll progress;
+        // 'howto' shows an intro line, then bolds the segment for the centred
+        // slide and lights the matching progress dot (segment 0 lights none).
+        const narr = scene.querySelector<HTMLElement>('.hero-narr p');
+        if (narr) {
+          if (narr.dataset.narr === 'featured') {
+            const active = Math.min(Math.floor(p * FEATURED_SEGMENTS.length), FEATURED_SEGMENTS.length - 1);
+            const key = `f${active}`;
+            if (narr.dataset.shown !== key) { narr.innerHTML = buildFeaturedNarration(active); narr.dataset.shown = key; }
+          } else if (p < 0.04) {
+            if (narr.dataset.shown !== 'initial') { narr.innerHTML = narr.dataset.initial || ''; narr.dataset.shown = 'initial'; }
+          } else {
+            const seg = Math.min(Math.max(Math.round(af), 0), HOWTO_SEGMENTS.length - 1);
+            const key = `d${seg}`;
+            if (narr.dataset.shown !== key) {
+              narr.innerHTML = buildHowtoNarration(seg);
+              narr.dataset.shown = key;
+              scene.querySelectorAll('.howto-track__dot').forEach((d, i) => d.classList.toggle('is-active', i === seg - 1));
+            }
+          }
         }
       });
 
@@ -193,7 +247,22 @@ export default function Feed() {
               <div className="splash-scene__pin">
                 <div className="hero-narr">
                   <h1>{scene.h1}</h1>
-                  <p data-initial={scene.initial} data-narration={scene.narration} dangerouslySetInnerHTML={{ __html: scene.initial }} />
+                  {scene.mode === 'howto' && (
+                    <div className="howto-track" aria-hidden="true">
+                      <span className="howto-track__line" />
+                      <span className="howto-track__arrow" />
+                      {[0, 1, 2, 3].map((i) => (
+                        <span key={i} className="howto-track__dot" style={{ left: `${12 + i * 25}%` }} />
+                      ))}
+                    </div>
+                  )}
+                  <p
+                    data-narr={scene.mode}
+                    data-initial={scene.initial}
+                    dangerouslySetInnerHTML={{
+                      __html: scene.mode === 'howto' ? scene.initial! : buildFeaturedNarration(0),
+                    }}
+                  />
                 </div>
                 <div className="stage">
                   {scene.steps.map((st, i) => {
@@ -204,7 +273,7 @@ export default function Feed() {
                           <div className={`slide__frame${cover ? '' : ' is-empty'}`}>
                             {cover
                               ? <img src={cover.imageUrl} alt={st.title ?? `Step ${i + 1}`} />
-                              : <span className="slide__frame-ph">Screenshot</span>}
+                              : <CountdownLeader n={i + 1} />}
                           </div>
                           <div className="slide__stepnum">Step <b>{i + 1}</b></div>
                         </div>

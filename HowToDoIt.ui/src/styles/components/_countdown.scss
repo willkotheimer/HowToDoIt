@@ -1,0 +1,36 @@
+// Film "countdown leader" placeholder used for imageless step frames (feed
+// walkthrough + SOP detail). See Components/CountdownLeader.
+$cd-sky: #18a0de;
+
+.countdown {
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  &__cross {
+    stroke: rgba(24, 160, 222, 0.35);
+    stroke-width: 1;
+  }
+
+  &__ring {
+    fill: none;
+    stroke: rgba(24, 160, 222, 0.55);
+    stroke-width: 1.5;
+  }
+
+  &__ring--dashed {
+    stroke: rgba(255, 255, 255, 0.35);
+    stroke-dasharray: 4 5;
+  }
+
+  &__num {
+    fill: #fff;
+    font-family: 'Righteous', cursive;
+    font-size: 58px;
+    text-anchor: middle;
+    dominant-baseline: central;
+    paint-order: stroke;
+    stroke: rgba(11, 39, 69, 0.9);
+    stroke-width: 3;
+  }
+}
