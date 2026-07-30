@@ -6,6 +6,7 @@ import AppModal from '../AppModal';
 import ImageUploader from '../Forms/ImageUploader';
 import { useUpdateStep, useDeleteStep } from '../../data/stepData';
 import { useDeleteStepImage, useReorderStepImages } from '../../data/stepImageData';
+import { sortBySortOrder, reorderIds } from '../../Helpers/sequenceHelper';
 import type { WorkStep } from '../../Types';
 
 interface StepEditorProps {
@@ -27,17 +28,13 @@ export default function StepEditor({
   const deleteImage = useDeleteStepImage(sequenceId);
   const reorderImages = useReorderStepImages(sequenceId);
 
-  const images = [...(step.images ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  const images = sortBySortOrder(step.images);
 
   const saveDetails = () => updateStep.mutate({ id: step.id, workSequenceId: sequenceId, title, description });
 
   const moveImage = (imageId: number, direction: -1 | 1) => {
-    const ids = images.map((im) => im.id);
-    const from = ids.indexOf(imageId);
-    const to = from + direction;
-    if (from < 0 || to < 0 || to >= ids.length) return;
-    [ids[from], ids[to]] = [ids[to], ids[from]];
-    reorderImages.mutate(ids);
+    const next = reorderIds(images.map((im) => im.id), imageId, direction);
+    if (next) reorderImages.mutate(next);
   };
 
   return (
@@ -48,13 +45,6 @@ export default function StepEditor({
           <div className="step-editor__move">
             <Button size="sm" color="light" disabled={index === 0} onClick={() => onMove(step.id, -1)}>↑</Button>
             <Button size="sm" color="light" disabled={index === total - 1} onClick={() => onMove(step.id, 1)}>↓</Button>
-            <Button
-              size="sm"
-              color="danger"
-              onClick={() => { if (window.confirm('Delete this step and its images?')) deleteStep.mutate(step.id); }}
-            >
-              Delete
-            </Button>
           </div>
         </div>
 
@@ -87,9 +77,24 @@ export default function StepEditor({
           ))}
         </div>
 
-        <AppModal title="Add Images" buttonLabel="Add Images" size="lg" btnColor="secondary">
-          <ImageUploader stepId={step.id} sequenceId={sequenceId} />
-        </AppModal>
+        <div className="step-editor__foot">
+          <AppModal
+            title="Add Images"
+            buttonLabel="Add Images"
+            size="lg"
+            btnColor="secondary"
+            className="add-images-modal"
+          >
+            <ImageUploader stepId={step.id} sequenceId={sequenceId} />
+          </AppModal>
+          <Button
+            size="sm"
+            color="danger"
+            onClick={() => { if (window.confirm('Delete this step and its images?')) deleteStep.mutate(step.id); }}
+          >
+            Delete step
+          </Button>
+        </div>
       </CardBody>
     </Card>
   );

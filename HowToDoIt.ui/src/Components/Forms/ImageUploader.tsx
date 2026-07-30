@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Button, Spinner } from 'reactstrap';
 import { useUploadStepImage } from '../../data/stepImageData';
-import { compressImage } from '../../helpers/compressImage';
+import { compressImage } from '../../Helpers/compressImage';
 
 interface ImageUploaderProps {
   stepId: number;

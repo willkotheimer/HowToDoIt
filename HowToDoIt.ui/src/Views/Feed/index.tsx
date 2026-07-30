@@ -1,15 +1,14 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useSequences, useSequence } from '../../data/sequenceData';
 import SequenceCard from '../../Components/SequenceCard';
-import type { WorkSequence } from '../../Types';
+import { slug, sceneHeight, groupSequencesByDomain } from '../../Helpers/feedHelper';
+import { sortBySortOrder, firstBySortOrder } from '../../Helpers/sequenceHelper';
 
 const DOMAIN_BLURBS: Record<string, string> = {
   'Coffee Shop': 'Opening, display, and bar procedures for a specialty café.',
   'Retail Store': 'Garment care, floor inventory, and checkout for a menswear boutique.',
   'Online Store': 'Pack & ship, product listing, and returns for an e-commerce shop.',
 };
-
-const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
 // A hero "step" — either a real WorkStep or a static walkthrough frame.
 type HeroStep = {
@@ -19,14 +18,15 @@ type HeroStep = {
   images?: { id: string | number; imageUrl: string; sortOrder?: number }[];
 };
 
-// "How it works" onboarding — its own scrollytelling scene, placeholder images
-// for now (swap in app screenshots later).
+// "How it works" onboarding — its own scrollytelling scene. Frames are real app
+// screenshots captured by e2e/screenshots.spec.ts (Playwright).
+const walkImg = (n: number) => [{ id: `hw${n}`, imageUrl: `/seed/howto-${n}.jpg`, sortOrder: 0 }];
 const WALKTHROUGH: HeroStep[] = [
-  { id: 'w1', title: 'Sign in', description: 'Sign in to unlock the create tools — only allowed writers can add or edit sequences.' },
-  { id: 'w2', title: 'Create a domain & category', description: 'Name the sequence, then group it by domain and category.' },
-  { id: 'w3', title: 'Upload your images', description: 'Drag in a photo for each step — they’re resized automatically before upload.' },
-  { id: 'w4', title: 'Order your photos', description: 'Arrange the images into the exact order of the task.' },
-  { id: 'w5', title: 'Add descriptions', description: 'Write a short caption for each step so anyone can follow along.' },
+  { id: 'w1', title: 'Sign in', description: 'Sign in to unlock the create tools — only allowed writers can add or edit sequences.', images: walkImg(1) },
+  { id: 'w2', title: 'Create a domain & category', description: 'Name the sequence, then group it by domain and category.', images: walkImg(2) },
+  { id: 'w3', title: 'Upload your images', description: 'Drag in a photo for each step — they’re resized automatically before upload.', images: walkImg(3) },
+  { id: 'w4', title: 'Order your photos', description: 'Arrange the images into the exact order of the task.', images: walkImg(4) },
+  { id: 'w5', title: 'Add descriptions', description: 'Write a short caption for each step so anyone can follow along.', images: walkImg(5) },
 ];
 
 // Quarter-arc dashed guide arrow (points left toward the image via CSS scaleX).
@@ -39,28 +39,18 @@ const Arrow = () => (
 
 type Scene = { id: string; h1: string; initial: string; narration: string; steps: HeroStep[] };
 
-const sceneHeight = (steps: HeroStep[]) => (steps.length ? `${(steps.length - 1) * 60 + 110}vh` : '72vh');
-
 export default function Feed() {
   const { data: sequences = [] } = useSequences();
   const rootRef = useRef<HTMLDivElement>(null);
 
   // Group sequences into domains (stable by id), domains ordered by first id.
-  const domains = useMemo(() => {
-    const map = new Map<string, WorkSequence[]>();
-    [...sequences].sort((a, b) => a.id - b.id).forEach((s) => {
-      const d = s.domain || 'Other';
-      if (!map.has(d)) map.set(d, []);
-      map.get(d)!.push(s);
-    });
-    return Array.from(map.entries()).map(([name, seqs]) => ({ name, sequences: seqs }));
-  }, [sequences]);
+  const domains = useMemo(() => groupSequencesByDomain(sequences), [sequences]);
 
   // Coffee-shop demo = first sequence of the first domain.
   const featuredId = domains[0]?.sequences[0]?.id ?? 0;
   const { data: featured } = useSequence(featuredId, featuredId > 0);
   const coffeeSteps: HeroStep[] = useMemo(
-    () => [...(featured?.steps ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
+    () => sortBySortOrder(featured?.steps),
     [featured],
   );
 
@@ -199,7 +189,7 @@ export default function Feed() {
 
         <div className="splash__content">
           {scenes.map((scene) => (
-            <section id={`sec-${scene.id}`} className="splash-scene" key={scene.id} style={{ height: sceneHeight(scene.steps) }}>
+            <section id={`sec-${scene.id}`} className="splash-scene" key={scene.id} style={{ height: sceneHeight(scene.steps.length) }}>
               <div className="splash-scene__pin">
                 <div className="hero-narr">
                   <h1>{scene.h1}</h1>
@@ -207,7 +197,7 @@ export default function Feed() {
                 </div>
                 <div className="stage">
                   {scene.steps.map((st, i) => {
-                    const cover = [...(st.images ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))[0];
+                    const cover = firstBySortOrder(st.images);
                     return (
                       <div className="slide" key={st.id}>
                         <div className="slide__media">

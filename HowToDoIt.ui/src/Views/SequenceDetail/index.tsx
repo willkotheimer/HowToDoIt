@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Spinner } from 'reactstrap';
 import { useSequence } from '../../data/sequenceData';
 import { useAuth } from '../../context/AuthContext';
+import { sortBySortOrder, firstBySortOrder } from '../../Helpers/sequenceHelper';
 
 // Quarter-circle dashed guide arrow (vertical tangent -> horizontal chevron
 // pointing at the image). Direction flips per row via CSS.
@@ -24,7 +25,7 @@ export default function SequenceDetail() {
   if (isLoading) return <div className="sop-page"><Spinner /> Loading…</div>;
   if (error || !sequence) return <p className="sop-page">Sequence not found.</p>;
 
-  const steps = [...(sequence.steps ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  const steps = sortBySortOrder(sequence.steps);
 
   return (
     <div className="sop-page">
@@ -52,8 +53,7 @@ export default function SequenceDetail() {
 
         <ol className="sop">
           {steps.map((step, index) => {
-            const images = [...(step.images ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
-            const cover = images[0];
+            const cover = firstBySortOrder(step.images);
             return (
               <li key={step.id} className="sop__step">
                 <div className="sop__media">

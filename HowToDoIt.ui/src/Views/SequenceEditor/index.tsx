@@ -8,6 +8,7 @@ import { useCategories, useAddCategory } from '../../data/categoryData';
 import { useCreateStep, useReorderSteps } from '../../data/stepData';
 import StepEditor from '../../Components/StepEditor';
 import { useAuth } from '../../context/AuthContext';
+import { sortBySortOrder, reorderIds } from '../../Helpers/sequenceHelper';
 import type { WorkStep } from '../../Types';
 
 export default function SequenceEditor() {
@@ -74,15 +75,11 @@ export default function SequenceEditor() {
     setNewStepTitle('');
   };
 
-  const steps: WorkStep[] = [...(sequence?.steps ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  const steps: WorkStep[] = sortBySortOrder(sequence?.steps);
 
   const moveStep = (stepId: number, direction: -1 | 1) => {
-    const ids = steps.map((s) => s.id);
-    const from = ids.indexOf(stepId);
-    const to = from + direction;
-    if (from < 0 || to < 0 || to >= ids.length) return;
-    [ids[from], ids[to]] = [ids[to], ids[from]];
-    reorderSteps.mutate(ids);
+    const next = reorderIds(steps.map((s) => s.id), stepId, direction);
+    if (next) reorderSteps.mutate(next);
   };
 
   const handleDeleteSequence = async () => {

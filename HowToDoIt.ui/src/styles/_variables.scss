@@ -1,2 +1,8 @@
 $favColor: #fff;
 $app-gradient: linear-gradient(162deg, #87bde4 0%, #2784de 35%, #4131b4 100%);
+
+// Editor / uploader palette (blueprint theme)
+$app-header: #0d1d47;        // matches the sticky nav header
+$step-panel: #123a63;        // dark-blue step card + uploader bounding box
+$step-accent: #18a0de;       // sky-blue accent
+$modal-stage-grey: #808080;  // "pure grey" upload-stage area in the modal

@@ -1,13 +1,15 @@
-$uploader-green: #20c14d;
-$uploader-green-dark: #18a840;
+// HowToDoIt image uploader. Lives inside the "Add Images" modal: the surround
+// (modal body) is the dark-blue step-panel colour, and the image staging area
+// (the dropzone) is a pure grey (see .add-images-modal below).
+$uploader-sky: #18a0de;
+$uploader-sky-dark: #1487ba;
 
 .image-uploader {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
     padding: 1.75rem;
-    border-radius: 14px;
-    background: $app-gradient;
+    background: transparent;
     color: #fff;
 
     &__dropzone {
@@ -17,18 +19,19 @@ $uploader-green-dark: #18a840;
         justify-content: center;
         gap: 0.5rem;
         padding: 3rem 1.5rem;
-        border: 3px dashed rgba(255, 255, 255, 0.7);
+        border: 3px dashed rgba(0, 0, 0, 0.35);
         border-radius: 16px;
-        background: rgba(0, 0, 0, 0.18);
+        background: $modal-stage-grey;
         cursor: pointer;
         text-align: center;
-        color: #fff;
+        // Dark ink for legibility on the grey staging area.
+        color: #14212f;
         transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
 
         &:hover,
         &.is-dragging {
-            border-color: $uploader-green;
-            background: rgba(32, 193, 77, 0.22);
+            border-color: $uploader-sky;
+            background: lighten($modal-stage-grey, 8%);
             transform: translateY(-1px);
         }
     }
@@ -37,13 +40,12 @@ $uploader-green-dark: #18a840;
         margin: 0;
         font-size: 1.5rem;
         font-weight: 700;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
     }
 
     &__hint {
         margin: 0;
         font-size: 1rem;
-        color: rgba(255, 255, 255, 0.85);
+        color: rgba(0, 0, 0, 0.6);
     }
 
     &__grid {
@@ -58,6 +60,7 @@ $uploader-green-dark: #18a840;
         border-radius: 10px;
         overflow: hidden;
         background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.14);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
         img {
@@ -103,13 +106,50 @@ $uploader-green-dark: #18a840;
             padding: 0.75rem 1.5rem;
             font-size: 1.1rem;
             font-weight: 600;
-            background-color: $uploader-green !important;
-            border: 1px solid $uploader-green-dark !important;
+            background-color: $uploader-sky !important;
+            border: 1px solid $uploader-sky-dark !important;
             color: #fff !important;
 
             &:disabled {
                 opacity: 0.6;
             }
         }
+    }
+}
+
+// ── "Add Images" modal chrome ─────────────────────────────────────────────────
+// Header matches the app nav header; the surround (modal body) is the dark-blue
+// step-panel colour; the image staging area (dropzone, styled above) is grey.
+.add-images-modal {
+    .modal-content {
+        background: $step-panel;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: $app-header;
+        color: #fff;
+        border-bottom: none;
+
+        .modal-title {
+            color: #fff;
+            font-family: 'Righteous', cursive;
+            letter-spacing: 1px;
+        }
+
+        // Bootstrap's close glyph is dark by default; invert it to white.
+        .btn-close {
+            filter: invert(1) grayscale(1) brightness(2);
+            opacity: 0.9;
+        }
+    }
+
+    .modal-body { background: $step-panel; padding: 0; }
+
+    .modal-footer {
+        background: $app-header;
+        border-top: none;
     }
 }

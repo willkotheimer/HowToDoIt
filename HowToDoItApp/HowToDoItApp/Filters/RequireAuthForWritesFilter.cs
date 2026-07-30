@@ -16,15 +16,19 @@ namespace HowToDoItApp.Filters
     ///
     /// Two-stage enforcement for unsafe methods:
     ///   1. The caller must be authenticated (valid bearer token) -> else 401.
-    ///   2. The caller's email must be in the Auth:AllowedWriters allow-list
-    ///      -> else 403. This is the server-side single-writer lockdown; the UI
+    ///   2. The caller must match the single-writer allow-list -> else 403. The UI
     ///      allow-list is UX-only and cannot be trusted.
     ///
-    /// Fail-closed: if the token carries no email claim we deny (403). Entra
-    /// External ID only emits an email claim on access tokens when it is added
-    /// as an optional claim on the API app registration. If legitimate writes
-    /// 403 with a valid login, add "email" (and/or "preferred_username") as an
-    /// optional claim in the Entra portal -- this code already reads all three.
+    /// A caller is allowed if EITHER holds:
+    ///   - their email-bearing claim is in Auth:AllowedWriters, OR
+    ///   - their object-id (oid) claim is in Auth:AllowedWriterObjectIds.
+    ///
+    /// The object-id path exists because Entra External ID (CIAM) does not put a
+    /// usable email on the access token for social-federated (e.g. Google) logins:
+    /// the token's preferred_username is a synthetic {oid}@tenant.onmicrosoft.com
+    /// UPN, and no "email" claim is emitted unless added as an optional claim.
+    /// The oid is stable per user and always present, so it is the reliable key.
+    /// Fail-closed: no matching identity -> deny.
     /// </summary>
     public class RequireAuthForWritesFilter : IAuthorizationFilter
     {
@@ -34,15 +38,28 @@ namespace HowToDoItApp.Filters
         // Claim types that may carry the caller's email, in preference order.
         private static readonly string[] EmailClaimTypes = { "email", "preferred_username", "emails" };
 
+        // Claim types that may carry the caller's stable object id.
+        private static readonly string[] ObjectIdClaimTypes =
+        {
+            "oid",
+            "http://schemas.microsoft.com/identity/claims/objectidentifier",
+        };
+
         private readonly HashSet<string> _allowedWriters;
+        private readonly HashSet<string> _allowedWriterObjectIds;
 
         public RequireAuthForWritesFilter(IConfiguration configuration)
         {
-            var configured = configuration.GetSection("Auth:AllowedWriters").Get<string[]>()
-                             ?? Array.Empty<string>();
-            _allowedWriters = configured
-                .Where(e => !string.IsNullOrWhiteSpace(e))
-                .Select(e => e.Trim().ToLowerInvariant())
+            _allowedWriters = LoadSet(configuration, "Auth:AllowedWriters");
+            _allowedWriterObjectIds = LoadSet(configuration, "Auth:AllowedWriterObjectIds");
+        }
+
+        private static HashSet<string> LoadSet(IConfiguration configuration, string key)
+        {
+            var configured = configuration.GetSection(key).Get<string[]>() ?? Array.Empty<string>();
+            return configured
+                .Where(v => !string.IsNullOrWhiteSpace(v))
+                .Select(v => v.Trim().ToLowerInvariant())
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -65,13 +82,14 @@ namespace HowToDoItApp.Filters
                 return;
             }
 
-            var email = EmailClaimTypes
-                .Select(type => user.FindFirst(type)?.Value)
-                .FirstOrDefault(value => !string.IsNullOrWhiteSpace(value))
-                ?.Trim()
-                .ToLowerInvariant();
+            var email = FirstClaim(user, EmailClaimTypes);
+            var objectId = FirstClaim(user, ObjectIdClaimTypes);
 
-            if (email == null || !_allowedWriters.Contains(email))
+            var allowed =
+                (email != null && _allowedWriters.Contains(email)) ||
+                (objectId != null && _allowedWriterObjectIds.Contains(objectId));
+
+            if (!allowed)
             {
                 context.Result = new ObjectResult("You are not authorized to make changes.")
                 {
@@ -79,5 +97,12 @@ namespace HowToDoItApp.Filters
                 };
             }
         }
+
+        private static string FirstClaim(System.Security.Claims.ClaimsPrincipal user, string[] types) =>
+            types
+                .Select(type => user.FindFirst(type)?.Value)
+                .FirstOrDefault(value => !string.IsNullOrWhiteSpace(value))
+                ?.Trim()
+                .ToLowerInvariant();
     }
 }

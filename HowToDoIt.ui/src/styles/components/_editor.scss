@@ -1,0 +1,97 @@
+// ── HowToDoIt: sequence editor ────────────────────────────────────────────────
+// Sits on the dark blueprint canvas (see _sop.scss), so all lettering is white.
+// Reactstrap Inputs keep their own light background, so only headings, labels
+// and helper text need recoloring here.
+
+.editor {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 4vw, 2rem) 4rem;
+  color: #fff;
+
+  h1 {
+    font-family: 'Righteous', cursive;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #fff;
+    margin: 0 0 1.5rem;
+  }
+
+  h2 {
+    font-family: 'Righteous', cursive;
+    letter-spacing: 1px;
+    color: #fff;
+    margin: 0 0 1rem;
+  }
+
+  &__meta,
+  &__steps {
+    background: rgba(7, 33, 62, 0.74);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 18px;
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    backdrop-filter: blur(3px);
+    margin-bottom: 1.75rem;
+  }
+
+  // Field labels and the "Public" checkbox text.
+  label,
+  .form-label,
+  .form-check-label {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  // Inputs sit on the dark panels: give them a readable dark-translucent field
+  // with white typed text and a legible (not grey-on-black) placeholder.
+  .form-control,
+  .form-select {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+
+    &::placeholder { color: rgba(255, 255, 255, 0.6); }
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.12);
+      border-color: #18a0de;
+      color: #fff;
+      box-shadow: 0 0 0 0.2rem rgba(24, 160, 222, 0.25);
+    }
+  }
+
+  // <select> renders its options in the OS menu (usually a light popup), so keep
+  // option text dark for that context.
+  .form-select option { color: #000; }
+
+  &__new-category {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  &__add-step {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  hr { border-color: rgba(255, 255, 255, 0.2); }
+
+  // The outline "Delete sequence" button is red-on-transparent, which blends
+  // into the dark canvas. Fill it so it reads clearly (and inverts on hover).
+  .btn-outline-danger {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+
+    &:hover,
+    &:focus {
+      color: #dc3545;
+      background-color: transparent;
+      border-color: #dc3545;
+    }
+  }
+
+  &__denied,
+  &__loading { color: #fff; padding: 2rem clamp(1rem, 4vw, 2rem); }
+}
