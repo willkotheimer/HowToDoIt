@@ -779,3 +779,227 @@ separately from ADR-0001 so that a code marker can cite the specific decision.
   after. Timezone semantics must be fixed explicitly at the contract — storing an
   ambiguous local time would produce ordering that is wrong only sometimes, which is
   the worst failure mode available here.
+
+---
+
+## ADR-0012 — Implementation venue: build the AI feature in Household/Playbook
+
+- **Timestamp:** 2026-09-02T20:15:00Z
+- **Clause/Contract Affected:** Changes the *venue* assumed by ADR-0003, ADR-0004,
+  ADR-0009 and ADR-0010. Those decisions and their measured evidence stand; only the
+  application they are implemented in changes.
+- **Marker status:** Planning Only
+- **Status:** **Accepted.** Operator-authorized 2026-09-02.
+- **Note:** Product context for this decision is recorded outside version control. See
+  `ADR-ADDENDUM` (untracked).
+
+### Problem
+
+The AI captioning work is complete in design and blocked in delivery. HowToDoIt has no
+working deployment path: the frontend CI stage has never passed (F-0011), the pipeline
+has never deployed anything (F-0012), and production runs from a zip published by hand
+in July. Household/Playbook — with which this project already shares an App Service
+plan, a storage account, a database and an Entra tenant — deploys through the same
+Azure DevOps service connection on every merge, with a deployment history to prove it.
+
+### Options Analyzed
+
+**Option A — Continue in HowToDoIt, fix its CI/CD first** *(rejected)*
+- *Architectural Mechanics:* Repair the pipeline (copy the SPA into the API publish,
+  retire `DeployFrontend`, register the pipeline), then build the feature.
+- *Advantages & Alignment:* Keeps the work where its ADRs already point. Fixes real
+  debt. Deployment becomes reproducible from source.
+- *Disadvantages & Operational Risk:* Roughly half a day of infrastructure work with an
+  unknown attached — nobody can yet say why the pipeline shows no runs — spent before
+  any feature value is delivered, on an application whose deployment is to be frozen
+  anyway.
+
+**Option B — Build in Household/Playbook, inheriting its working CI/CD** `[RECOMMENDED]`
+- *Architectural Mechanics:* Implement captioning and capture-time ordering against
+  Household's `Images` entity. HowToDoIt's deployment is frozen; its repository remains
+  available as a source of UI components.
+- *Advantages & Alignment:* The deployment blockers become **moot rather than paid**.
+  Feature work ships on a path proven to work. HowToDoIt's live site stops changing,
+  which is the operator's stated intent. The design ports cleanly — verified below.
+- *Disadvantages & Operational Risk:* The ADRs recorded so far name HowToDoIt entities
+  and must be superseded (ADR-0013). Bounded rework if the persistence target changes
+  again later.
+
+**Option C — Restructure both applications first, then build the feature once** *(rejected)*
+- *Architectural Mechanics:* Complete the structural work, then implement captioning
+  once against the resulting model.
+- *Advantages & Alignment:* No rework at all; the feature is built once, in its final
+  home.
+- *Disadvantages & Operational Risk:* Front-loads the largest and riskiest step with no
+  user-visible payoff, and delays every validated design decision behind a restructuring
+  whose scope is not yet analysed.
+
+### Selection
+
+**Option B.**
+
+### Why the design ports — verified, not assumed
+
+Household's `Images` model is `Id / Image / ChoreId / Active / SortOrder`, and the
+project already carries an `ImageOrderRequest`. Household therefore already has
+**ordered images within a parent record** — structurally the same problem as ordered
+images within a step, with one less level of nesting. The measured findings transfer
+intact: captioning quality (F-0006), the capture-time ordering decision (ADR-0010), the
+concurrency and retry policy (ADR-0009), and the model selection (ADR-0008) are all
+independent of which entity holds the rows.
+
+### Trade-Off & Consequence
+
+- **Gained:** A working deployment path; feature value delivered without paying
+  unrelated infrastructure debt first; HowToDoIt's production site held stable.
+- **Surrendered:** HowToDoIt's CI/CD remains broken. F-0009, F-0011 and F-0012 stay
+  **open and true**; they simply leave the critical path. They must not be recorded as
+  resolved.
+- **Admitted debt/risk:** Building against one persistence target and later re-pointing
+  at another is real rework. It stays small **only** if the analysis service remains
+  entity-agnostic behind ADR-0004's `IImageAnalysisService`, with persistence isolated
+  in an adapter. That constraint is now load-bearing rather than stylistic, and a
+  violation of it should be treated as a defect.
+
+---
+
+## ADR-0013 — Target entity: Household `Images` supersedes `StepImage`
+
+- **Timestamp:** 2026-09-02T20:15:00Z
+- **Clause/Contract Affected:** **Supersedes ADR-0001 and ADR-0011.** Both remain in the
+  register unedited; neither is to be implemented as written.
+- **Marker status:** Requires Marker — the Household `Images` model and its migration
+- **Status:** Accepted, not yet implemented
+
+### Unequivocal Winner Bypass (§3.5)
+
+No options matrix is presented. Once ADR-0012 fixes the venue, the target entity is
+**mandated by the pre-authored data scaffold**: Household's `Images` is the only entity
+holding ordered images. §3.5 waives the multiple-option requirement where a single
+approach is dictated by the data scaffold; that clause is cited explicitly as required.
+
+### Amendment
+
+The four columns specified by ADR-0001 and ADR-0011 apply to Household's
+`Models/Images.cs` instead of HowToDoIt's `Models/StepImage.cs`:
+
+| Column | Type | Source decision |
+|---|---|---|
+| `Caption` | `nvarchar(500)`, null | ADR-0001 |
+| `IsCaptionAiGenerated` | `bit`, default `0` | ADR-0001 |
+| `CapturedAt` | `datetime2`, null | ADR-0011 |
+| `CapturedAtSource` | short string, null | ADR-0011 |
+
+The reasoning behind each is unchanged and is not restated: `IsCaptionAiGenerated` still
+exists to make "the model never overwrote a human edit" provable (§4.3), and
+`CapturedAtSource` still exists so a file-copy timestamp cannot masquerade as a verified
+capture time.
+
+### Trade-Off & Consequence
+
+- **Gained:** The schema work lands where the feature will actually ship.
+- **Surrendered:** Nothing in the design; only the entity name changes.
+- **Admitted debt/risk:** The migration now targets Household's `dbo` schema rather than
+  `howtodoit`. Both schemas live in **one physical database**, so the migration must be
+  confirmed scoped to `dbo` and confirmed not to disturb the `howtodoit` tables — the
+  same care ADR-0001 demanded, pointed the other way. Delivery is additionally blocked
+  by F-0013: Household has no migration mechanism at all.
+
+---
+
+## ADR-0014 — Identity: retain a single Entra tenant and audience
+
+- **Timestamp:** 2026-09-02T20:15:00Z
+- **Clause/Contract Affected:** §8.2 (external interface). Reclassifies F-0010 item 2.
+- **Marker status:** Planning Only
+- **Status:** Accepted
+- **Note:** The product requirement motivating this decision is recorded outside version
+  control. See `ADR-ADDENDUM` (untracked).
+
+### Problem
+
+Both applications already validate tokens from one CIAM tenant against one audience
+(`api://8a384714-...`). F-0010 recorded this as an isolation weakness: a token minted
+for one API is accepted by the other. The question is whether to split identity or keep
+it shared.
+
+### Unequivocal Winner Bypass (§3.5)
+
+No options matrix. A **single sign-in shared across both applications** is a stated
+requirement; splitting the tenant would make it impossible. The requirement dictates the
+answer.
+
+### Decision
+
+Retain one tenant and one API audience. A **separate native client registration** will
+be required for the React Native application — public client, PKCE, custom redirect
+URI — which is a client-type requirement, not an isolation one, and is already scoped
+as Task 2.2.
+
+### Consequence for F-0010
+
+Item 2 of F-0010 is **reclassified from a latent weakness to intended design**. It is
+not deleted: the underlying fact is unchanged, and if the shared-sign-in requirement
+were ever dropped, the original concern returns immediately. Separation between the two
+applications' data therefore rests on application-level scoping, which makes that
+scoping security-relevant rather than merely organisational.
+
+---
+
+## ADR-0015 — This register is closed; the record continues in the implementation repository
+
+- **Timestamp:** 2026-09-02T21:00:00Z
+- **Clause/Contract Affected:** §3.2 (register location), §3.3 (append-only continuity)
+- **Marker status:** Planning Only
+- **Status:** **Accepted.** Final entry in this register.
+
+### Problem
+
+ADR-0012 moved implementation to Household/Playbook. ADR-0013 supersedes this
+repository's schema decisions with ones targeting another codebase. Continuing to append
+here would leave a register in a frozen repository describing changes to a different
+application — the record would be split across two places, and the half describing live
+work would sit in the half that no longer ships.
+
+§3.2 requires a durable, append-only register. It does not require that a register
+outlive the work it governs. What it does require is that the trail never breaks.
+
+### Decision
+
+**This register is closed at ADR-0015.** No further entries are appended here.
+
+The record continues in the repository where implementation happens. That repository's
+register opens by carrying forward, unedited:
+
+- **ADR-0001 through ADR-0015** in full, including superseded entries. ADR-0001 and
+  ADR-0011 are preserved *as superseded*, not deleted (§3.3) — the reasoning in them is
+  still the reasoning behind ADR-0013's columns.
+- **F-0001 through F-0013**, with their venue applicability marked as already recorded
+  in the register note of 2026-09-02T20:15:00Z. F-0009, F-0011 and F-0012 remain **open
+  and true for this repository**; they are carried across as history, not as live items.
+- Numbering continues from ADR-0016 and F-0014. Identifiers are never reused.
+
+### What remains true of this repository
+
+- Its deployment is **frozen**. Production runs a zip published by hand in July
+  (F-0012). Nothing here is expected to deploy again.
+- The smoke-suite repair and the `test:e2e` split (F-0011) are **real fixes to this
+  codebase** and remain valid regardless of venue. `npm run test:e2e` passes here.
+- F-0009, F-0011 and F-0012 are **not resolved by the move**. If this application is
+  ever deployed again, every one of them applies unchanged — in particular the F-0012
+  addendum warning that enabling `DeployAPI` would strip the SPA from production.
+- The codebase remains the source of the sequence UI referenced by ADR-0012.
+
+### Trade-Off & Consequence
+
+- **Gained:** One continuous register in the repository where work happens, rather than
+  two partial ones.
+- **Surrendered:** Reading the full history now requires both repositories. This entry
+  is the link between them and must not be removed.
+- **Admitted debt/risk:** A carried-forward register is a **copy**, and a copy can drift
+  from its source or lose entries in transit. The carry-forward must be verified entry
+  by entry against this file — ADR-0001 to ADR-0015 and F-0001 to F-0013, counted, not
+  assumed — before the first new entry is appended there. Note also that product context
+  for several decisions is held outside version control (`ADR-ADDENDUM`, untracked);
+  that file is not carried by any git operation and must be moved deliberately, or it
+  will simply be left behind.

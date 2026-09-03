@@ -351,3 +351,107 @@ is per instance and is not transferable to the next submission.**
 
 Part 1 delivers a working, shippable web feature on its own. Nothing in Part 2 is
 required for it to be useful.
+
+---
+
+# Handover — implementation moves to Household/Playbook
+
+Recorded 2026-09-02 under ADR-0012 (venue), ADR-0013 (entity) and ADR-0015 (register
+closure). This section replaces Part 1's task list **for execution purposes**: the
+decisions above it still stand, but they are carried out in the other repository.
+
+Everything below is sequenced so that each step is independently verifiable and nothing
+touches the shared production database until its migration SQL has been read.
+
+## H0 — Carry the record across *(no code)*
+
+1. Copy `docs/decisions/ADR.md`, `docs/FINDINGS.md` and `docs/PROVENANCE.md` into the
+   implementation repository.
+2. **Verify the carry-forward by count, not by assumption** (ADR-0015): ADR-0001
+   through ADR-0015 and F-0001 through F-0013 must all be present, superseded entries
+   included.
+3. Move the untracked addendum deliberately — **no git operation will carry it**. Once
+   the destination repository is private, it should become a normal tracked file there
+   rather than an ignored one; ignoring it in a private repository buys nothing and
+   leaves it unversioned and unbacked-up.
+4. Numbering continues at ADR-0016 and F-0014.
+
+## H1 — Unblock the schema (F-0013) — **the gating item**
+
+Household uses EF Core to read a schema it does not own: no `Migrations/` folder, no
+`Migrate()` call, no CI migration step. ADR-0013's four columns therefore have nowhere
+to land yet.
+
+1. **Decide the migration mechanism first, in its own ADR with a §3.5 options
+   analysis.** Candidates: an EF baseline plus migrations; hand-written `ALTER TABLE`
+   continuing current practice; or adopting a startup-migration pattern — the last of
+   which imports F-0008's swallowed-failure mode and must not be chosen without also
+   fixing it.
+2. If a baseline migration is chosen: generate it, then **read the generated SQL before
+   running it.** It must touch only `dbo`, and must not emit `CREATE TABLE` for tables
+   that already exist. The database is shared with the `howtodoit` schema.
+3. Apply against a restorable copy before production.
+
+**Nothing in H2 onward can proceed until H1 is settled.**
+
+## H2 — Schema change *(ADR-0013)*
+
+- **Red:** caption and capture-time fields round-trip on `Images`;
+  `IsCaptionAiGenerated` defaults false; `CapturedAt` / `CapturedAtSource` default null.
+- **Green:** the four columns on `Models/Images.cs`, mirrored in the frontend types.
+- **Markers:** `// Governance-Ref: ADR-0013` on the properties and in the migration.
+
+## H3 — Analysis service *(ADR-0004, ADR-0008, ADR-0009)*
+
+- **Red, table-driven (§6.2):** caption validation (empty, over-length, non-JSON, wrong
+  sentence count, timeout) and ordering validation (ids outside the set, duplicates,
+  missing, wrong count, empty) — each falling back without corrupting data.
+- **§7.1:** the mock asserts the **outbound** payload, not just a canned response.
+- **Green:** `IImageAnalysisService` + the `gpt-4.1-mini` implementation, with the
+  bounded concurrency and `Retry-After` backoff ADR-0009 requires.
+- **Constraint, now load-bearing:** the service stays **entity-agnostic**, with
+  persistence behind an adapter. ADR-0012's rework estimate depends on this; eroding it
+  for convenience is a defect, not a shortcut.
+- **§7.1 live cycle:** one run against the real deployment before this is called
+  complete, judged on inspected caption text — not on a `200 OK` (§7.2).
+
+## H4 — Endpoints *(ADR-0003)*
+
+- **Red — negative assertions (§4.3), the point of this step:** anonymous analyze
+  returns 401; an authenticated non-writer returns 403; over the image cap returns 400;
+  **a human-edited caption is never overwritten by a re-run**; no model endpoint or
+  credential appears in build output or logs.
+- **Green:** the analyze endpoint and the caption-update endpoint.
+
+## H5 — Capture time *(ADR-0010, ADR-0011)*
+
+- **Red:** extraction returns `exif` when `DateTimeOriginal` is present, `filetime`
+  from `File.lastModified` otherwise, null source when unreadable — and runs **before**
+  any canvas re-encode, which is what destroys the metadata (F-0001).
+- **Red, server side:** future dates, implausibly old dates, all-identical batches,
+  malformed values — each rejected or downgraded, never silently trusted.
+- **Green:** client extraction, upload fields with **UTC pinned at the contract**, and
+  ordering by `CapturedAt` ahead of any model call.
+- **Negative assertion (§4.3):** **no model request is issued** when capture times
+  suffice. ADR-0010's cost and correctness win is only real if the model is genuinely
+  bypassed.
+- **Note:** Household's client may or may not share HowToDoIt's canvas re-encode; that
+  must be checked rather than assumed, since F-0001 was specific to this repository's
+  `compressImage`.
+
+## H6 — UI
+
+Caption editing per image, an analyze trigger after uploads settle, the ADR-0003
+"not yet described" recoverable state, captions rendered as `alt` text, and the
+labelled unapplied ordering suggestion for the fallback path (ADR-0010).
+
+## Carried across but not scheduled
+
+- **F-0008** — the swallowed migration failure. HowToDoIt's pattern is **not present**
+  in Household, so this transfers as a *constraint on H1* rather than as an existing
+  defect: do not introduce startup migration without fail-fast behaviour.
+- **F-0010 item 1** — two Bicep templates both creating one storage account. Unchanged,
+  and more relevant now that both applications are being worked on.
+- **F-0002, F-0004** — repository defects specific to HowToDoIt's `StepImageRepository`.
+  They do **not** apply to Household's `ImagesRepository`, which must be reviewed on its
+  own terms; the equivalent ordering-validation gap may or may not exist there.
