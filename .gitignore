@@ -457,3 +457,6 @@ Seeds/
 # Playwright walkthrough capture output (compressed copies live in public/seed + docs/)
 /HowToDoIt.ui/e2e/walkthrough-shots/
 /HowToDoIt.ui/playwright-results/
+
+# Untracked governance addendum (product direction — see ADR-ADDENDUM)
+docs/decisions/ADR-ADDENDUM.md
