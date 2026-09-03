@@ -45,7 +45,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test smoke",
+    "test:e2e:capture": "playwright test walkthrough screenshots",
+    "test:e2e:all": "playwright test",
     "test:e2e:report": "playwright show-report"
   },
   "browserslist": {
