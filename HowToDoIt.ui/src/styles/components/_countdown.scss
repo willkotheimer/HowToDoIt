@@ -23,6 +23,19 @@ $cd-sky: #18a0de;
     stroke-dasharray: 4 5;
   }
 
+  // The walkthrough's "Sign in" slide: the step's words instead of a leader number.
+  &__label {
+    fill: #fff;
+    font-family: 'Righteous', cursive;
+    font-size: 40px;
+    letter-spacing: 1px;
+    text-anchor: middle;
+    dominant-baseline: central;
+    paint-order: stroke;
+    stroke: rgba(11, 39, 69, 0.9);
+    stroke-width: 3;
+  }
+
   &__num {
     fill: #fff;
     font-family: 'Righteous', cursive;
